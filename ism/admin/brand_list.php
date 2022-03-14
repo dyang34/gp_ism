@@ -31,24 +31,32 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
             <!-- 메인TABLE(s) -->
             <table class="display" cellpadding="0" cellspacing="0">
             	<colgroup>
-            		<col width="12%">
-            		<col width="13%">
-            		<col width="12%">
-            		<col width="13%">
-            		<col width="12%">
-            		<col width="13%">
-            		<col width="12%">
-            		<col width="13%">
+            		<col width="5%">
+            		<col width="10%">
+            		<col width="10%">
+            		<col width="5%">
+            		<col width="10%">
+            		<col width="10%">
+            		<col width="5%">
+            		<col width="10%">
+            		<col width="10%">
+            		<col width="5%">
+            		<col width="10%">
+            		<col width="10%">
             	</colgroup>
                 <thead>
                     <tr>
-                        <th class="tbl_first">명칭</th>
+                        <th class="tbl_first">코드</th>
+                        <th>명칭</th>
                         <th>등록일</th>
                         <th style="border-left:12px solid #fff;">명칭</th>
+                        <th>명칭</th>
                         <th>등록일</th>
-                        <th style="border-left:12px solid #fff;">명칭</th>
+                        <th style="border-left:12px solid #fff;">코드</th>
+                        <th>명칭</th>
                         <th>등록일</th>
-                        <th style="border-left:12px solid #fff;">명칭</th>
+                        <th style="border-left:12px solid #fff;">코드</th>
+                        <th>명칭</th>
                         <th>등록일</th>
                     </tr>
                 </thead>
@@ -64,7 +72,8 @@ if($rs->num_rows > 0) {
             echo "</tr><tr>";
         }
 ?>
-                        <td class="<?=($i % 4)==0?"tbl_first":""?>" style="text-align:center;<?=($i % 4)>0?"border-left:12px solid #fff;":""?>"><a href="#" name="btnModify" imb_idx="<?=$row['imb_idx']?>"><?=$row["name"]?></a></td>
+                        <td class="<?=($i % 4)==0?"tbl_first":""?>" style="text-align:center;<?=($i % 4)>0?"border-left:12px solid #fff;":""?>"><a href="#" name="btnModify" imb_idx="<?=$row['imb_idx']?>"><?=$row["code"]?></a></td>
+                        <td style="text-align:center;"><a href="#" name="btnModify" imb_idx="<?=$row['imb_idx']?>"><?=$row["name"]?></a></td>
                         <td style="text-align:center;"><?=$row["reg_date"]?></td>
 <?php        
     }

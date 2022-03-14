@@ -29,8 +29,22 @@ try {
     if($mode=="INS") {
         
 //        if (empty($userid)) {
+        if (!$code) {
+            JsUtil::alertBack("코드를 입력해 주십시오.   ");
+            exit;
+        }
+        
         if (!$name) {
             JsUtil::alertBack("명칭을 입력해 주십시오.   ");
+            exit;
+        }
+        
+        $wq = new WhereQuery(true, true);
+        $wq->addAndString("code","=",$code);
+//        $wq->addAndString2("imb_fg_del","=","0");
+        
+        if (BrandMgr::getInstance()->exists($wq)) {
+            JsUtil::alertBack("이미 존재하는 코드 입니다.   ");
             exit;
         }
         

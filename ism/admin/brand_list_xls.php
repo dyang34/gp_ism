@@ -27,6 +27,7 @@ th{font-size:11px;text-align:center;color:white;background-color:#000081;}
 
 <table cellpadding=3 cellspacing=0 border=1 bordercolor='#bdbebd' style='border-collapse: collapse'>
 	<tr style="height:30px;">
+		<th style="color:white;background-color:#000081;">코드</th>
 		<th style="color:white;background-color:#000081;">명칭</th>
 		<th style="color:white;background-color:#000081;">등록일</th>
 	</tr>
@@ -36,6 +37,7 @@ if($rs->num_rows > 0) {
         $row = $rs->fetch_assoc();
 ?>
 		<tr>
+			<td><?=$row["code"]?></td>
             <td><?=$row["name"]?></td>
             <td><?=$row["reg_date"]?></td>
 		</tr>

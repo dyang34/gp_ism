@@ -57,19 +57,19 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                     <table class="wrt_table">
                         <caption>등록하기</caption>
                         <colgroup>
-                            <col style="width:16%;"><col>
+                            <col style="width:10%;"><col>
                         </colgroup>
                         <tbody>
+                            <tr>
+                                <th>코드</th>
+                                <td>
+                                    <input type="text" name="code" value="<?=$row['code']?>" placeholder="코드를 입력하세요." style="width: 20%;">
+                                </td>
+                            </tr>
                             <tr>
                                 <th>명칭</th>
                                 <td>
                                     <input type="text" name="name" value="<?=$row['name']?>" placeholder="명칭을 입력하세요." style="width: 20%;">
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>코드<font color="gray">(선택 항목)</font></th>
-                                <td>
-                                    <input type="text" name="code" value="<?=$row['code']?>" placeholder="코드를 입력하세요." style="width: 20%;">
                                 </td>
                             </tr>
                         </tbody>
@@ -97,7 +97,7 @@ if ($mode=="UPD") {
 			</div>
 			<!-- 202112123 등록하기(e) -->
 
-<script src="/rig/cms/js/util/ValidCheck.js"></script>	
+<script src="/ism/cms/js/util/ValidCheck.js"></script>	
 <script type="text/javascript">
 var mc_consult_submitted = false;
 
@@ -106,6 +106,7 @@ $(document).on("click","a[name=btnSave]",function() {
 	
 	var f = document.writeForm;
 
+	if ( VC_inValidText(f.code, "코드") ) return false;
 	if ( VC_inValidText(f.name, "명칭") ) return false;
 
 	f.auto_defense.value = "identicharmc!@";
