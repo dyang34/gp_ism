@@ -27,7 +27,8 @@ class CmsConfig
         static $mysql_database = "gangblydb";
 */        
 
-        static $mysql_host = "localhost";
+//        static $mysql_host = "localhost";
+        static $mysql_host = "203.245.24.13";
         static $mysql_user = "ganglife2018";
         static $mysql_password = "ganglife2018@";
         static $mysql_database = "ganglife2018";

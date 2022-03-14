@@ -11,23 +11,31 @@ $menuNo = 6;
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("imct_fg_del","=","0");
 
-$_order_by = "case depth when 1 then lpad(sort,'4','0')
-        when 2 then CONCAT((SELECT lpad(sort,'4','0') FROM ism_mst_category b WHERE b.imct_idx = a.uppest_imct_idx),'-',lpad(sort,'4','0'))
-        when 3 then CONCAT((SELECT lpad(sort,'4','0') FROM ism_mst_category b WHERE b.imct_idx = a.uppest_imct_idx),'-',(SELECT lpad(sort,'4','0') FROM ism_mst_category b WHERE b.imct_idx = a.upper_imct_idx),'-',lpad(sort,'4','0'))
-        when 4 then CONCAT((SELECT lpad(sort,'4','0') FROM ism_mst_category b WHERE b.imct_idx = a.uppest_imct_idx),'-',(SELECT lpad(sort,'4','0') FROM ism_mst_category b WHERE b.imct_idx = (SELECT upper_imct_idx FROM ism_mst_category b WHERE b.imct_idx = a.upper_imct_idx)),'-',(SELECT lpad(sort,'4','0') FROM ism_mst_category b WHERE b.imct_idx = a.upper_imct_idx),'-',lpad(sort,'4','0'))
-        END
-";
+$_order_by = "cate_no";
 $wq->addOrderBy($_order_by, "asc");
 
 $rs = CategoryMgr::getInstance()->getList($wq, $pg);
 
+$arrCategory = array();
+if($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row = $rs->fetch_assoc();
+        
+        array_push($arrCategory, $row);
+    }
+}
+
 include $_SERVER['DOCUMENT_ROOT']."/ism/include/head.php";
 include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
 ?>
-           
+	<form name="pageForm" method="get"></form>
+	         
 						<!-- 제품검색(s) -->
 						<div style="padding-left:20px;">
 							<h3 class="wrt_icon_search">카테고리 관리</h3>
+                            <ul class="icon_Btn">
+                                <li><a href="#" name="btnExcelDownload">엑셀</a></li>
+                            </ul>
 						</div>
 						<!-- 제품검색(e) -->
 						
@@ -54,161 +62,91 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
 								</div>
 								<div class="adm-category-box">
 									<ul class="ism_menu">
-										<li class="list" style="border-top: 0;">
-											<input type="checkbox" name="item" id="item1"/>   
-											<label for="item1">
-												<span class="folder"></span> List 1<input type="button" value="항목추가">
-												<span class="arw"></span>
+<?php
+
+$cnt_ul = 0;
+
+for($i=0;$i<count($arrCategory);$i++) {
+?>
+										<li class="list 
+<?php
+//if ($i > 0 && ($arrCategory[$i-1]["depth"] < $arrCategory[$i]["depth"])) {
+if ($arrCategory[$i]["depth"]=="2") {
+    echo " sub_list ";
+}
+/*
+if ($i < count($arrCategory)-1 && ($arrCategory[$i+1]["depth"] > $arrCategory[$i]["depth"])) {
+    echo " depth_list ";
+} else {
+    echo " depth_last_list ";
+}
+*/
+?>
+ " style="border-top: 0;">
+											<input type="checkbox" name="cate<?=$arrCategory[$i]["imct_idx"]?>" id="cate<?=$arrCategory[$i]["imct_idx"]?>"/>   
+											<label for="cate<?=$arrCategory[$i]["imct_idx"]?>">
+												<span class="<?=($i < count($arrCategory)-1 && ($arrCategory[$i+1]["depth"] > $arrCategory[$i]["depth"]))?"folder":"folder folder_close"?>"></span> <?=$arrCategory[$i]["title"]?>
+<span class="btn_wrap">												
+<?php
+    if ($arrCategory[$i]["depth"] < 4) {
+?>												
+													<input type="button" value="항목추가" mode="INS" name="btnIns" imct_idx="<?=$arrCategory[$i]["imct_idx"]?>" depth="<?=$arrCategory[$i]["depth"]?>" title="" sort="<?=$arrCategory[$i]["sort"]?>" upper_imct_idx="<?=$arrCategory[$i]["upper_imct_idx"]?>" >
+<?php
+    }
+?>
+    												<input type="button" value="수정" mode="UPD" name="btnUpd" imct_idx="<?=$arrCategory[$i]["imct_idx"]?>" depth="<?=$arrCategory[$i]["depth"]?>" title="" sort="<?=$arrCategory[$i]["sort"]?>" upper_imct_idx="<?=$arrCategory[$i]["upper_imct_idx"]?>" >
+    												<input type="button" value="위로" mode="UP" name="btnUp" imct_idx="<?=$arrCategory[$i]["imct_idx"]?>" depth="<?=$arrCategory[$i]["depth"]?>" title="" sort="<?=$arrCategory[$i]["sort"]?>" upper_imct_idx="<?=$arrCategory[$i]["upper_imct_idx"]?>" >
+    												<input type="button" value="아래료" mode="DOWN" name="btnDown" imct_idx="<?=$arrCategory[$i]["imct_idx"]?>" depth="<?=$arrCategory[$i]["depth"]?>" title="" sort="<?=$arrCategory[$i]["sort"]?>" upper_imct_idx="<?=$arrCategory[$i]["upper_imct_idx"]?>" >
+												</span>
+<?php
+/*
+ if ($i < (count($arrCategory)-1) && ($arrCategory[$i+1]["depth"] > $arrCategory[$i]["depth"])) {
+ ?>
+ <span class="arw"></span>
+ <?php
+ }
+ */
+?>												
 											</label>
-											<!--
-												하위 추가 시 <ul class="options items"> 추가
-												
-												- 첫번째 하위 카테고리에는 sub_list 가 포함되어있어야 함
-												- 추가 하위 카테고리가 있을 시 li → list depth_list
-												- 추가 하위 카테고리가 없을 시 li → list depth_last_list
-											-->
-											<ul class="options items">
-												<li class="list sub_list depth_list" style="border-top: 0;">
-													<input type="checkbox" name="item" id="item_1"/>
-													<label for="item_1">
-														<span class="folder"></span> List 1<input type="button" value="항목추가">
-														<span class="arw"></span>
-													</label>
-													<!-- 세번째 추가 하위카테고리가 있을때 ism_dep -->
-													<ul class="options items ism_dep">
-														<li class="list depth_last_list" style="border-top: 0;">
-															<input type="checkbox" name="item" id="item_1_1"/>
-															<label for="item_1_1">
-																<span class="folder"></span> List 1<input type="button" value="항목추가">
-															</label>
-														</li>
-														<li class="list depth_last_list" style="border-top: 0;">
-															<input type="checkbox" name="item" id="item_1_2"/>
-															<label for="item_1_2">
-																<span class="folder"></span> List 2<input type="button" value="항목추가">
-															</label>
-														</li>
-													</ul>
-													<!-- 세번째 추가 하위카테고리가 있을때 ism_dep -->
-												</li>
+<?php
+    if ($i < (count($arrCategory)-1) && ($arrCategory[$i+1]["depth"] > $arrCategory[$i]["depth"])) {
+        $cnt_ul++;
+?>
+											<ul class="options items ism_dep<?=$arrCategory[$i]["depth"]?>">
+<?php
+    } else if ($i < (count($arrCategory)-1) && ($arrCategory[$i+1]["depth"] < $arrCategory[$i]["depth"])) {
+?>
+    	</li>
+<?php
+        for($i_ul=$arrCategory[$i+1]["depth"];$i_ul<$arrCategory[$i]["depth"];$i_ul++) {
+            $cnt_ul--;
+?>
 											</ul>
 										</li>
-										<li class="list">
-											<input type="checkbox" name="item" id="item2" />   
-											<label for="item2">
-												<span class="folder"></span> List 2<input type="button" value="항목추가">
-												<span class="arw"></span>
-											</label>
-											<ul class="options items">
-												<li class="list sub_list depth_last_list" style="border-top: 0;">
-													<input type="checkbox" name="item" id="item2_1" checked/>   
-													<label for="item2_1">
-														<span class="folder"></span> List 1<input type="button" value="항목추가">
-													</label>
-												</li>
-												<li class="list sub_list depth_list" style="border-top: 0;">
-													<input type="checkbox" name="item" id="item2_2"/>   
-													<label for="item2_2">
-														<span class="folder"></span> List 2<input type="button" value="항목추가">
-														<span class="arw"></span>
-													</label>
-													<!-- 세번째 추가 하위카테고리가 있을때 ism_dep 추가 -->
-													<ul class="options items ism_dep"> 
-														<li class="list depth_last_list" style="border-top: 0;">
-															<input type="checkbox" name="item" id="item_1_1"/>
-															<label for="item_1_1">
-																<span class="folder"></span> List 1<input type="button" value="항목추가">
-															</label>
-														</li>
-														<li class="list depth_last_list" style="border-top: 0;">
-															<input type="checkbox" name="item" id="item_1_2"/>
-															<label for="item_1_2">
-																<span class="folder"></span> List 2<input type="button" value="항목추가">
-															</label>
-														</li>
-														<li class="list depth_last_list" style="border-top: 0;">
-															<input type="checkbox" name="item" id="item_1_3"/>
-															<label for="item_1_3">
-																<span class="folder"></span> List 3<input type="button" value="항목추가">
-															</label>
-														</li>
-													</ul>
-													<!-- 세번째 추가 하위카테고리가 있을때 ism_dep 추가 -->
-												</li>
-												<li class="list sub_list depth_last_list" style="border-top: 0;">
-													<input type="checkbox" name="item" id="item2_3" checked/>   
-													<label for="item2_3">
-														<span class="folder"></span> List 3<input type="button" value="항목추가">
-													</label>
-												</li>
+<?php
+        }
+    } else if ($arrCategory[$i+1]["depth"] == $arrCategory[$i]["depth"]) {
+?>    
+    	</li>
+<?php
+    }
+}
+
+for($i_ul=0;$i_ul<$cnt_ul;$i_ul++) {
+?>
 											</ul>
 										</li>
-										<li class="list">
-											<input type="checkbox" name="item" id="item3" />   
-											<label for="item3">
-												<span class="folder"></span> List 3<input type="button" value="항목추가">
-												<span class="arw"></span>
-											</label>
-											<ul class="options items">
-												<li class="list sub_list depth_last_list" style="border-top: 0;">
-													<input type="checkbox" name="item" id="item3_1" checked/>   
-													<label for="item3_1">
-														<span class="folder"></span> List 1<input type="button" value="항목추가">
-													</label>
-												</li>
-												<li class="list sub_list depth_last_list" style="border-top: 0;">
-													<input type="checkbox" name="item" id="item3_2" checked/>   
-													<label for="item3_2">
-														<span class="folder"></span> List 2<input type="button" value="항목추가">
-													</label>
-												</li>
-											</ul>
-										</li>
-										<li class="list">
-											<input type="checkbox" name="item" id="item4" />   
-											<label for="item4">
-												<span class="folder"></span> List 4<input type="button" value="항목추가">
-												<span class="arw"></span>
-											</label>
-											<ul class="options items">
-												<li class="list sub_list depth_last_list" style="border-top: 0;">
-													<input type="checkbox" name="item" id="item4_1" checked/>   
-													<label for="item4_1">
-														<span class="folder"></span> List 1<input type="button" value="항목추가">
-													</label>
-												</li>
-												<li class="list sub_list depth_last_list" style="border-top: 0;">
-													<input type="checkbox" name="item" id="item4_2" checked/>   
-													<label for="item4_2">
-														<span class="folder"></span> List 2<input type="button" value="항목추가">
-													</label>
-												</li>
-											</ul>
-										</li>
-										<li class="list">
-											<input type="checkbox" name="item" id="item5" />   
-											<label for="item5">
-												<span class="folder"></span> List 5<input type="button" value="항목추가">
-												<span class="arw"></span>
-											</label>
-											<ul class="options items">
-												<li class="list sub_list depth_last_list" style="border-top: 0;">
-													<input type="checkbox" name="item" id="item5_1" checked/>   
-													<label for="item5_1">
-														<span class="folder"></span> List 1<input type="button" value="항목추가">
-													</label>
-												</li>
-											</ul>
-										</li>
+<?php 
+}
+?>									
 									</ul>
 								</div>
-								
-								
-								
+<?php /*								
 								<p class="align-r" style="font-size: 12px; margin-top: 10px;">선택한 카테고리 이동
 									<button type="button" class="btn-icon" style="margin-left: 4px;">▲</button>
 									<button type="button" class="btn-icon">▼</button>
 								</p>
+*/?>
 							</div>
 							<!-- 카테고리 관리(e) -->
 							
@@ -223,82 +161,21 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
 										</colgroup>
 										<tbody>
 											<tr>
-												<th>상위 카테고리</th>
-												<td>생활</td>
+												<th>상위 카테고리명</th>
+												<td></td>
 											</tr>
 											<tr>
-												<th>분류번호</th>
-												<td>2-155</td>
-											</tr>							
+												<th>Depth</th>
+												<td></td>
+											</tr>
 											<tr>
-												<th>카테고리 이름</th>
+												<th>카테고리명</th>
 												<td><input type="text" class="width-xl" name="title" value="생활" style="line-height: 31px;"></td>
-											</tr>
-											<tr>
-												<th>접근권한</th>
-												<td>
-													<select name="access_level">
-														<option value="5" selected="">레벨5</option>
-														<option value="4">레벨4</option>
-														<option value="3">레벨3</option>
-														<option value="2">레벨2</option>
-														<option value="1">레벨1</option>
-													</select>
-												</td>
-											</tr>
-											<tr>
-												<th>사용 여부</th>
-												<td>
-													<input type="radio" name="display" id="cate_show" checked=""><label for="cate_show" style="margin-right: 20px;">사용</label>
-													<input type="radio" name="display" id="cate_hide"><label for="cate_hide">미사용</label>
-												</td>
-											</tr>
-											<tr>
-												<th>서브비주얼</th>
-												<td>
-													<p style="margin-bottom: 5px;"><small>권장사이즈 : 1920 x 397 px</small></p>
-													<div>
-														<p class="file" style="width:250px;">
-															<input type="file" name="img1" id="prod_thumb">
-															<label for="prod_thumb">파일찾기</label>
-														</p>
-														<p class="float-l"><button type="button">삭제</button></p>
-													</div>
-												</td>
-											</tr>
-											<tr>
-												<th>제품리스트 배너</th>
-												<td>
-													<p style="margin-bottom: 5px;"><small>권장사이즈 : 1200 * 225 px</small></p>
-													<div>
-														<p class="file" style="width:250px;">
-															<input type="file" id="prod_thumb3">
-															<label for="prod_thumb3">파일찾기</label>
-														</p>
-													</div>
-												</td>
-											</tr>
-											<tr>
-												<th>모바일 제품리스트 배너</th>
-												<td>
-													<p style="margin-bottom: 5px;"><small>권장사이즈 : 1200 * 225 px</small></p>
-													<div>
-														<p class="file" style="width:250px;">
-															<input type="file" id="prod_thumb5">
-															<label for="prod_thumb5">파일찾기</label>
-														</p>
-													</div>
-												</td>
-											</tr>
-											<tr>
-												<th>분류설명</th>
-												<td><textarea name="content" cols="30" rows="3"></textarea></td>
 											</tr>
 											<tr>
 												<th>카테고리 삭제</th>
 												<td>
 													<button type="button" class="btn-alert btn-sm">삭제</button>
-													<span class="ft-red" style="margin-left: 5px !important; font-size: 12px;">삭제하신 카테고리는 복구가 불가합니다.</span>
 												</td>
 											</tr>
 										</tbody>
@@ -327,6 +204,136 @@ $(document).on('click','a[name=btnExcelDownload]', function() {
 	
 	f.submit();
 });
+
+$(document).on('click','input[name=btnUp]', function() {
+	var obj = $(this).closest('li');
+	var obj_tgt = obj.prev();
+	
+	if(isEmpty(obj_tgt.html())) {
+		alert("최상위 카테고리입니다.\r\n\r\n카테고리 이동은 같은 상위 카테고리 내에서만 가능합니다.    ");
+		return false;
+	}
+	
+	var obj_tgt_btn = obj_tgt.find('[name=btnUp]');
+	
+//	alert($(this).attr('imct_idx')+" "+$(this).attr('sort'));
+//	alert(obj_tgt_btn.attr('imct_idx')+" "+obj_tgt_btn.attr('sort'));
+
+	$.ajax({
+		url: '../ajax/category_sort_upd.php',
+		type: 'POST',
+		dataType: "json",
+		async: true,
+		cache: false,
+		data: {
+			mode : 'SORT_UP',
+			src_idx : $(this).attr('imct_idx'),
+			src_sort : obj_tgt_btn.attr('sort'),
+			tgt_idx : obj_tgt_btn.attr('imct_idx'),
+			tgt_sort : $(this).attr('sort'),
+		},
+		success: function (response) {
+			switch(response.RESULTCD){
+                case "SUCCESS" :
+					obj_tgt.before(obj);                
+                    break;
+                case "not_login" :
+                    alert("로그인 후 작업하시기 바랍니다.    ");
+                    break;                    
+                case "no_idx" :
+                    alert("Index 에러입니다.    ");
+                    break;                    
+                case "no_sort" :
+                    alert("Sort 에러입니다.    ");
+                    break;                    
+                case "not_mode" :
+                    alert("모드 에러입니다.    ");
+                    break;                    
+                case "no_data" :
+                    alert("해당 카테고리의 정렬을 찾을 수 없습니다.    ");
+                    break;                    
+                default:
+                	alert("시스템 오류입니다.\r\n문의주시기 바랍니다.\r\n\r\n"+response.RESULTCD);
+                    break;
+            }
+		},
+		complete:function(){
+			;
+		},
+		error: function(request,status,error){
+			alert("code:"+request.status+"\n"+"error:"+error+"\n"+"status:"+status+"\n"+"curr_idx:"+curr_idx);	// +"message:"+request.responseText+"\n"
+		}
+	});
+});
+
+$(document).on('click','input[name=btnDown]', function() {
+	var obj = $(this).closest('li');
+	var obj_tgt = obj.next();
+	
+	if(isEmpty(obj_tgt.html())) {
+		alert("최상위 카테고리입니다.\r\n\r\n카테고리 이동은 같은 상위 카테고리 내에서만 가능합니다.    ");
+		return false;
+	}
+	
+	var obj_tgt_btn = obj_tgt.find('[name=btnUp]');
+	
+//	alert($(this).attr('imct_idx')+" "+$(this).attr('sort'));
+//	alert(obj_tgt_btn.attr('imct_idx')+" "+obj_tgt_btn.attr('sort'));
+
+	$.ajax({
+		url: '../ajax/category_sort_upd.php',
+		type: 'POST',
+		dataType: "json",
+		async: true,
+		cache: false,
+		data: {
+			mode : 'SORT_UP',
+			src_idx : $(this).attr('imct_idx'),
+			src_sort : obj_tgt_btn.attr('sort'),
+			tgt_idx : obj_tgt_btn.attr('imct_idx'),
+			tgt_sort : $(this).attr('sort'),
+		},
+		success: function (response) {
+			switch(response.RESULTCD){
+                case "SUCCESS" :
+					obj.before(obj_tgt);                
+                    break;
+                case "not_login" :
+                    alert("로그인 후 작업하시기 바랍니다.    ");
+                    break;                    
+                case "no_idx" :
+                    alert("Index 에러입니다.    ");
+                    break;                    
+                case "no_sort" :
+                    alert("Sort 에러입니다.    ");
+                    break;                    
+                case "not_mode" :
+                    alert("모드 에러입니다.    ");
+                    break;                    
+                case "no_data" :
+                    alert("해당 카테고리의 정렬을 찾을 수 없습니다.    ");
+                    break;                    
+                default:
+                	alert("시스템 오류입니다.\r\n문의주시기 바랍니다.\r\n\r\n"+response.RESULTCD);
+                    break;
+            }
+		},
+		complete:function(){
+			;
+		},
+		error: function(request,status,error){
+			alert("code:"+request.status+"\n"+"error:"+error+"\n"+"status:"+status+"\n"+"curr_idx:"+curr_idx);	// +"message:"+request.responseText+"\n"
+		}
+	});
+});
+
+var isEmpty = function(str){
+//	if( value == "" || value == null || value == undefined || ( value != null && typeof value == "object" && !Object.keys(value).length ) ) {
+    if(typeof str == "undefined" || str == null || str == "")
+        return true;
+    else
+        return false ;
+}
 
 </script>            
 <?php

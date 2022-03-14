@@ -149,7 +149,22 @@ class CategoryDao extends A_Dao
 	        
 	        return $db->query($sql);
 	}
-	
+
+	function updateSort($db, $arrVal) {
+	    
+	    $sql ="call sp_ism_category_sort('".$this->checkMysql($db, $arrVal["src_idx"])."','".$this->checkMysql($db, $arrVal["tgt_idx"])."','".$this->checkMysql($db, $arrVal["src_sort"])."','".$this->checkMysql($db, $arrVal["tgt_sort"])."')";
+	    
+	    $row = array();
+	    $result = $db->query($sql);
+	    if ( $result->num_rows > 0 ) {
+	        $row = $result->fetch_assoc();
+	        @ $result->free();
+	    }
+	    
+	    return $row;
+	    
+	}
+
 	function delete($db, $key) {
 	    
 	    $sql = "update ism_mst_category set imct_fg_del = 1 where imct_idx = ".$this->quot($db, $key);
