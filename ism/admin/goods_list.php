@@ -332,7 +332,7 @@ if($rs->num_rows > 0) {
                         <td><?=$row["code"]?></td>
                         <td><a href="./goods_write.php?mode=UPD&item_code=<?=$row["item_code"]?>"><?=$row["name"]?></a></td>
                         <td><?=$row["item_code"]?></td>
-                        <td><?=$row["item_name"]?></td>
+                        <td><a href="./goods_write.php?mode=UPD&item_code=<?=$row["item_code"]?>"><?=$row["item_name"]?></a></td>
                         <td class="txt_c"><?=$row["brand_name"]?></td>
                         <td class="txt_c"><?=$row["cate1_name"]?></td>
                         <td class="txt_c"><?=$row["cate2_name"]?></td>
