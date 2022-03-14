@@ -8,12 +8,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/category/CategoryMgr.ph
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("imct_fg_del","=","0");
 
-$_order_by = "case depth when 1 then lpad(sort,'4','0')
-        when 2 then CONCAT((SELECT lpad(sort,'4','0') FROM ism_mst_category b WHERE b.imct_idx = a.uppest_imct_idx),'-',lpad(sort,'4','0'))
-        when 3 then CONCAT((SELECT lpad(sort,'4','0') FROM ism_mst_category b WHERE b.imct_idx = a.uppest_imct_idx),'-',(SELECT lpad(sort,'4','0') FROM ism_mst_category b WHERE b.imct_idx = a.upper_imct_idx),'-',lpad(sort,'4','0'))
-        when 4 then CONCAT((SELECT lpad(sort,'4','0') FROM ism_mst_category b WHERE b.imct_idx = a.uppest_imct_idx),'-',(SELECT lpad(sort,'4','0') FROM ism_mst_category b WHERE b.imct_idx = (SELECT upper_imct_idx FROM ism_mst_category b WHERE b.imct_idx = a.upper_imct_idx)),'-',(SELECT lpad(sort,'4','0') FROM ism_mst_category b WHERE b.imct_idx = a.upper_imct_idx),'-',lpad(sort,'4','0'))
-        END
-";
+$_order_by = "cate_no";
 $wq->addOrderBy($_order_by, "asc");
 
 $rs = CategoryMgr::getInstance()->getList($wq, $pg);
