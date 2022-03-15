@@ -86,17 +86,17 @@ if ($i < count($arrCategory)-1 && ($arrCategory[$i+1]["depth"] > $arrCategory[$i
 											<input type="checkbox" name="cate<?=$arrCategory[$i]["imct_idx"]?>" id="cate<?=$arrCategory[$i]["imct_idx"]?>"/>   
 											<label for="cate<?=$arrCategory[$i]["imct_idx"]?>">
 												<span class="<?=($i < count($arrCategory)-1 && ($arrCategory[$i+1]["depth"] > $arrCategory[$i]["depth"]))?"folder":"folder folder_close"?>"></span> <?=$arrCategory[$i]["title"]?>
-<span class="btn_wrap">												
+												<span class="btn_wrap">												
 <?php
     if ($arrCategory[$i]["depth"] < 4) {
 ?>												
-													<input type="button" value="항목추가" mode="INS" name="btnIns" imct_idx="<?=$arrCategory[$i]["imct_idx"]?>" depth="<?=$arrCategory[$i]["depth"]?>" title="" sort="<?=$arrCategory[$i]["sort"]?>" upper_imct_idx="<?=$arrCategory[$i]["upper_imct_idx"]?>" >
+    												<a class="btn_inner" href="#" mode="INS" name="btnIns" imct_idx="<?=$arrCategory[$i]["imct_idx"]?>" depth="<?=$arrCategory[$i]["depth"]?>" title="" sort="<?=$arrCategory[$i]["sort"]?>" upper_imct_idx="<?=$arrCategory[$i]["upper_imct_idx"]?>"><img src="/ism/images/common/add_item.gif" /></a>
 <?php
     }
 ?>
-    												<input type="button" value="수정" mode="UPD" name="btnUpd" imct_idx="<?=$arrCategory[$i]["imct_idx"]?>" depth="<?=$arrCategory[$i]["depth"]?>" title="" sort="<?=$arrCategory[$i]["sort"]?>" upper_imct_idx="<?=$arrCategory[$i]["upper_imct_idx"]?>" >
-    												<input type="button" value="위로" mode="UP" name="btnUp" imct_idx="<?=$arrCategory[$i]["imct_idx"]?>" depth="<?=$arrCategory[$i]["depth"]?>" title="" sort="<?=$arrCategory[$i]["sort"]?>" upper_imct_idx="<?=$arrCategory[$i]["upper_imct_idx"]?>" >
-    												<input type="button" value="아래료" mode="DOWN" name="btnDown" imct_idx="<?=$arrCategory[$i]["imct_idx"]?>" depth="<?=$arrCategory[$i]["depth"]?>" title="" sort="<?=$arrCategory[$i]["sort"]?>" upper_imct_idx="<?=$arrCategory[$i]["upper_imct_idx"]?>" >
+                                                    <a class="btn_inner" href="#" mode="UPD" name="btnUpd" imct_idx="<?=$arrCategory[$i]["imct_idx"]?>" depth="<?=$arrCategory[$i]["depth"]?>" title="" sort="<?=$arrCategory[$i]["sort"]?>" upper_imct_idx="<?=$arrCategory[$i]["upper_imct_idx"]?>"><img src="/ism/images/common/edit.png" /></a>
+                                                    <a class="btn_inner" href="#" mode="UP" name="btnUp" imct_idx="<?=$arrCategory[$i]["imct_idx"]?>" depth="<?=$arrCategory[$i]["depth"]?>" title="" sort="<?=$arrCategory[$i]["sort"]?>" upper_imct_idx="<?=$arrCategory[$i]["upper_imct_idx"]?>" alt=""><img src="/ism/images/common/up.png" /></a>
+                                                    <a class="btn_inner" href="#" mode="DOWN" name="btnDown" imct_idx="<?=$arrCategory[$i]["imct_idx"]?>" depth="<?=$arrCategory[$i]["depth"]?>" title="" sort="<?=$arrCategory[$i]["sort"]?>" upper_imct_idx="<?=$arrCategory[$i]["upper_imct_idx"]?>"><img src="/ism/images/common/down.png" /></a>
 												</span>
 <?php
 /*
@@ -205,20 +205,22 @@ $(document).on('click','a[name=btnExcelDownload]', function() {
 	f.submit();
 });
 
-$(document).on('click','input[name=btnUp]', function() {
+$(document).on('click','a[name=btnUp]', function() {
+
 	var obj = $(this).closest('li');
 	var obj_tgt = obj.prev();
+
+	var obj_src_btn = $(this);
+	var obj_tgt_btn = obj_tgt.find('a[name=btnUp]');
 	
 	if(isEmpty(obj_tgt.html())) {
 		alert("최상위 카테고리입니다.\r\n\r\n카테고리 이동은 같은 상위 카테고리 내에서만 가능합니다.    ");
 		return false;
 	}
 	
-	var obj_tgt_btn = obj_tgt.find('[name=btnUp]');
+	var src_sort = obj_src_btn.attr('sort');
+	var tgt_sort = obj_tgt_btn.attr('sort');
 	
-//	alert($(this).attr('imct_idx')+" "+$(this).attr('sort'));
-//	alert(obj_tgt_btn.attr('imct_idx')+" "+obj_tgt_btn.attr('sort'));
-
 	$.ajax({
 		url: '../ajax/category_sort_upd.php',
 		type: 'POST',
@@ -227,15 +229,19 @@ $(document).on('click','input[name=btnUp]', function() {
 		cache: false,
 		data: {
 			mode : 'SORT_UP',
-			src_idx : $(this).attr('imct_idx'),
-			src_sort : obj_tgt_btn.attr('sort'),
+			src_idx : obj_src_btn.attr('imct_idx'),
+			src_sort : tgt_sort,
 			tgt_idx : obj_tgt_btn.attr('imct_idx'),
-			tgt_sort : $(this).attr('sort'),
+			tgt_sort : src_sort,
 		},
 		success: function (response) {
 			switch(response.RESULTCD){
                 case "SUCCESS" :
-					obj_tgt.before(obj);                
+					obj_tgt.before(obj);        
+					obj.find('a[name=btnUp]').attr('sort', tgt_sort);
+					obj.find('a[name=btnDown]').attr('sort', tgt_sort);
+					obj_tgt.find('a[name=btnUp]').attr('sort', src_sort);
+					obj_tgt.find('a[name=btnDown]').attr('sort', src_sort);
                     break;
                 case "not_login" :
                     alert("로그인 후 작업하시기 바랍니다.    ");
@@ -266,19 +272,20 @@ $(document).on('click','input[name=btnUp]', function() {
 	});
 });
 
-$(document).on('click','input[name=btnDown]', function() {
+$(document).on('click','a[name=btnDown]', function() {
 	var obj = $(this).closest('li');
 	var obj_tgt = obj.next();
+
+	var obj_src_btn = $(this);
+	var obj_tgt_btn = obj_tgt.find('a[name=btnUp]');
 	
 	if(isEmpty(obj_tgt.html())) {
-		alert("최상위 카테고리입니다.\r\n\r\n카테고리 이동은 같은 상위 카테고리 내에서만 가능합니다.    ");
+		alert("최하위 카테고리입니다.\r\n\r\n카테고리 이동은 같은 상위 카테고리 내에서만 가능합니다.    ");
 		return false;
 	}
 	
-	var obj_tgt_btn = obj_tgt.find('[name=btnUp]');
-	
-//	alert($(this).attr('imct_idx')+" "+$(this).attr('sort'));
-//	alert(obj_tgt_btn.attr('imct_idx')+" "+obj_tgt_btn.attr('sort'));
+	var src_sort = obj_src_btn.attr('sort');
+	var tgt_sort = obj_tgt_btn.attr('sort');
 
 	$.ajax({
 		url: '../ajax/category_sort_upd.php',
@@ -288,15 +295,19 @@ $(document).on('click','input[name=btnDown]', function() {
 		cache: false,
 		data: {
 			mode : 'SORT_UP',
-			src_idx : $(this).attr('imct_idx'),
-			src_sort : obj_tgt_btn.attr('sort'),
+			src_idx : obj_src_btn.attr('imct_idx'),
+			src_sort : tgt_sort,
 			tgt_idx : obj_tgt_btn.attr('imct_idx'),
-			tgt_sort : $(this).attr('sort'),
+			tgt_sort : src_sort,
 		},
 		success: function (response) {
 			switch(response.RESULTCD){
                 case "SUCCESS" :
-					obj.before(obj_tgt);                
+					obj.before(obj_tgt);
+					obj.find('a[name=btnUp]').attr('sort', tgt_sort);
+					obj.find('a[name=btnDown]').attr('sort', tgt_sort);
+					obj_tgt.find('a[name=btnUp]').attr('sort', src_sort);
+					obj_tgt.find('a[name=btnDown]').attr('sort', src_sort);
                     break;
                 case "not_login" :
                     alert("로그인 후 작업하시기 바랍니다.    ");
