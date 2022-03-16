@@ -57,7 +57,7 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
 								<div class="float-wrap" style="padding: 0;">
 									<h3 class="icon-cate float-l">카테고리 관리</h3>
 									<p class="float-r">
-										<input type="button" value="대분류 추가" style="border-radius: 5px;">
+										<input type="button" name="btnTopIns" value="대분류 추가" style="border-radius: 5px;">
 									</p>
 								</div>
 								<div class="adm-category-box">
@@ -90,13 +90,13 @@ if ($i < count($arrCategory)-1 && ($arrCategory[$i+1]["depth"] > $arrCategory[$i
 <?php
     if ($arrCategory[$i]["depth"] < 4) {
 ?>												
-    												<a class="btn_inner" href="#" mode="INS" name="btnIns" imct_idx="<?=$arrCategory[$i]["imct_idx"]?>" depth="<?=$arrCategory[$i]["depth"]?>" title="" sort="<?=$arrCategory[$i]["sort"]?>" upper_imct_idx="<?=$arrCategory[$i]["upper_imct_idx"]?>"><img src="/ism/images/common/add_item.gif" /></a>
+    												<a class="btn_inner" href="#" mode="INS" name="btnSubIns" imct_idx="<?=$arrCategory[$i]["imct_idx"]?>" depth="<?=$arrCategory[$i]["depth"]?>" title="" sort="<?=$arrCategory[$i]["sort"]?>" upper_imct_idx="<?=$arrCategory[$i]["upper_imct_idx"]?>" upper_title="<?=$arrCategory[$i]["upper_title"]?>" cate_title="<?=$arrCategory[$i]["title"]?>"><img src="/ism/images/common/add_item.gif" /></a>
 <?php
     }
 ?>
-                                                    <a class="btn_inner" href="#" mode="UPD" name="btnUpd" imct_idx="<?=$arrCategory[$i]["imct_idx"]?>" depth="<?=$arrCategory[$i]["depth"]?>" title="" sort="<?=$arrCategory[$i]["sort"]?>" upper_imct_idx="<?=$arrCategory[$i]["upper_imct_idx"]?>"><img src="/ism/images/common/edit.png" /></a>
-                                                    <a class="btn_inner" href="#" mode="UP" name="btnUp" imct_idx="<?=$arrCategory[$i]["imct_idx"]?>" depth="<?=$arrCategory[$i]["depth"]?>" title="" sort="<?=$arrCategory[$i]["sort"]?>" upper_imct_idx="<?=$arrCategory[$i]["upper_imct_idx"]?>" alt=""><img src="/ism/images/common/up.png" /></a>
-                                                    <a class="btn_inner" href="#" mode="DOWN" name="btnDown" imct_idx="<?=$arrCategory[$i]["imct_idx"]?>" depth="<?=$arrCategory[$i]["depth"]?>" title="" sort="<?=$arrCategory[$i]["sort"]?>" upper_imct_idx="<?=$arrCategory[$i]["upper_imct_idx"]?>"><img src="/ism/images/common/down.png" /></a>
+                                                    <a class="btn_inner" href="#" mode="UPD" name="btnUpd" imct_idx="<?=$arrCategory[$i]["imct_idx"]?>" depth="<?=$arrCategory[$i]["depth"]?>" title="" sort="<?=$arrCategory[$i]["sort"]?>" upper_imct_idx="<?=$arrCategory[$i]["upper_imct_idx"]?>" upper_title="<?=$arrCategory[$i]["upper_title"]?>" cate_title="<?=$arrCategory[$i]["title"]?>"><img src="/ism/images/common/edit.png" /></a>
+                                                    <a class="btn_inner" href="#" mode="UP" name="btnUp" imct_idx="<?=$arrCategory[$i]["imct_idx"]?>" depth="<?=$arrCategory[$i]["depth"]?>" title="" sort="<?=$arrCategory[$i]["sort"]?>"><img src="/ism/images/common/up.png" /></a>
+                                                    <a class="btn_inner" href="#" mode="DOWN" name="btnDown" imct_idx="<?=$arrCategory[$i]["imct_idx"]?>" depth="<?=$arrCategory[$i]["depth"]?>" title="" sort="<?=$arrCategory[$i]["sort"]?>"><img src="/ism/images/common/down.png" /></a>
 												</span>
 <?php
 /*
@@ -153,49 +153,49 @@ for($i_ul=0;$i_ul<$cnt_ul;$i_ul++) {
 							<!-- 카테고리 설정(s) -->
 							<div class="float-r cate_view" style="width:60%">
 								<h3 class="icon-pen">카테고리 상세설정</h3>
-								<form>
+                				<form name="writeForm" action="./category_write_act.php" method="post">
+                					<input type="hidden" name="mode" />
+                					<input type="hidden" name="auto_defense" />
+                					<input type="hidden" name="imct_idx" />
+                					<input type="hidden" name="upper_imct_idx" />
+
 									<table class="adm-table">
 										<caption>카테고리 수정</caption>
 										<colgroup>
 											<col style="width:140px;">
+											<col />
 										</colgroup>
 										<tbody>
 											<tr>
 												<th>상위 카테고리명</th>
-												<td></td>
+												<td><span name="spanUpperTitle"></span></td>
 											</tr>
 											<tr>
 												<th>Depth</th>
-												<td></td>
+												<td><span name="spanDepth"></span></td>
 											</tr>
 											<tr>
 												<th>카테고리명</th>
-												<td><input type="text" class="width-xl" name="title" value="생활" style="line-height: 31px;"></td>
+												<td><input type="text" class="width-xl" name="title" value="" style="line-height: 31px;"></td>
 											</tr>
 											<tr>
 												<th>카테고리 삭제</th>
 												<td>
-													<button type="button" class="btn-alert btn-sm">삭제</button>
+													<button type="button" name="btnDel" class="btn-alert btn-sm" style="display:none;">삭제</button>
 												</td>
 											</tr>
 										</tbody>
 									</table>
 								</form>
-								<p style="margin-top: 10px; text-align: center;"><input type="button" value="변경사항 적용하기" class="btn-l btn-ok" style="height: 40px; font-size: 14px; border-radius: 5px;"></p>
+								<p style="margin-top: 10px; text-align: center;"><input type="button" name="btnSave" value="저장" class="btn-l btn-ok" style="height: 40px; font-size: 14px; border-radius: 5px; display:none;"></p>
 							</div>
 							<!-- 카테고리 설정(e) -->
 						</div>
 						<!--카테고리(e)-->
 
-
-
-
-
-
-
-
-
+<script src="/ism/cms/js/util/ValidCheck.js"></script>	
 <script type="text/javascript">
+var mc_consult_submitted = false;
 
 $(document).on('click','a[name=btnExcelDownload]', function() {
 	var f = document.pageForm;
@@ -203,6 +203,85 @@ $(document).on('click','a[name=btnExcelDownload]', function() {
 	f.action = "category_list_xls.php";
 	
 	f.submit();
+});
+
+$(document).on('click','input[name=btnTopIns]', function() {
+	$('input[name=mode]').val('TOPINS');
+	
+	$('input[name=imct_idx]').val('0');
+	$('input[name=upper_imct_idx]').val('0');
+	$('span[name=spanUpperTitle]').html("<span style='color:blue'>[최상위]</span>");
+	$('span[name=spanDepth]').html("1");
+	$('input[name=title]').val("");
+	
+	$('button[name=btnDel]').hide();
+	$('input[name=btnSave]').show();
+});
+
+$(document).on('click','a[name=btnSubIns]', function() {
+	$('input[name=mode]').val('SUBINS');	
+	$('input[name=imct_idx]').val('0');
+	$('input[name=upper_imct_idx]').val($(this).attr('imct_idx'));
+	$('span[name=spanUpperTitle]').html($(this).attr('cate_title'));
+	$('span[name=spanDepth]').html(parseInt($(this).attr('depth'))+1);
+	$('input[name=title]').val('');
+	
+	$('button[name=btnDel]').hide();
+	$('input[name=btnSave]').show();
+});
+
+$(document).on('click','a[name=btnUpd]', function() {
+	$('input[name=mode]').val('UPD');	
+	$('input[name=upper_imct_idx]').val($(this).attr('upper_imct_idx'));
+	$('input[name=imct_idx]').val($(this).attr('imct_idx'));
+	if($(this).attr('upper_imct_idx')==0) {
+		$('span[name=spanUpperTitle]').html("<span style='color:blue'>[최상위]</span>");
+	} else {
+		$('span[name=spanUpperTitle]').html($(this).attr('upper_title'));
+	}
+	$('span[name=spanDepth]').html($(this).attr('depth'));
+	$('input[name=title]').val($(this).attr('cate_title'));
+	
+	$('button[name=btnDel]').show();
+	$('input[name=btnSave]').show();
+});
+
+$(document).on('click','button[name=btnDel]', function() {
+
+	if (!confirm("정말 삭제하시겠습니까?    ")) {
+		return false;
+	}
+
+	$('input[name=mode]').val('DEL');
+	
+	if(mc_consult_submitted == true) { return false; }
+	
+	var f = document.writeForm;
+
+	f.auto_defense.value = "identicharmc!@";
+	mc_consult_submitted = true;
+
+    f.submit();	
+
+    return false;
+	
+});
+
+$(document).on('click','input[name=btnSave]', function() {
+
+	if(mc_consult_submitted == true) { return false; }
+	
+	var f = document.writeForm;
+
+	if ( VC_inValidText(f.title, "카테고리명") ) return false;
+
+	f.auto_defense.value = "identicharmc!@";
+	mc_consult_submitted = true;
+
+    f.submit();	
+
+    return false;
+
 });
 
 $(document).on('click','a[name=btnUp]', function() {

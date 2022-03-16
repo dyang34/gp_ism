@@ -13,6 +13,9 @@ error_reporting(E_ALL ^ E_NOTICE);
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
         <meta name="robots" content="noindex">  <!-- 검색엔진로봇 수집 차단. -->
+
+        <link rel="shortcut icon" href="http://assets.tumblr.com/images/favicons/favicon.ico?" />
+        <link rel="apple-touch-icon-precomposed" href="http://assets.tumblr.com/images/apple_touch_icon.png?"/>
         
         <link type="text/css" rel="stylesheet" href="/ism/css/table_style.css?t=<?php echo time(); ?>" />
         <link type="text/css" rel="stylesheet" href="/ism/css/write_style.css?t=<?php echo time(); ?>" />

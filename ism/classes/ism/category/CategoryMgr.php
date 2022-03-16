@@ -157,6 +157,29 @@ class CategoryMgr extends A_Mgr
         return $isOk;
     }
     
+    function save($arrVal) {
+        
+        $isOk = null;
+        $db = null;
+        
+        try {
+            $db = DbUtil::getConnection();
+            
+            //            $this->startTran($db);
+            
+            $isOk = CategoryDao::getInstance()->save($db, $arrVal);
+            
+            //            $this->commit($db);
+            
+        } catch(Exception $e) {
+            //            $this->rollback($db);
+            echo $e->getMessage();
+        }
+        
+        @ $db->close();
+        return $isOk;
+    }
+    
     function editSort($arr) {
         
         $isOk = null;

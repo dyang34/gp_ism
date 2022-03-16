@@ -36,7 +36,7 @@ class CategoryDao extends A_Dao
 
 	function selectFirst($db, $wq) {
 
-		$sql =" select imct_idx, depth, cate_no, code, title, display, sort, imct_fg_del, reg_date "
+		$sql =" select imct_idx, depth, cate_no, code, title, display, sort, imct_fg_del, reg_date, upper_imct_idx, uppest_imct_idx "
 			 ." from ism_mst_category"
 			 .$wq->getWhereQuery()
 			 .$wq->getOrderByQuery()
@@ -56,8 +56,9 @@ class CategoryDao extends A_Dao
 
 	function select($db, $wq) {
 	    
-	    $sql =" select imct_idx, depth, cate_no, code, title, display, sort, imct_fg_del, reg_date "
-	         ." from ism_mst_category a "
+	    $sql =" select imct_idx, depth, cate_no, code, title, display, sort, imct_fg_del, reg_date, upper_imct_idx, uppest_imct_idx "
+	        ."		        ,case when depth = 1 then '' else (select title from ism_mst_category b where b.imct_idx = a.upper_imct_idx) end as upper_title "
+	        ." from ism_mst_category a "
 	         .$wq->getWhereQuery()
 	         .$wq->getOrderByQuery()
 	         ;
@@ -68,8 +69,9 @@ class CategoryDao extends A_Dao
 	function selectPerPage($db, $wq, $pg) {
 		
 		$sql =" select @rnum:=@rnum+1 as rnum, r.* from ("
-			 ."		select @rnum:=0, imct_idx, depth, cate_no, code, title, display, sort, imct_fg_del, reg_date "
-			 ."		from ism_mst_category"
+			 ."		select @rnum:=0, imct_idx, depth, cate_no, code, title, display, sort, imct_fg_del, reg_date, upper_imct_idx, uppest_imct_idx "
+            ."		        ,case when depth = 1 then '' else (select title from ism_mst_category b where b.imct_idx = a.upper_imct_idx) end as upper_title "
+            ."		from ism_mst_category a"
 	         .$wq->getWhereQuery()
 	         .$wq->getOrderByQuery()
 	         ."		limit ".$pg->getStartIdx().", ".$pg->getPageSize()
@@ -126,6 +128,21 @@ class CategoryDao extends A_Dao
 			return false;
 		}
 	}
+	
+	function save($db, $arrVal) {
+	    
+	    $sql ="call sp_ism_category_save('".$this->checkMysql($db, $arrVal["mode"])."','".$this->checkMysql($db, $arrVal["imct_idx"])."','".$this->checkMysql($db, $arrVal["upper_imct_idx"])."','".$this->checkMysql($db, $arrVal["code"])."','".$this->checkMysql($db, $arrVal["title"])."')";
+	    
+	    $row = array();
+	    $result = $db->query($sql);
+	    if ( $result->num_rows > 0 ) {
+	        $row = $result->fetch_assoc();
+	        @ $result->free();
+	    }
+	    
+	    return $row;
+	}
+	
 	
 	function insert($db, $arrVal) {
 	    
