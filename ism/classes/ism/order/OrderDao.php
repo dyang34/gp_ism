@@ -130,7 +130,28 @@ class OrderDao extends A_Dao
                 ."		limit ".$pg->getStartIdx().", ".$pg->getPageSize()
                 ." ) r"
             ;
-	         
+
+	    
+	    /*
+	    echo $sql =" select @rnum:=@rnum+1 as rnum, r.*  from ("
+	    //	        ."		select @rnum:=0, io_idx, no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, item_code, order_no, order_no_mall, order_no_sub, order_no_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, reg_date "
+	    
+	    ."	select @rnum:=0, r2.* ".$add_select2." from ("
+	        
+	        ."	select sum(amount) amount, sum(ea) ea, sum(price_collect) price_collect, count(*) as cnt ".$add_select1
+	        ." from ism_order a "
+	        //                ." left join ism_mst_goods g "        // 너무 느림.
+	    ." inner join ism_mst_goods g "
+	        ." on a.item_code = g.item_code "
+	            .$wq->getWhereQuery()
+	            ." group by ".$group_by
+	            ." ) r2"
+	                .$wq->getOrderByQuery()
+	                ."		limit ".$pg->getStartIdx().", ".$pg->getPageSize()
+	                ." ) r"
+	                    ;
+	    */
+	    
         return $db->query($sql);
 	}
 	

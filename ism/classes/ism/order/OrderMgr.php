@@ -110,21 +110,35 @@ class OrderMgr extends A_Mgr
                     case "grp_goods":
                         $group_by .= ",code";
                         $add_select1 .= ",code,name";
+                        
+                        $wq->addOrderBy("name", "");
+                        
                         break;
                     case "grp_item":
                         $group_by .= ",code,a.item_code";
                         $add_select1 .= ",code,a.item_code,name,item_name";
+                        
+                        $wq->addOrderBy("name", "");
+                        $wq->addOrderBy("item_name", "");
+                        
                         break;
                     case "grp_cate1":
                         $group_by .= ",cate1_idx";
                         $add_select1 .= ",cate1_idx";
                         $add_select2 .= ",(select title from ism_mst_category c1 where c1.imct_idx = g.cate1_idx) as cate1_name";
+                        
+                        $wq->addOrderBy("cate1_name", "");
+                        
                         break;
                     case "grp_cate2":
                         $group_by .= ",cate1_idx,cate2_idx";
                         $add_select1 .= ",cate1_idx,cate2_idx";
                         $add_select2 .= ",(select title from ism_mst_category c1 where c1.imct_idx = g.cate1_idx) as cate1_name";
                         $add_select2 .= ",(select title from ism_mst_category c2 where c2.imct_idx = g.cate2_idx) as cate2_name";
+                        
+                        $wq->addOrderBy("cate1_name", "");
+                        $wq->addOrderBy("cate2_name", "");
+                        
                         break;
                     case "grp_cate3":
                         $group_by .= ",cate1_idx,cate2_idx,cate3_idx";
@@ -132,6 +146,11 @@ class OrderMgr extends A_Mgr
                         $add_select2 .= ",(select title from ism_mst_category c1 where c1.imct_idx = g.cate1_idx) as cate1_name";
                         $add_select2 .= ",(select title from ism_mst_category c2 where c2.imct_idx = g.cate2_idx) as cate2_name";
                         $add_select2 .= ",(select title from ism_mst_category c3 where c3.imct_idx = g.cate3_idx) as cate3_name";
+
+                        $wq->addOrderBy("cate1_name", "");
+                        $wq->addOrderBy("cate2_name", "");
+                        $wq->addOrderBy("cate3_name", "");
+                        
                         break;
                     case "grp_cate4":
                         $group_by .= ",cate1_idx,cate2_idx,cate3_idx,cate4_idx";
@@ -140,24 +159,42 @@ class OrderMgr extends A_Mgr
                         $add_select2 .= ",(select title from ism_mst_category c2 where c2.imct_idx = g.cate2_idx) as cate2_name";
                         $add_select2 .= ",(select title from ism_mst_category c3 where c3.imct_idx = g.cate3_idx) as cate3_name";
                         $add_select2 .= ",(select title from ism_mst_category c4 where c4.imct_idx = g.cate4_idx) as cate4_name";
+                        
+                        $wq->addOrderBy("cate1_name", "");
+                        $wq->addOrderBy("cate2_name", "");
+                        $wq->addOrderBy("cate3_name", "");
+                        $wq->addOrderBy("cate4_name", "");
+                        
                         break;
                     case "grp_brand":
                         $group_by .= ",imb_idx";
                         $add_select1 .= ",imb_idx";
                         $add_select2 .= ",(select name from ism_mst_brand b where b.imb_idx = g.imb_idx) as brand_name";
+                        
+                        $wq->addOrderBy("brand_name", "");
+                        
                         break;
                     case "grp_channel":
                         $group_by .= ",imc_idx";
                         $add_select1 .= ",imc_idx";
                         $add_select2 .= ",(select name from ism_mst_channel b where b.imc_idx = a.imc_idx) as channel";
+                        
+                        $wq->addOrderBy("channel", "");
+                        
                         break;
                     case "grp_tax_type":
                         $group_by .= ",tax_type";
                         $add_select1 .= ",tax_type";
+                        
+                        $wq->addOrderBy("tax_type", "");
+                        
                         break;
                     case "grp_order_type":
                         $group_by .= ",order_type";
                         $add_select1 .= ",order_type";
+                        
+                        $wq->addOrderBy("order_type", "");
+                        
                         break;
                 }
             }
@@ -232,54 +269,106 @@ class OrderMgr extends A_Mgr
                     case "grp_goods":
                         $group_by .= ",code";
                         $add_select1 .= ",code,name";
+                        
+                        $wq->addOrderBy("name", "");
+                        
                         break;
                     case "grp_item":
                         $group_by .= ",code,a.item_code";
                         $add_select1 .= ",code,a.item_code,name,item_name";
+                        
+                        $wq->addOrderBy("name", "");
+                        $wq->addOrderBy("item_name", "");
+                        
                         break;
                     case "grp_cate1":
                         $group_by .= ",cate1_idx";
                         $add_select1 .= ",cate1_idx";
-                        $add_select2 .= ",(select title from ism_mst_category c1 where c1.imct_idx = r.cate1_idx) as cate1_name";
+                        $add_select1 .= ",(select title from ism_mst_category c1 where c1.imct_idx = cate1_idx) as cate1_name";
+                        //$add_select2 .= ",(select title from ism_mst_category c1 where c1.imct_idx = cate1_idx) as cate1_name";
+                        
+                        $wq->addOrderBy("cate1_name", "");
+                        
                         break;
                     case "grp_cate2":
                         $group_by .= ",cate1_idx,cate2_idx";
                         $add_select1 .= ",cate1_idx,cate2_idx";
-                        $add_select2 .= ",(select title from ism_mst_category c1 where c1.imct_idx = r.cate1_idx) as cate1_name";
-                        $add_select2 .= ",(select title from ism_mst_category c2 where c2.imct_idx = r.cate2_idx) as cate2_name";
+                        $add_select1 .= ",(select title from ism_mst_category c1 where c1.imct_idx = cate1_idx) as cate1_name";
+                        $add_select1 .= ",(select title from ism_mst_category c2 where c2.imct_idx = cate2_idx) as cate2_name";
+                        //$add_select2 .= ",(select title from ism_mst_category c1 where c1.imct_idx = cate1_idx) as cate1_name";
+                        //$add_select2 .= ",(select title from ism_mst_category c2 where c2.imct_idx = cate2_idx) as cate2_name";
+                        
+                        $wq->addOrderBy("cate1_name", "");
+                        $wq->addOrderBy("cate2_name", "");
+                        
                         break;
                     case "grp_cate3":
                         $group_by .= ",cate1_idx,cate2_idx,cate3_idx";
                         $add_select1 .= ",cate1_idx,cate2_idx,cate3_idx";
-                        $add_select2 .= ",(select title from ism_mst_category c1 where c1.imct_idx = r.cate1_idx) as cate1_name";
-                        $add_select2 .= ",(select title from ism_mst_category c2 where c2.imct_idx = r.cate2_idx) as cate2_name";
-                        $add_select2 .= ",(select title from ism_mst_category c3 where c3.imct_idx = r.cate3_idx) as cate3_name";
+                        $add_select1 .= ",(select title from ism_mst_category c1 where c1.imct_idx = cate1_idx) as cate1_name";
+                        $add_select1 .= ",(select title from ism_mst_category c2 where c2.imct_idx = cate2_idx) as cate2_name";
+                        $add_select1 .= ",(select title from ism_mst_category c3 where c3.imct_idx = cate3_idx) as cate3_name";
+/*                        
+                        $add_select2 .= ",(select title from ism_mst_category c1 where c1.imct_idx = cate1_idx) as cate1_name";
+                        $add_select2 .= ",(select title from ism_mst_category c2 where c2.imct_idx = cate2_idx) as cate2_name";
+                        $add_select2 .= ",(select title from ism_mst_category c3 where c3.imct_idx = cate3_idx) as cate3_name";
+*/
+                        
+                        $wq->addOrderBy("cate1_name", "");
+                        $wq->addOrderBy("cate2_name", "");
+                        $wq->addOrderBy("cate3_name", "");
+                        
                         break;
                     case "grp_cate4":
                         $group_by .= ",cate1_idx,cate2_idx,cate3_idx,cate4_idx";
                         $add_select1 .= ",cate1_idx,cate2_idx,cate3_idx,cate4_idx";
-                        $add_select2 .= ",(select title from ism_mst_category c1 where c1.imct_idx = r.cate1_idx) as cate1_name";
-                        $add_select2 .= ",(select title from ism_mst_category c2 where c2.imct_idx = r.cate2_idx) as cate2_name";
-                        $add_select2 .= ",(select title from ism_mst_category c3 where c3.imct_idx = r.cate3_idx) as cate3_name";
-                        $add_select2 .= ",(select title from ism_mst_category c4 where c4.imct_idx = r.cate4_idx) as cate4_name";
+                        $add_select1 .= ",(select title from ism_mst_category c1 where c1.imct_idx = cate1_idx) as cate1_name";
+                        $add_select1 .= ",(select title from ism_mst_category c2 where c2.imct_idx = cate2_idx) as cate2_name";
+                        $add_select1 .= ",(select title from ism_mst_category c3 where c3.imct_idx = cate3_idx) as cate3_name";
+                        $add_select1 .= ",(select title from ism_mst_category c4 where c4.imct_idx = cate4_idx) as cate4_name";
+/*
+                        $add_select2 .= ",(select title from ism_mst_category c1 where c1.imct_idx = cate1_idx) as cate1_name";
+                        $add_select2 .= ",(select title from ism_mst_category c2 where c2.imct_idx = cate2_idx) as cate2_name";
+                        $add_select2 .= ",(select title from ism_mst_category c3 where c3.imct_idx = cate3_idx) as cate3_name";
+                        $add_select2 .= ",(select title from ism_mst_category c4 where c4.imct_idx = cate4_idx) as cate4_name";
+*/                        
+                        $wq->addOrderBy("cate1_name", "");
+                        $wq->addOrderBy("cate2_name", "");
+                        $wq->addOrderBy("cate3_name", "");
+                        $wq->addOrderBy("cate4_name", "");
+                        
                         break;
                     case "grp_brand":
                         $group_by .= ",imb_idx";
                         $add_select1 .= ",imb_idx";
-                        $add_select2 .= ",(select name from ism_mst_brand b where b.imb_idx = r.imb_idx) as brand_name";
+                        $add_select1 .= ",(select name from ism_mst_brand b where b.imb_idx = g.imb_idx) as brand_name";
+                        //$add_select2 .= ",(select name from ism_mst_brand b where b.imb_idx = imb_idx) as brand_name";
+                        
+                        $wq->addOrderBy("brand_name", "");
+                        
                         break;
                     case "grp_channel":
                         $group_by .= ",imc_idx";
                         $add_select1 .= ",imc_idx";
-                        $add_select2 .= ",(select name from ism_mst_channel b where b.imc_idx = r.imc_idx) as channel";
+                        $add_select1 .= ",(select name from ism_mst_channel b where b.imc_idx = a.imc_idx) as channel";
+                        //$add_select2 .= ",(select name from ism_mst_channel b where b.imc_idx = imc_idx) as channel";
+                        
+                        $wq->addOrderBy("channel", "");
+                        
                         break;
                     case "grp_tax_type":
                         $group_by .= ",tax_type";
                         $add_select1 .= ",tax_type";
+                        
+                        $wq->addOrderBy("tax_type", "");
+                        
                         break;
                     case "grp_order_type":
                         $group_by .= ",order_type";
                         $add_select1 .= ",order_type";
+                        
+                        $wq->addOrderBy("order_type", "");
+                        
                         break;
                 }
             }

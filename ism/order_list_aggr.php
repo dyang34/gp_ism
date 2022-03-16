@@ -188,8 +188,8 @@ if ($_order_by=="cate1_name") {
 }
 
 $wq->addOrderBy("order_date", "desc");
-$wq->addOrderBy("name", "asc");
-$wq->addOrderBy("item_name", "asc");
+//$wq->addOrderBy("name", "asc");
+//$wq->addOrderBy("item_name", "asc");
 
 $arrGroupBy = array();
 
@@ -308,8 +308,8 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                                     </select>
 									<input type="checkbox" name="_grp_brand" id="_grp_brand" value="grp_brand" <?=$_grp_brand=="grp_brand"?"checked='checked'":""?>><label for="_grp_brand">브랜드</label>
                                     <input type="checkbox" name="_grp_channel" id="_grp_channel" value="grp_channel" <?=$_grp_channel=="grp_channel"?"checked='checked'":""?>><label for="_grp_channel">채널</label>
-                                    <input type="checkbox" name="_grp_tax_type" id="_grp_tax_type" value="grp_tax_type" <?=$_grp_tax_type=="grp_tax_type"?"checked='checked'":""?>><label for="_grp_tax_type">과세</label>
                                     <input type="checkbox" name="_grp_order_type" id="_grp_order_type" value="grp_order_type" <?=$_grp_order_type=="grp_order_type"?"checked='checked'":""?>><label for="_grp_order_type">판매유형</label>
+                                    <input type="checkbox" name="_grp_tax_type" id="_grp_tax_type" value="grp_tax_type" <?=$_grp_tax_type=="grp_tax_type"?"checked='checked'":""?>><label for="_grp_tax_type">과세</label>
                                 </td>
 							</tr>
 							<tr>
@@ -462,18 +462,6 @@ if (in_array("grp_item", $arrGroupBy)) {
             <?php
 }
 
-if (in_array("grp_channel", $arrGroupBy)) {
-?>
-					<col />
-            <?php
-}
-
-if (in_array("grp_brand", $arrGroupBy)) {
-?>
-					<col />
-            <?php
-}
-
 if (in_array("grp_cate1", $arrGroupBy)) {
 ?>
 					<col />
@@ -495,6 +483,18 @@ if (in_array("grp_cate3", $arrGroupBy)) {
 
 if (in_array("grp_cate4", $arrGroupBy)) {
 ?>
+					<col />
+            <?php
+}
+
+if (in_array("grp_brand", $arrGroupBy)) {
+    ?>
+					<col />
+            <?php
+}
+
+if (in_array("grp_channel", $arrGroupBy)) {
+    ?>
 					<col />
             <?php
 }
@@ -553,20 +553,6 @@ if (in_array("grp_item", $arrGroupBy)) {
             <?php
 }
 
-if (in_array("grp_channel", $arrGroupBy)) {
-    $cnt_columns++;
-?>
-						<th class="">채널</th>
-            <?php
-}
-
-if (in_array("grp_brand", $arrGroupBy)) {
-    $cnt_columns++;
-?>
-						<th class="">브랜드</th>
-            <?php
-}
-
 if (in_array("grp_cate1", $arrGroupBy)) {
     $cnt_columns++;
 ?>
@@ -598,6 +584,20 @@ if (in_array("grp_cate4", $arrGroupBy)) {
 						<th class="">카테고리2</th>
 						<th class="">카테고리3</th>
 						<th class="">카테고리4</th>
+            <?php
+}
+
+if (in_array("grp_brand", $arrGroupBy)) {
+    $cnt_columns++;
+    ?>
+						<th class="">브랜드</th>
+            <?php
+}
+
+if (in_array("grp_channel", $arrGroupBy)) {
+    $cnt_columns++;
+    ?>
+						<th class="">채널</th>
             <?php
 }
 
@@ -657,18 +657,6 @@ if ($rs->num_rows > 0) {
             <?php
             }
             
-            if (in_array("grp_channel", $arrGroupBy)) {
-            ?>
-                        <td class="txt_c"><?=$row["channel"]?></td>
-            <?php
-            }
-            
-            if (in_array("grp_brand", $arrGroupBy)) {
-            ?>
-                        <td class="txt_c"><?=$row["brand_name"]?></td>
-            <?php
-            }
-            
             if (in_array("grp_cate1", $arrGroupBy)) {
             ?>
                         <td class="txt_c"><?=$row["cate1_name"]?></td>
@@ -696,6 +684,18 @@ if ($rs->num_rows > 0) {
                         <td class="txt_c"><?=$row["cate2_name"]?></td>
                         <td class="txt_c"><?=$row["cate3_name"]?></td>
                         <td class="txt_c"><?=$row["cate4_name"]?></td>
+            <?php
+            }
+            
+            if (in_array("grp_brand", $arrGroupBy)) {
+                ?>
+                        <td class="txt_c"><?=$row["brand_name"]?></td>
+            <?php
+            }
+            
+            if (in_array("grp_channel", $arrGroupBy)) {
+                ?>
+                        <td class="txt_c"><?=$row["channel"]?></td>
             <?php
             }
             
