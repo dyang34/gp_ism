@@ -124,7 +124,7 @@ th{font-size:11px;text-align:center;color:white;background-color:#000081;}
 <?php 
 $cnt_columns = 4;
 
-if (in_array("grp_order_date_day", $arrGroupBy)) {
+if (in_array("grp_order_date_day", $arrGroupBy) || in_array("grp_order_date_week", $arrGroupBy)) {
     $cnt_columns++;
 ?>
 						<th style="color:white;background-color:#000081;">주문일자</th>
@@ -231,6 +231,8 @@ if ($rs->num_rows > 0) {
         if ($_grp_day_type=="grp_order_date_day") {
             $idx_day_of_week = date('w', strtotime(substr($row["order_date"],0,10)));
             $date_txt = substr($row["order_date"],0,10)." ".$arrDayOfWeek[$idx_day_of_week];
+        } else if ($_grp_day_type=="grp_order_date_week") {
+            $date_txt = str_replace("<br/>","",$row["order_date"]);
         } else {
             $date_txt = substr($row["order_date"],0,7);
         }

@@ -95,6 +95,14 @@ class OrderMgr extends A_Mgr
                         $group_by .= ",date_format(order_date, '%Y-%m-%d')";
                         $add_select1 .= ",date_format(order_date, '%Y-%m-%d') as order_date";
                         break;
+                    case "grp_order_date_week":
+/*                      일요일 시작.                        
+                        $group_by .= ",date_format(order_date, '%Y-%U')";
+                        $add_select1 .= ",concat(DATE_FORMAT(DATE_SUB(order_date, INTERVAL (DAYOFWEEK(order_date)-1) DAY), '%Y-%m-%d'),'~',DATE_FORMAT(DATE_SUB(order_date, INTERVAL (DAYOFWEEK(order_date)-7) DAY), '%Y-%m-%d')) as order_date";
+*/                        
+                        $group_by .= ",date_format(order_date, '%Y-%u')";
+                        $add_select1 .= ",concat(DATE_FORMAT(DATE_SUB(order_date, INTERVAL (DAYOFWEEK(order_date)-2) DAY), '%Y-%m-%d'),' <br/>~ ',DATE_FORMAT(DATE_SUB(order_date, INTERVAL (DAYOFWEEK(order_date)-8) DAY), '%Y-%m-%d')) as order_date";
+                        break;
                     case "grp_order_date_month":
                         $group_by .= ",date_format(order_date, '%Y-%m')";
                         $add_select1 .= ",date_format(order_date, '%Y-%m') as order_date";
@@ -208,6 +216,14 @@ class OrderMgr extends A_Mgr
                     case "grp_order_date_day":
                         $group_by .= ",date_format(order_date, '%Y-%m-%d')";
                         $add_select1 .= ",date_format(order_date, '%Y-%m-%d') as order_date";
+                        break;
+                    case "grp_order_date_week":
+                        /*                      일요일 시작.
+                         $group_by .= ",date_format(order_date, '%Y-%U')";
+                         $add_select1 .= ",concat(DATE_FORMAT(DATE_SUB(order_date, INTERVAL (DAYOFWEEK(order_date)-1) DAY), '%Y-%m-%d'),'~',DATE_FORMAT(DATE_SUB(order_date, INTERVAL (DAYOFWEEK(order_date)-7) DAY), '%Y-%m-%d')) as order_date";
+                         */
+                        $group_by .= ",date_format(order_date, '%Y-%u')";
+                        $add_select1 .= ",concat(DATE_FORMAT(DATE_SUB(order_date, INTERVAL (DAYOFWEEK(order_date)-2) DAY), '%Y-%m-%d'),' <br/>~ ',DATE_FORMAT(DATE_SUB(order_date, INTERVAL (DAYOFWEEK(order_date)-8) DAY), '%Y-%m-%d')) as order_date";
                         break;
                     case "grp_order_date_month":
                         $group_by .= ",date_format(order_date, '%Y-%m')";
