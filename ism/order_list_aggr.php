@@ -291,6 +291,7 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
 */?>
 									<select name="_grp_day_type">
                                     	<option value="grp_order_date_day" <?=$_grp_day_type=="grp_order_date_day"?"selected='selected'":""?>>일별</option>
+                                    	<option value="grp_order_date_week" <?=$_grp_day_type=="grp_order_date_week"?"selected='selected'":""?>>주별</option>
                                     	<option value="grp_order_date_month" <?=$_grp_day_type=="grp_order_date_month"?"selected='selected'":""?>>월별</option>
                                     </select>
 									<select name="_grp_code_type">
@@ -442,12 +443,85 @@ if ($_grp_code_type=="grp_goods" || $_grp_code_type=="grp_item") {
            
             <!-- 메인TABLE(s) -->
             <table class="display" cellpadding="0" cellspacing="0">
+				<colgroup>
+                    <col style="width:110px;">
+<?php                    
+if (in_array("grp_goods", $arrGroupBy)) {
+?>
+					<col />
+					<col />
+            <?php             
+}
+
+if (in_array("grp_item", $arrGroupBy)) {
+?>
+					<col />
+					<col />
+					<col />
+					<col />
+            <?php
+}
+
+if (in_array("grp_channel", $arrGroupBy)) {
+?>
+					<col />
+            <?php
+}
+
+if (in_array("grp_brand", $arrGroupBy)) {
+?>
+					<col />
+            <?php
+}
+
+if (in_array("grp_cate1", $arrGroupBy)) {
+?>
+					<col />
+            <?php
+}
+
+if (in_array("grp_cate2", $arrGroupBy)) {
+?>
+					<col />
+					<col />
+            <?php
+}
+
+if (in_array("grp_cate3", $arrGroupBy)) {
+?>
+					<col />
+            <?php
+}
+
+if (in_array("grp_cate4", $arrGroupBy)) {
+?>
+					<col />
+            <?php
+}
+
+if (in_array("grp_order_type", $arrGroupBy)) {
+?>
+					<col />
+            <?php
+}
+
+if (in_array("grp_tax_type", $arrGroupBy)) {
+?>
+					<col />
+            <?php
+}
+?>                    
+					<col />
+					<col />
+					<col />
+					<col />
+                </colgroup>
                 <thead>
                     <tr>
 <?php 
 $cnt_columns = 4;
 
-if (in_array("grp_order_date_day", $arrGroupBy)) {
+if (in_array("grp_order_date_day", $arrGroupBy) || in_array("grp_order_date_week", $arrGroupBy)) {
     $cnt_columns++;
 ?>
 						<th class="tbl_first">주문일자</th>
@@ -556,6 +630,8 @@ if ($rs->num_rows > 0) {
         if ($_grp_day_type=="grp_order_date_day") {
             $idx_day_of_week = date('w', strtotime(substr($row["order_date"],0,10)));
             $date_txt = substr($row["order_date"],0,10)." ".$arrDayOfWeek[$idx_day_of_week];
+        } else if ($_grp_day_type=="grp_order_date_week") {
+            $date_txt = $row["order_date"];
         } else {
             $date_txt = substr($row["order_date"],0,7);
         }
