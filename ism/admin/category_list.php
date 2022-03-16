@@ -85,7 +85,7 @@ if ($i < count($arrCategory)-1 && ($arrCategory[$i+1]["depth"] > $arrCategory[$i
  " style="border-top: 0;">
 											<input type="checkbox" name="cate<?=$arrCategory[$i]["imct_idx"]?>" id="cate<?=$arrCategory[$i]["imct_idx"]?>"/>   
 											<label for="cate<?=$arrCategory[$i]["imct_idx"]?>">
-												<span class="<?=($i < count($arrCategory)-1 && ($arrCategory[$i+1]["depth"] > $arrCategory[$i]["depth"]))?"folder":"folder folder_close"?>"></span> <?=$arrCategory[$i]["title"]?>
+												<span class="<?=($i < count($arrCategory)-1 && ($arrCategory[$i+1]["depth"] > $arrCategory[$i]["depth"]))?"folder":"folder folder_close"?>"></span> <?=$arrCategory[$i]["title"]?><span style="color:gray;font-size:12px;"> (제품 <?=number_format($arrCategory[$i]["cnt_goods"])?>개, 품목 <?=number_format($arrCategory[$i]["cnt_goods_item"])?>개)</span>
 												<span class="btn_wrap">												
 <?php
     if ($arrCategory[$i]["depth"] < 4) {

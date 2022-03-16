@@ -33,6 +33,8 @@ th{font-size:11px;text-align:center;color:white;background-color:#000081;}
 		<th style="color:white;background-color:#000081;">명칭3</th>
 		<th style="color:white;background-color:#000081;">명칭4</th>
 		<th style="color:white;background-color:#000081;">레벨</th>
+		<th style="color:white;background-color:#000081;">제품수</th>
+		<th style="color:white;background-color:#000081;">품목수</th>
 		<th style="color:white;background-color:#000081;">등록일</th>
 	</tr>
 <?php
@@ -50,6 +52,8 @@ if($rs->num_rows > 0) {
                         <td><?=$row["depth"]>2?$prevCate[3]:""?></td>
                         <td><?=$row["depth"]>3?$prevCate[4]:""?></td>
                         <td><?=$row["depth"]?></td>
+                        <td><?=number_format($row["cnt_goods"])?></td>
+                        <td><?=number_format($row["cnt_goods_item"])?></td>
                         <td><?=$row["reg_date"]?></td>
                     </tr>
 <?php

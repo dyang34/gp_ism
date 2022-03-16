@@ -58,6 +58,8 @@ class CategoryDao extends A_Dao
 	    
 	    $sql =" select imct_idx, depth, cate_no, code, title, display, sort, imct_fg_del, reg_date, upper_imct_idx, uppest_imct_idx "
 	        ."		        ,case when depth = 1 then '' else (select title from ism_mst_category b where b.imct_idx = a.upper_imct_idx) end as upper_title "
+            ."		        ,(select count(distinct code) from ism_mst_goods where img_fg_del = 0 and (cate1_idx = imct_idx or cate2_idx = imct_idx or cate3_idx = imct_idx or cate4_idx = imct_idx)) as cnt_goods "
+	        ."		        ,(select count(*) from ism_mst_goods g inner join ism_mst_goods_item gi on g.code = gi.code and imgi_fg_del = 0 where img_fg_del = 0 and (cate1_idx = imct_idx or cate2_idx = imct_idx or cate3_idx = imct_idx or cate4_idx = imct_idx)) as cnt_goods_item "
 	        ." from ism_mst_category a "
 	         .$wq->getWhereQuery()
 	         .$wq->getOrderByQuery()
