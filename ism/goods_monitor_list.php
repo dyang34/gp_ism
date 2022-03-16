@@ -340,7 +340,7 @@ if($rs->num_rows > 0) {
                         <td class="txt_r" name="td_stock_qty"><?=number_format($row["stock_qty"])?></td>
                         <td style="text-align:center;" name="td_stock_apply_date"><?=$row["stock_apply_date"]?></td>
                         <td style="text-align:center;"><?=substr($row["reg_date"],0,10)?></td>
-                        <td style="text-align:center;"><a href="#" name="btnApplyStock" item_code="<?=$row["item_code"]?>" style=" display: block; background-color: #1b80c3; padding: 6px 2px; border-radius: 20px; color: #fff;">재고반영</a></td>
+                        <td style="text-align:center;"><a href="#" name="btnApplyStock" item_code="<?=$row["item_code"]?>" style=" display: block; background-color: #1b80c3; padding: 6px 12px; border-radius: 20px; color: #fff;">재고반영</a></td>
                     </tr>
 <?php
     }
