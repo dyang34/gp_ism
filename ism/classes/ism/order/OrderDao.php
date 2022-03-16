@@ -65,6 +65,7 @@ class OrderDao extends A_Dao
 //	            ." left join ism_mst_goods g "   // 너무 느림.
 	            ." inner join ism_mst_goods g "
 	            ." on a.item_code = g.item_code "
+	            ." and g.img_fg_del = 0 "
 	         .$wq->getWhereQuery()
 	         .$wq->getOrderByQuery()
 	         ;
@@ -80,6 +81,7 @@ class OrderDao extends A_Dao
 //	            ." left join ism_mst_goods g "   // 너무 느림
 	                ." inner join ism_mst_goods g "
 	                ." on a.item_code = g.item_code "
+	                    ." and g.img_fg_del = 0 "
 	                    .$wq->getWhereQuery()
 	                    ." group by ".$group_by
 	                    .$wq->getOrderByQuery()
@@ -105,7 +107,7 @@ class OrderDao extends A_Dao
 //			             ." left join ism_mst_goods g "    //너무 느림.
 			                 ." inner join ism_mst_goods g "
 			                 ." on a.item_code = g.item_code "
-			                     
+			                     ." and g.img_fg_del = 0 "
 	         .$wq->getWhereQuery()
 	         .$wq->getOrderByQuery()
 	         ."		limit ".$pg->getStartIdx().", ".$pg->getPageSize()
@@ -124,7 +126,8 @@ class OrderDao extends A_Dao
 //                ." left join ism_mst_goods g "        // 너무 느림.
 	               ." inner join ism_mst_goods g "
                 ." on a.item_code = g.item_code "
-                .$wq->getWhereQuery()
+                    ." and g.img_fg_del = 0 "
+                        .$wq->getWhereQuery()
                 ." group by ".$group_by
                 .$wq->getOrderByQuery()
                 ."		limit ".$pg->getStartIdx().", ".$pg->getPageSize()
@@ -164,7 +167,8 @@ class OrderDao extends A_Dao
 //            ." left join ism_mst_goods g "    // 너무 느림.
 	       ." inner join ism_mst_goods g "
             ." on a.item_code = g.item_code "
-            .$wq->getWhereQuery()
+                ." and g.img_fg_del = 0 "
+                    .$wq->getWhereQuery()
             ." group by ".$group_by
             .") as t"
         ;
@@ -187,7 +191,8 @@ class OrderDao extends A_Dao
 //	        ." left join ism_mst_goods g "       // 너무 느림.
 		  ." inner join ism_mst_goods g "
             ." on a.item_code = g.item_code "
-            .$wq->getWhereQuery()
+                ." and g.img_fg_del = 0 "
+                    .$wq->getWhereQuery()
 	   ;
 		
 		$row = null;
@@ -208,7 +213,8 @@ class OrderDao extends A_Dao
 //		        ." left join ism_mst_goods g "  // 너무 느림.
 		." inner join ism_mst_goods g "
 		            ." on a.item_code = g.item_code "
-			 .$wq->getWhereQuery()
+		                ." and g.img_fg_del = 0 "
+		                    .$wq->getWhereQuery()
 			 ;
 
 		$row = null;
