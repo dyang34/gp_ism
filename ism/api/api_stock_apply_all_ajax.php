@@ -54,15 +54,15 @@ if($item_code!="ISM_GOODS_ALL") {
 }
 
 $wq = new WhereQuery(true, true);
-$wq->addAndString2("img_fg_del","=","0");
+$wq->addAndString2("imgi_fg_del","=","0");
 //$wq->addAndLike("item_code","DG");
 
 if (!empty($div_idx)) {
     $start_idx = ($div_idx-1)*500;
     $end_idx = $div_idx*500;
     
-    $wq->addAndString("img_idx",">",$start_idx);
-    $wq->addAndString("img_idx","<=",$end_idx);
+    $wq->addAndString("imgi_idx",">",$start_idx);
+    $wq->addAndString("imgi_idx","<=",$end_idx);
 }
 
 $wq->addOrderBy("stock_apply_date","asc");
