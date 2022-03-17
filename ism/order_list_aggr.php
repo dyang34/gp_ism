@@ -438,6 +438,21 @@ if ($_grp_code_type=="grp_goods" || $_grp_code_type=="grp_item") {
 <?php
 }
 ?>
+
+
+					<a href="#none" name="_btn_sort" order_by="code" order_by_asc="asc" class="<?=$_order_by=="code" && $_order_by_asc=="asc"?"on":""?>">상품코드<em>▲</em></a>
+					<a href="#none" name="_btn_sort" order_by="code" order_by_asc="desc" class="<?=$_order_by=="code" && $_order_by_asc=="desc"?"on":""?>">상품코드<em>▼</em></a>
+					<a href="#none" name="_btn_sort" order_by="item_code" order_by_asc="asc" class="<?=$_order_by=="item_code" && $_order_by_asc=="asc"?"on":""?>">품목(옵션)코드<em>▲</em></a>
+					<a href="#none" name="_btn_sort" order_by="item_code" order_by_asc="desc" class="<?=$_order_by=="item_code" && $_order_by_asc=="desc"?"on":""?>">품목(옵션)코드<em>▼</em></a>
+					<a href="#none" name="_btn_sort" order_by="name" order_by_asc="asc" class="<?=$_order_by=="name" && $_order_by_asc=="asc"?"on":""?>">상품명<em>▲</em></a>
+					<a href="#none" name="_btn_sort" order_by="name" order_by_asc="desc" class="<?=$_order_by=="name" && $_order_by_asc=="desc"?"on":""?>">상품명<em>▼</em></a>
+					<a href="#none" name="_btn_sort" order_by="item_name" order_by_asc="asc" class="<?=$_order_by=="item_name" && $_order_by_asc=="asc"?"on":""?>">품목(옵션)명<em>▲</em></a>
+					<a href="#none" name="_btn_sort" order_by="item_name" order_by_asc="desc" class="<?=$_order_by=="item_name" && $_order_by_asc=="desc"?"on":""?>">품목(옵션)명<em>▼</em></a>
+					<a href="#none" name="_btn_sort" order_by="brand_name" order_by_asc="asc" class="<?=$_order_by=="brand_name"?"on":""?>">브랜드순<em>▲</em></a>
+					<a href="#none" name="_btn_sort" order_by="cate1_name" order_by_asc="asc" class="<?=$_order_by=="cate1_name"?"on":""?>">카테고리<em>▲</em></a>
+
+
+
 				</p>
 			</div>
            

@@ -108,15 +108,15 @@ class OrderMgr extends A_Mgr
                         $add_select1 .= ",date_format(order_date, '%Y-%m') as order_date";
                         break;
                     case "grp_goods":
-                        $group_by .= ",code";
-                        $add_select1 .= ",code,name";
+                        $group_by .= ",gi.code";
+                        $add_select1 .= ",gi.code,name";
                         
                         $wq->addOrderBy("name", "");
                         
                         break;
                     case "grp_item":
-                        $group_by .= ",code,a.item_code";
-                        $add_select1 .= ",code,a.item_code,name,item_name";
+                        $group_by .= ",gi.code,a.item_code";
+                        $add_select1 .= ",gi.code,a.item_code,name,item_name";
                         
                         $wq->addOrderBy("name", "");
                         $wq->addOrderBy("item_name", "");
@@ -267,15 +267,15 @@ class OrderMgr extends A_Mgr
                         $add_select1 .= ",date_format(order_date, '%Y-%m') as order_date";
                         break;
                     case "grp_goods":
-                        $group_by .= ",code";
-                        $add_select1 .= ",code,name";
+                        $group_by .= ",gi.code";
+                        $add_select1 .= ",gi.code,name";
                         
                         $wq->addOrderBy("name", "");
                         
                         break;
                     case "grp_item":
-                        $group_by .= ",code,a.item_code";
-                        $add_select1 .= ",code,a.item_code,name,item_name";
+                        $group_by .= ",gi.code,a.item_code";
+                        $add_select1 .= ",gi.code,a.item_code,name,item_name";
                         
                         $wq->addOrderBy("name", "");
                         $wq->addOrderBy("item_name", "");

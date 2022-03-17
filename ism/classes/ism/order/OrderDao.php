@@ -99,7 +99,7 @@ class OrderDao extends A_Dao
 	
 	function selectPerPage($db, $wq, $pg) {
 		
-		echo $sql =" select @rnum:=@rnum+1 as rnum, r.* from ("
+		$sql =" select @rnum:=@rnum+1 as rnum, r.* from ("
 //			     ."		select @rnum:=0, no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, a.item_code, order_no, order_no_mall, order_no_sub, order_no_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, a.reg_date, g.code, g.name, g.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3 "
 			     ."		select @rnum:=0, order_date, channel, amount, ea, a.item_code, order_no, price_collect, status, tax_type, grp_code, a.reg_date, g.code, g.name, gi.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3, imc_idx "
 			         ." ,(select name from ism_mst_brand b where b.imb_idx = g.imb_idx) as brand_name "
@@ -157,8 +157,7 @@ class OrderDao extends A_Dao
                 ." ) r"
             ;
 
-	    
-	    /*
+            /*
 	    echo $sql =" select @rnum:=@rnum+1 as rnum, r.*  from ("
 	    //	        ."		select @rnum:=0, io_idx, no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, item_code, order_no, order_no_mall, order_no_sub, order_no_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, reg_date "
 	    
