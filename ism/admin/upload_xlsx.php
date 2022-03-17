@@ -20,7 +20,7 @@ if ( !$_FILES["up_file"]["name"] ) {
     JsUtil::alertBack("업로드할 파일을 지정해 주십시오.   ");
     exit;
 }
-
+/*
 $last_order_date = "";
 $wq = new WhereQuery(true, true);
 $wq->addOrderBy("order_date", "desc");
@@ -29,7 +29,7 @@ $row_legacy = OrderMgr::getInstance()->getFirst($wq);
 if($row_legacy) {
     $last_order_date = $row_legacy["order_date"];
 }
-
+*/
 $newFileName = UploadUtil::getNewFileName();
 
 $ret = UploadUtil::upload2("up_file", $newFileName, UploadUtil::$Excel_UpWebPath, UploadUtil::$Excel_MaxFileSize, UploadUtil::$Excel_AllowFileType, false);
