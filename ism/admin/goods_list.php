@@ -132,7 +132,7 @@ $wq->addAndString("cate2_idx","=",$_cate2_idx);
 $wq->addAndString("cate3_idx","=",$_cate3_idx);
 $wq->addAndString("cate4_idx","=",$_cate4_idx);
 
-$wq->addAndLike("code",$_code);
+$wq->addAndLike("a.code",$_code);
 $wq->addAndLike("item_code",$_item_code);
 $wq->addAndLike("name",$_name);
 $wq->addAndLike("item_name",$_item_name);

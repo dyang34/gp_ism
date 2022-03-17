@@ -67,7 +67,7 @@ class GoodsDao extends A_Dao
 	
 	function select2($db, $wq) {
 	    
-	    $sql =" select imgi_idx, gi.code, name, item_code, item_name, imb_idx, cate1_idx, cate2_idx, cate3_idx, cate4_idx, img_fg_del, a.reg_date, stock_qty, stock_apply_date "
+	    $sql =" select imgi_idx, a.code, name, item_code, item_name, imb_idx, cate1_idx, cate2_idx, cate3_idx, cate4_idx, img_fg_del, a.reg_date, stock_qty, stock_apply_date "
 	        ."		,(select name from ism_mst_brand b where b.imb_idx = g.imb_idx) as brand_name "
 	            ."		,(select title from ism_mst_category c1 where c1.imct_idx = g.cate1_idx) as cate1_name "
 	                ."		,(select title from ism_mst_category c2 where c2.imct_idx = g.cate2_idx) as cate2_name "

@@ -162,7 +162,7 @@ $wq->addAndString("cate3_idx", "=", $_cate3_idx);
 $wq->addAndString("cate4_idx", "=", $_cate4_idx);
 $wq->addAndString("tax_type", "=", $_tax_type);
 $wq->addAndString("order_type", "=", $_order_type);
-$wq->addAndString("code", "=", $_code);
+$wq->addAndString("gi.code", "=", $_code);
 $wq->addAndString("a.item_code", "=", $_item_code);
 
 $wq->addAndLike("name",$_goods_name);

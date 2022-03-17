@@ -45,7 +45,7 @@
                 <div class="subMenu">
                 	<a href="/ism/admin/adm_mem_list.php " class="<?=$menuNo==9?"on":""?>">- 회원 관리</a>
                     <a href="/ism/admin/goods_list.php " class="<?=$menuNo==4?"on":""?>">- 상품 관리</a>
-                    <a href="/ism/admin/goods_item_list.php " class="<?=$menuNo==4?"on":""?>">- 품목 관리</a>
+                    <a href="/ism/admin/goods_item_list.php " class="<?=$menuNo==24?"on":""?>">- 품목 관리</a>
                     <a href="/ism/admin/brand_list.php " class="<?=$menuNo==5?"on":""?>">- 브랜드 관리</a>
                     <a href="/ism/admin/category_list.php " class="<?=$menuNo==6?"on":""?>">- 카테고리 관리</a>
                     <a href="/ism/admin/channel_list.php " class="<?=$menuNo==7?"on":""?>">- 채널 리스트</a>
