@@ -63,10 +63,13 @@ class OrderDao extends A_Dao
 	            $sql =" select order_date, channel, amount, ea, a.item_code, order_no, price_collect, status, tax_type, grp_code, a.reg_date, order_type, goods_mst_code, tmp_data3, imc_idx  "
 	                ." from ism_order a "
 //	            ." left join ism_mst_goods g "   // 너무 느림.
-	            ." inner join ism_mst_goods g "
-	            ." on a.item_code = g.item_code "
-	            ." and g.img_fg_del = 0 "
-	         .$wq->getWhereQuery()
+	            ." inner join ism_mst_goods_item gi "
+	                ." on a.item_code = gi.item_code "
+	                    ." and gi.imgi_fg_del = 0 "
+	                        ." inner join ism_mst_goods g "
+	            ." on gi.code = g.code "
+	                ." and g.img_fg_del = 0 "
+	                    .$wq->getWhereQuery()
 	         .$wq->getOrderByQuery()
 	         ;
 
@@ -79,10 +82,13 @@ class OrderDao extends A_Dao
 	    $sql =" select sum(amount) amount, sum(ea) ea, sum(price_collect) price_collect, count(*) as cnt ".$add_select1.$add_select2
 	        ." from ism_order a "
 //	            ." left join ism_mst_goods g "   // 너무 느림
+	    ." inner join ism_mst_goods_item gi "
+	        ." on a.item_code = gi.item_code "
+	            ." and gi.imgi_fg_del = 0 "
 	                ." inner join ism_mst_goods g "
-	                ." on a.item_code = g.item_code "
-	                    ." and g.img_fg_del = 0 "
-	                    .$wq->getWhereQuery()
+	                    ." on gi.code = g.code "
+	                        ." and g.img_fg_del = 0 "
+	                            .$wq->getWhereQuery()
 	                    ." group by ".$group_by
 	                    .$wq->getOrderByQuery()
 	                    ;
@@ -93,9 +99,9 @@ class OrderDao extends A_Dao
 	
 	function selectPerPage($db, $wq, $pg) {
 		
-		$sql =" select @rnum:=@rnum+1 as rnum, r.* from ("
+		echo $sql =" select @rnum:=@rnum+1 as rnum, r.* from ("
 //			     ."		select @rnum:=0, no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, a.item_code, order_no, order_no_mall, order_no_sub, order_no_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, a.reg_date, g.code, g.name, g.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3 "
-			     ."		select @rnum:=0, order_date, channel, amount, ea, a.item_code, order_no, price_collect, status, tax_type, grp_code, a.reg_date, g.code, g.name, g.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3, imc_idx "
+			     ."		select @rnum:=0, order_date, channel, amount, ea, a.item_code, order_no, price_collect, status, tax_type, grp_code, a.reg_date, g.code, g.name, gi.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3, imc_idx "
 			         ." ,(select name from ism_mst_brand b where b.imb_idx = g.imb_idx) as brand_name "
 /*			             
 			             ."		,(select title from ism_mst_category c1 where c1.imct_idx = a.cate1_idx) as cate1_name "
@@ -105,12 +111,26 @@ class OrderDao extends A_Dao
 */
 			         ." from ism_order a "
 //			             ." left join ism_mst_goods g "    //너무 느림.
-			                 ." inner join ism_mst_goods g "
-			                 ." on a.item_code = g.item_code "
-			                     ." and g.img_fg_del = 0 "
-	         .$wq->getWhereQuery()
-	         .$wq->getOrderByQuery()
-	         ."		limit ".$pg->getStartIdx().", ".$pg->getPageSize()
+		." inner join ism_mst_goods_item gi "
+    ." on a.item_code = gi.item_code "
+        ." and gi.imgi_fg_del = 0 "
+            ." inner join ism_mst_goods g "
+                ." on gi.code = g.code "
+                    ." and g.img_fg_del = 0 "
+	         ." INNER JOIN ( "
+	         ."     select idx from ism_order a "
+	         ." inner join ism_mst_goods_item gi "
+	             ." on a.item_code = gi.item_code "
+	                 ." and gi.imgi_fg_del = 0 "
+	                     ." inner join ism_mst_goods g "
+	                         ." on gi.code = g.code "
+	                             ." and g.img_fg_del = 0 "
+            .$wq->getWhereQuery()
+	             .$wq->getOrderByQuery()
+	         ."     limit ".$pg->getStartIdx().", ".$pg->getPageSize()
+	         ."     ) pg_idx "
+	         ." on a.idx=pg_idx.idx "
+//	         ."		limit ".$pg->getStartIdx().", ".$pg->getPageSize()
 			 ." ) r"
 			 ;
 			 
@@ -124,10 +144,13 @@ class OrderDao extends A_Dao
 	            ."	select @rnum:=0, sum(amount) amount, sum(ea) ea, sum(price_collect) price_collect, count(*) as cnt ".$add_select1
                 ." from ism_order a "
 //                ." left join ism_mst_goods g "        // 너무 느림.
-	               ." inner join ism_mst_goods g "
-                ." on a.item_code = g.item_code "
-                    ." and g.img_fg_del = 0 "
-                        .$wq->getWhereQuery()
+	    ." inner join ism_mst_goods_item gi "
+	        ." on a.item_code = gi.item_code "
+	            ." and gi.imgi_fg_del = 0 "
+	                ." inner join ism_mst_goods g "
+	                    ." on gi.code = g.code "
+	                        ." and g.img_fg_del = 0 "
+	                            .$wq->getWhereQuery()
                 ." group by ".$group_by
                 .$wq->getOrderByQuery()
                 ."		limit ".$pg->getStartIdx().", ".$pg->getPageSize()
@@ -165,10 +188,13 @@ class OrderDao extends A_Dao
             ." select count(*) cnt"
 	        ." from ism_order a "
 //            ." left join ism_mst_goods g "    // 너무 느림.
-	       ." inner join ism_mst_goods g "
-            ." on a.item_code = g.item_code "
-                ." and g.img_fg_del = 0 "
-                    .$wq->getWhereQuery()
+	    ." inner join ism_mst_goods_item gi "
+	        ." on a.item_code = gi.item_code "
+	            ." and gi.imgi_fg_del = 0 "
+	                ." inner join ism_mst_goods g "
+	                    ." on gi.code = g.code "
+	                        ." and g.img_fg_del = 0 "
+	                            .$wq->getWhereQuery()
             ." group by ".$group_by
             .") as t"
         ;
@@ -189,10 +215,13 @@ class OrderDao extends A_Dao
 		$sql =" select count(*) cnt"
 		    ." from ism_order a "
 //	        ." left join ism_mst_goods g "       // 너무 느림.
-		  ." inner join ism_mst_goods g "
-            ." on a.item_code = g.item_code "
-                ." and g.img_fg_del = 0 "
-                    .$wq->getWhereQuery()
+		." inner join ism_mst_goods_item gi "
+    ." on a.item_code = gi.item_code "
+        ." and gi.imgi_fg_del = 0 "
+            ." inner join ism_mst_goods g "
+                ." on gi.code = g.code "
+                    ." and g.img_fg_del = 0 "
+                        .$wq->getWhereQuery()
 	   ;
 		
 		$row = null;
@@ -211,10 +240,13 @@ class OrderDao extends A_Dao
 		$sql =" select count(*) cnt"
 		    ." from ism_order a "
 //		        ." left join ism_mst_goods g "  // 너무 느림.
-		." inner join ism_mst_goods g "
-		            ." on a.item_code = g.item_code "
-		                ." and g.img_fg_del = 0 "
-		                    .$wq->getWhereQuery()
+		." inner join ism_mst_goods_item gi "
+    ." on a.item_code = gi.item_code "
+        ." and gi.imgi_fg_del = 0 "
+            ." inner join ism_mst_goods g "
+                ." on gi.code = g.code "
+                    ." and g.img_fg_del = 0 "
+                        .$wq->getWhereQuery()
 			 ;
 
 		$row = null;
@@ -254,11 +286,11 @@ class OrderDao extends A_Dao
     	    ."','도매판매"
     	    ."',concat('W',DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'),lpad(FLOOR(RAND()*1000),3,0))"
     	    .",(select name from ism_mst_channel where imc_idx = 21)"
-    	    .",(select code from ism_mst_goods where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"
-    	    .",(select name from ism_mst_goods where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"
-    	    .",(select item_name from ism_mst_goods where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"
-    	    .",(select name from ism_mst_goods where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"
-    	    .",(select item_name from ism_mst_goods where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"
+    	    .",(select code from ism_mst_goods_item where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"
+    	    .",(select name from ism_mst_goods_item gi inner join ism_mst_goods g on gi.code = g.code where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"
+    	    .",(select item_name from ism_mst_goods_item where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"
+    	    .",(select name from ism_mst_goods_item gi inner join ism_mst_goods g on gi.code = g.code where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"
+    	    .",(select item_name from ism_mst_goods_item where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"
             .", '".$this->checkMysql($db, $arrVal["tmp_data3"])
             ."',now())"
         ;
@@ -358,11 +390,11 @@ class OrderDao extends A_Dao
 	    
 	    $sql =" update ism_order"
 	        .$uq->getQuery($db)
-	        .",goods_mst_code=(select code from ism_mst_goods where item_code = '".$this->checkMysql($db, $item_code)."')"
-	            .",name_collect=(select name from ism_mst_goods where item_code = '".$this->checkMysql($db, $item_code)."')"
-	                .",opt_name_collect=(select item_name from ism_mst_goods where item_code = '".$this->checkMysql($db, $item_code)."')"
-	                    .",name_confirm=(select name from ism_mst_goods where item_code = '".$this->checkMysql($db, $item_code)."')"
-	                        .",opt_name_confirm=(select item_name from ism_mst_goods where item_code = '".$this->checkMysql($db, $item_code)."')"
+	        .",goods_mst_code=(select code from ism_mst_goods_item where item_code = '".$this->checkMysql($db, $item_code)."')"
+	            .",name_collect=(select name from ism_mst_goods_item gi inner join ism_mst_goods g on gi.code = g.code where item_code = '".$this->checkMysql($db, $item_code)."')"
+	                .",opt_name_collect=(select item_name from ism_mst_goods_item where item_code = '".$this->checkMysql($db, $item_code)."')"
+	                    .",name_confirm=(select name from ism_mst_goods_item gi inner join ism_mst_goods g on gi.code = g.code  where item_code = '".$this->checkMysql($db, $item_code)."')"
+	                        .",opt_name_confirm=(select item_name from ism_mst_goods_item where item_code = '".$this->checkMysql($db, $item_code)."')"
 	        ." where order_no = ".$this->quot($db, $key);
 	        //	        ." where io_idx = ".$this->quot($db, $key);
 	        
