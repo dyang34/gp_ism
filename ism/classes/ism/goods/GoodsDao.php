@@ -18,8 +18,8 @@ class GoodsDao extends A_Dao
 
 	function selectByKey($db, $key) {
 		 
-		$sql =" select img_idx, code, name, item_code, item_name, imb_idx, cate1_idx, cate2_idx, cate3_idx, cate4_idx, img_fg_del, reg_date, stock_qty, stock_apply_date "
-			 ." from ism_mst_goods "
+		$sql =" select imgi_idx, gi.code, name, item_code, item_name, imb_idx, cate1_idx, cate2_idx, cate3_idx, cate4_idx, img_fg_del, gi.reg_date, stock_qty, stock_apply_date "
+			 ." from ism_mst_good_item gi inner join ism_mst_goods g on gi.code = g.code "
 			 ." where item_code = ".$this->quot($db, $key)
 		 	 ;
 		
@@ -36,8 +36,8 @@ class GoodsDao extends A_Dao
 
 	function selectFirst($db, $wq) {
 
-		$sql =" select img_idx, code, name, item_code, item_name, imb_idx, cate1_idx, cate2_idx, cate3_idx, cate4_idx, img_fg_del, reg_date, stock_qty, stock_apply_date "
-			 ." from ism_mst_goods"
+		$sql =" select imgi_idx, gi.code, name, item_code, item_name, imb_idx, cate1_idx, cate2_idx, cate3_idx, cate4_idx, img_fg_del, gi.reg_date, stock_qty, stock_apply_date "
+			 ." from ism_mst_goods_item gi inner join ism_mst_goods g on gi.code = g.code "
 			 .$wq->getWhereQuery()
 			 .$wq->getOrderByQuery()
 			 ;
@@ -56,8 +56,8 @@ class GoodsDao extends A_Dao
 
 	function select($db, $wq) {
 	    
-	    $sql =" select img_idx, code, name, item_code, item_name, imb_idx, cate1_idx, cate2_idx, cate3_idx, cate4_idx, img_fg_del, reg_date, stock_qty, stock_apply_date "
-	         ." from ism_mst_goods"
+	    $sql =" select imgi_idx, gi.code, name, item_code, item_name, imb_idx, cate1_idx, cate2_idx, cate3_idx, cate4_idx, img_fg_del, gi.reg_date, stock_qty, stock_apply_date "
+	         ." from ism_mst_goods_item gi inner join ism_mst_goods g on gi.code = g.code "
 	         .$wq->getWhereQuery()
 	         .$wq->getOrderByQuery()
 	         ;
@@ -67,13 +67,13 @@ class GoodsDao extends A_Dao
 	
 	function select2($db, $wq) {
 	    
-	    $sql =" select img_idx, code, name, item_code, item_name, imb_idx, cate1_idx, cate2_idx, cate3_idx, cate4_idx, img_fg_del, reg_date, stock_qty, stock_apply_date "
-	        ."		,(select name from ism_mst_brand b where b.imb_idx = a.imb_idx) as brand_name "
-	            ."		,(select title from ism_mst_category c1 where c1.imct_idx = a.cate1_idx) as cate1_name "
-	                ."		,(select title from ism_mst_category c2 where c2.imct_idx = a.cate2_idx) as cate2_name "
-	                    ."		,(select title from ism_mst_category c3 where c3.imct_idx = a.cate3_idx) as cate3_name "
-	                        ."		,(select title from ism_mst_category c4 where c4.imct_idx = a.cate4_idx) as cate4_name "
-	                            ." from ism_mst_goods a "
+	    $sql =" select imgi_idx, gi.code, name, item_code, item_name, imb_idx, cate1_idx, cate2_idx, cate3_idx, cate4_idx, img_fg_del, a.reg_date, stock_qty, stock_apply_date "
+	        ."		,(select name from ism_mst_brand b where b.imb_idx = g.imb_idx) as brand_name "
+	            ."		,(select title from ism_mst_category c1 where c1.imct_idx = g.cate1_idx) as cate1_name "
+	                ."		,(select title from ism_mst_category c2 where c2.imct_idx = g.cate2_idx) as cate2_name "
+	                    ."		,(select title from ism_mst_category c3 where c3.imct_idx = g.cate3_idx) as cate3_name "
+	                        ."		,(select title from ism_mst_category c4 where c4.imct_idx = g.cate4_idx) as cate4_name "
+	                            ." from ism_mst_goods_item a inner join ism_mst_goods g on a.code = g.code  "
 	            .$wq->getWhereQuery()
 	            .$wq->getOrderByQuery()
 	            ;
@@ -85,8 +85,8 @@ class GoodsDao extends A_Dao
 	function selectPerPage($db, $wq, $pg) {
 	    
 	    $sql =" select @rnum:=@rnum+1 as rnum, r.* from ("
-	        ."		select @rnum:=0, img_idx, code, name, item_code, item_name, imb_idx, cate1_idx, cate2_idx, cate3_idx, cate4_idx, img_fg_del, reg_date, stock_qty, stock_apply_date "
-	            ."		from ism_mst_goods"
+	        ."		select @rnum:=0, imgi_idx, gi.code, name, item_code, item_name, imb_idx, cate1_idx, cate2_idx, cate3_idx, cate4_idx, img_fg_del, gi.reg_date, stock_qty, stock_apply_date "
+	            ."		from ism_mst_goods_item gi inner join ism_mst_goods g on gi.code = g.code "
 	                .$wq->getWhereQuery()
 	                .$wq->getOrderByQuery()
 	                ."		limit ".$pg->getStartIdx().", ".$pg->getPageSize()
@@ -99,13 +99,13 @@ class GoodsDao extends A_Dao
 	function selectPerPage2($db, $wq, $pg) {
 	    
 	    $sql =" select @rnum:=@rnum+1 as rnum, r.* from ("
-	        ."		select @rnum:=0, img_idx, code, name, item_code, item_name, imb_idx, cate1_idx, cate2_idx, cate3_idx, cate4_idx, img_fg_del, reg_date, stock_qty, stock_apply_date "
-	        ."		,(select name from ism_mst_brand b where b.imb_idx = a.imb_idx) as brand_name "
-            ."		,(select title from ism_mst_category c1 where c1.imct_idx = a.cate1_idx) as cate1_name "
-            ."		,(select title from ism_mst_category c2 where c2.imct_idx = a.cate2_idx) as cate2_name "
-            ."		,(select title from ism_mst_category c3 where c3.imct_idx = a.cate3_idx) as cate3_name "
-            ."		,(select title from ism_mst_category c4 where c4.imct_idx = a.cate4_idx) as cate4_name "
-                    ."		from ism_mst_goods a "
+	        ."		select @rnum:=0, imgi_idx, a.code, name, item_code, item_name, imb_idx, cate1_idx, cate2_idx, cate3_idx, cate4_idx, img_fg_del, a.reg_date, stock_qty, stock_apply_date "
+	        ."		,(select name from ism_mst_brand b where b.imb_idx = g.imb_idx) as brand_name "
+            ."		,(select title from ism_mst_category c1 where c1.imct_idx = g.cate1_idx) as cate1_name "
+            ."		,(select title from ism_mst_category c2 where c2.imct_idx = g.cate2_idx) as cate2_name "
+            ."		,(select title from ism_mst_category c3 where c3.imct_idx = g.cate3_idx) as cate3_name "
+            ."		,(select title from ism_mst_category c4 where c4.imct_idx = g.cate4_idx) as cate4_name "
+                    ."		from ism_mst_goods_item a inner join ism_mst_goods g on a.code = g.code "
 	                .$wq->getWhereQuery()
 	                .$wq->getOrderByQuery()
 	                ."		limit ".$pg->getStartIdx().", ".$pg->getPageSize()
@@ -119,7 +119,7 @@ class GoodsDao extends A_Dao
 	function selectCount($db, $wq) {
 
 		$sql =" select count(*) cnt"
-			 ." from ism_mst_goods a "
+			 ." from ism_mst_goods_item a inner join ism_mst_goods g on a.code = g.code "
 			 .$wq->getWhereQuery()
 			 ;
 		
@@ -137,7 +137,7 @@ class GoodsDao extends A_Dao
 	function exists($db, $wq) {
 
 		$sql =" select count(*) cnt"
-			 ." from ism_mst_goods"
+			 ." from ism_mst_goods_item a inner join ism_mst_goods g on a.code = g.code"
 			 .$wq->getWhereQuery()
 			 ;
 
@@ -166,8 +166,8 @@ class GoodsDao extends A_Dao
 	
 	function selectMaxIdx($db, $wq) {
 	    
-	    $sql =" select max(img_idx) max_idx"
-	        ." from ism_mst_goods a "
+	    $sql =" select max(imgi_idx) max_idx"
+	        ." from ism_mst_goods_item a inner join ism_mst_goods g on a.code = g.code "
 	            .$wq->getWhereQuery()
 	            ;
 
@@ -217,7 +217,7 @@ class GoodsDao extends A_Dao
 	
 	function update($db, $uq, $key) {
 	    
-	    $sql =" update ism_mst_goods"
+	    $sql =" update ism_mst_goods_item"
 	        .$uq->getQuery($db)
 	        ." where item_code = ".$this->quot($db, $key);
 	        

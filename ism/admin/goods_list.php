@@ -303,6 +303,22 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
            
             <!-- 메인TABLE(s) -->
             <table class="display" cellpadding="0" cellspacing="0">
+          		<colgroup>
+                    <col >
+                    <col >
+                    <col >
+                    <col >
+                    <col >
+                    <col >
+                    <col >
+                    <col >
+                    <col >
+                    <col >
+                    <col >
+                    <col >
+                    <col >
+                    <col style="width:100px;">
+                </colgroup>
                 <thead>
                     <tr>
                         <th class="tbl_first">No</th>
