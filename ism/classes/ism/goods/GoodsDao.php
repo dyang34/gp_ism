@@ -19,7 +19,7 @@ class GoodsDao extends A_Dao
 	function selectByKey($db, $key) {
 		 
 		$sql =" select imgi_idx, gi.code, name, item_code, item_name, imb_idx, cate1_idx, cate2_idx, cate3_idx, cate4_idx, img_fg_del, gi.reg_date, stock_qty, stock_apply_date "
-			 ." from ism_mst_good_item gi inner join ism_mst_goods g on gi.code = g.code "
+			 ." from ism_mst_goods_item gi inner join ism_mst_goods g on gi.code = g.code "
 			 ." where item_code = ".$this->quot($db, $key)
 		 	 ;
 		
