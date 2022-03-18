@@ -445,17 +445,15 @@ $(document).on("click","a[name=btnSearch]",function() {
 	var arrToDate=f._order_date_to.value.split('-');
 	
 	var fromDate = new Date(arrFromDate[0],arrFromDate[1]-1,arrFromDate[2]);
-	var toDate = new Date(arrToDate[0],arrToDate[1]-1,arrToDate[2]);
+	var toDate = new Date(arrToDate[0],arrToDate[1]-3,arrToDate[2]);
 
-	toDate.setMonth(toDate.getMonth()-1);
-	
-	if (fromDate < toDate) {
-		alert("최대 1개월 단위로 조회하실 수 있습니다.    ");
+	if (fromDate <= toDate) {
+		alert("최대 3년 단위로 조회하실 수 있습니다.    ");
 		f._order_date_from.focus();
 	
 		return false;
 	}
-	
+
     f.submit();	
 });
 

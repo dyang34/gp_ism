@@ -3,8 +3,19 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/blm_default_set.php";
 
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/JsUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/login/LoginManager.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/SystemUtil.php";
 
 include $_SERVER['DOCUMENT_ROOT']."/ism/include/head.php";
+
+if (!SystemUtil::isLocalhost()) {
+?>
+<script>
+if(window.location.protocol == "http:"){
+	window.location.protocol = "https:";
+}
+</script>
+<?php
+}
 ?>
 
 	<body class="login_wrap">

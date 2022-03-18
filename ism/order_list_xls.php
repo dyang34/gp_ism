@@ -5,7 +5,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/order/OrderMgr.php";
 
-// ini_set('memory_limit','512M');
+ini_set('memory_limit','-1');
 
 $_order_date_from = RequestUtil::getParam("_order_date_from", date("Y-m-01"));
 $_order_date_to = RequestUtil::getParam("_order_date_to", date("Y-m-d"));
@@ -78,7 +78,8 @@ th{font-size:11px;text-align:center;color:white;background-color:#000081;}
         <th style="color:white;background-color:#000081;">상품명</th>
         <th style="color:white;background-color:#000081;">옵션코드</th>
         <th style="color:white;background-color:#000081;">옵션명</th>
-        <th style="color:white;background-color:#000081;">주문번호</th>
+        <th style="color:white;background-color:#000081;">주문번호(사방넷)</th>
+        <th style="color:white;background-color:#000081;">주문번호(쇼핑몰)</th>
         <th style="color:white;background-color:#000081;">수량</th>
         <th style="color:white;background-color:#000081;">EA</th>
         <th style="color:white;background-color:#000081;">판매가</th>
@@ -100,7 +101,8 @@ if ($rs->num_rows > 0) {
         <td><?=$row["name"]?></td>
         <td><?=$row["item_code"]?></td>
         <td><?=$row["item_name"]?></td>
-        <td><?=$row["order_no"]?></td>
+        <td style="mso-number-format:'\@';"><?=$row["order_no"]?></td>
+        <td style="mso-number-format:'\@';"><?=$row["order_no_mall"]?></td>
         <td><?=number_format($row["amount"])?></td>
         <td><?=number_format($row["ea"])?></td>
         <td><?=number_format($row["price_collect"])?></td>
