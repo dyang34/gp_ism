@@ -433,6 +433,19 @@ if ($rs->num_rows > 0) {
 <script src="/ism/cms/js/util/ValidCheck.js"></script>
 <script type="text/javascript">
 
+function addMonth(date, month) {
+    let addMonthFirstDate = new Date(date.getFullYear(),date.getMonth() + month,1);	// month달 후의 1일
+    let addMonthLastDate = new Date(addMonthFirstDate.getFullYear(),addMonthFirstDate.getMonth() + 1, 0);	// month달 후의 말일
+    
+    let result = addMonthFirstDate;
+    if(date.getDate() > addMonthLastDate.getDate()) {
+    	result.setDate(addMonthLastDate.getDate());
+    } else {
+    	result.setDate(date.getDate());
+    }
+    
+    return result;
+}
 
 $(document).on("click","a[name=btnSearch]",function() {
 	
@@ -441,14 +454,14 @@ $(document).on("click","a[name=btnSearch]",function() {
     if ( VC_inValidDate(f._order_date_from, "판매일자 시작일") ) return false;
     if ( VC_inValidDate(f._order_date_to, "판매일자 종료일") ) return false;
 
-	var arrFromDate=f._order_date_from.value.split('-');
-	var arrToDate=f._order_date_to.value.split('-');
+	let arrFromDate=f._order_date_from.value.split('-');
+	let arrToDate=f._order_date_to.value.split('-');
 	
-	var fromDate = new Date(arrFromDate[0],arrFromDate[1]-1,arrFromDate[2]);
-	var toDate = new Date(arrToDate[0],arrToDate[1]-3,arrToDate[2]);
-
+	let fromDate = addMonth(new Date(arrFromDate[0],arrFromDate[1]-1,arrFromDate[2]), 12);
+	let toDate = new Date(arrToDate[0],arrToDate[1]-1,arrToDate[2]);
+		
 	if (fromDate <= toDate) {
-		alert("최대 3년 단위로 조회하실 수 있습니다.    ");
+		alert("최대 1년 단위로 조회하실 수 있습니다.    ");
 		f._order_date_from.focus();
 	
 		return false;
@@ -497,7 +510,22 @@ $(document).on('change','.sel_category',function() {
 });
 
 $(document).on('click','a[name=btnExcelDownload]', function() {
+
 	var f = document.pageForm;
+	
+	let arrFromDate=f._order_date_from.value.split('-');
+	let arrToDate=f._order_date_to.value.split('-');
+	
+	let fromDate = addMonth(new Date(arrFromDate[0],arrFromDate[1]-1,arrFromDate[2]), 3);
+	let toDate = new Date(arrToDate[0],arrToDate[1]-1,arrToDate[2]);
+
+	if (fromDate <= toDate) {
+		alert("엑셀 다운로드는 최대 3개월 단위로 다운로드 하실 수 있습니다.    ");
+		f._order_date_from.focus();
+	
+		return false;
+	}
+	
 	f.target = "_new";
 	f.action = "order_list_xls.php";
 	
