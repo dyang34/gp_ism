@@ -11,7 +11,7 @@
                     <a href="/ism/order_list_by_brand.php" class="<?=$menuNo==11?"on":""?>">- 브랜드별 집계</a>
                     <a href="/ism/order_list_by_category.php" class="<?=$menuNo==12?"on":""?>">- 카테고리별 집계</a>
                     <a href="/ism/order_list_aggr.php" class="<?=$menuNo==22?"on":""?>">- 통합 판매 집계</a>
-                    <a href="/ism/goods_monitor_list.php" class="<?=$menuNo==23?"on":""?>">- 상품 리스트</a>
+                    <a href="/ism/goods_monitor_list.php" class="<?=$menuNo==23?"on":""?>">- 품목 리스트</a>
     			</div>
             </li>
     <?php

@@ -516,11 +516,11 @@ $(document).on('click','a[name=btnExcelDownload]', function() {
 	let arrFromDate=f._order_date_from.value.split('-');
 	let arrToDate=f._order_date_to.value.split('-');
 	
-	let fromDate = addMonth(new Date(arrFromDate[0],arrFromDate[1]-1,arrFromDate[2]), 3);
+	let fromDate = addMonth(new Date(arrFromDate[0],arrFromDate[1]-1,arrFromDate[2]), 1);
 	let toDate = new Date(arrToDate[0],arrToDate[1]-1,arrToDate[2]);
 
 	if (fromDate <= toDate) {
-		alert("엑셀 다운로드는 최대 3개월 단위로 다운로드 하실 수 있습니다.    ");
+		alert("엑셀 다운로드는 최대 1개월 단위로 다운로드 하실 수 있습니다.    ");
 		f._order_date_from.focus();
 	
 		return false;
