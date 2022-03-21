@@ -145,7 +145,7 @@ if ($_order_by=="cate1_name") {
     $wq->addOrderBy("cate4_name", "asc");
 }
 
-$wq->addOrderBy("reg_date", "desc");
+$wq->addOrderBy("imgi_idx", "desc");
 
 $rs = GoodsItemMgr::getInstance()->getListPerPage2($wq, $pg);
 

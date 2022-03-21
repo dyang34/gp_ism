@@ -2,14 +2,14 @@
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/blm_default_set.php";
 
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
-require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsItemMgr.php";
 
 $menuCate = 2;
 $menuNo = 10;
 
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("img_fg_del","=","0");
-$max_idx = GoodsMgr::getInstance()->getMaxIdx($wq);
+$max_idx = GoodsItemMgr::getInstance()->getMaxIdx($wq);
 
 $max_idx = ceil($max_idx / 500);
 

@@ -36,7 +36,7 @@ if ($_order_by=="cate1_name") {
     $wq->addOrderBy("cate4_name", "asc");
 }
 
-$wq->addOrderBy("reg_date", "desc");
+$wq->addOrderBy("img_idx", "desc");
 
 $rs = GoodsMgr::getInstance()->getList2($wq, $pg);
 
