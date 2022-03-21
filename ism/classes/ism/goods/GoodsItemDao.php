@@ -184,16 +184,10 @@ class GoodsItemDao extends A_Dao
 	
 	function insert($db, $arrVal) {
 	    
-	    $sql =" insert into ism_mst_goods(code, name, item_code, item_name, imb_idx, cate1_idx, cate2_idx, cate3_idx, cate4_idx, stock_qty, reg_date)"
+	    $sql =" insert into ism_mst_goods_item(code, item_code, item_name, stock_qty, reg_date)"
 	        ." values ('".$this->checkMysql($db, $arrVal["code"])
-	        ."', '".$this->checkMysql($db, $arrVal["name"])
 	        ."', '".$this->checkMysql($db, $arrVal["item_code"])
 	        ."', '".$this->checkMysql($db, $arrVal["item_name"])
-	        ."', '".$this->checkMysql($db, $arrVal["imb_idx"])
-	        ."', '".$this->checkMysql($db, $arrVal["cate1_idx"])
-	        ."', '".$this->checkMysql($db, $arrVal["cate2_idx"])
-	        ."', '".$this->checkMysql($db, $arrVal["cate3_idx"])
-	        ."', '".$this->checkMysql($db, $arrVal["cate4_idx"])
 	        ."', '".$this->checkMysql($db, $arrVal["stock_qty"])
 	        ."', now())"
 	            ;
@@ -226,7 +220,7 @@ class GoodsItemDao extends A_Dao
 	
 	function delete($db, $key) {
 	    
-	    $sql = "update ism_mst_goods set img_fg_del = 1 where item_code = ".$this->quot($db, $key);
+	    $sql = "update ism_mst_goods_item set imgi_fg_del = 1 where item_code = ".$this->quot($db, $key);
 	    
 	    return $db->query($sql);
 	}	

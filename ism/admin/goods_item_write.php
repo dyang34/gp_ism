@@ -4,6 +4,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/blm_default_set.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/RequestUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/JsUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsItemMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/brand/BrandMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/category/CategoryMgr.php";
@@ -14,36 +15,19 @@ $menuNo = 24;
 $mode = RequestUtil::getParam("mode", "INS");
 $item_code = RequestUtil::getParam("item_code", "");
 
-$arrBrand = $arrCategory1 = $arrCategory2 = $arrCategory3 = $arrCategory4 = array();
-
 $wq = new WhereQuery(true, true);
-$wq->addAndString2("imb_fg_del","=","0");
-$wq->addOrderBy("sort","desc");
+$wq->addAndString2("img_fg_del","=","0");
+//$wq->addAndLike("item_code","DG");
 $wq->addOrderBy("name","asc");
 
-$rs = BrandMgr::getInstance()->getList($wq);
+$rs = GoodsMgr::getInstance()->getList($wq);
 
+$arrGoods= array();
 if($rs->num_rows > 0) {
     for($i=0;$i<$rs->num_rows;$i++) {
-        $row_brand = $rs->fetch_assoc();
+        $row_goods = $rs->fetch_assoc();
         
-        array_push($arrBrand, $row_brand);
-    }
-}
-
-$wq = new WhereQuery(true, true);
-$wq->addAndString2("imct_fg_del","=","0");
-$wq->addAndString("depth","=","1");
-$wq->addOrderBy("sort","desc");
-$wq->addOrderBy("title","asc");
-
-$rs = CategoryMgr::getInstance()->getList($wq);
-
-if($rs->num_rows > 0) {
-    for($i=0;$i<$rs->num_rows;$i++) {
-        $row_category = $rs->fetch_assoc();
-        
-        array_push($arrCategory1, $row_category);
+        array_push($arrGoods, $row_goods);
     }
 }
 
@@ -61,63 +45,6 @@ if ($mode=="UPD") {
         JsUtil::alertBack("잘못된 경로로 접근하였습니다. (ErrCode:0x02)   ");
         exit;
     }
-    
-    if($row["cate1_idx"] && $row["cate1_idx"] > 0) {
-        $wq = new WhereQuery(true, true);
-        $wq->addAndString2("imct_fg_del","=","0");
-        $wq->addAndString("depth","=","2");
-        $wq->addAndString("upper_imct_idx","=",$row["cate1_idx"]);
-        $wq->addOrderBy("sort","desc");
-        $wq->addOrderBy("title","asc");
-        
-        $rs = CategoryMgr::getInstance()->getList($wq);
-        
-        if($rs->num_rows > 0) {
-            for($i=0;$i<$rs->num_rows;$i++) {
-                $row_category = $rs->fetch_assoc();
-                
-                array_push($arrCategory2, $row_category);
-            }
-        }
-    }
-    
-    if($row["cate2_idx"] && $row["cate2_idx"] > 0) {
-        $wq = new WhereQuery(true, true);
-        $wq->addAndString2("imct_fg_del","=","0");
-        $wq->addAndString("depth","=","3");
-        $wq->addAndString("upper_imct_idx","=",$row["cate2_idx"]);
-        $wq->addOrderBy("sort","desc");
-        $wq->addOrderBy("title","asc");
-        
-        $rs = CategoryMgr::getInstance()->getList($wq);
-        
-        if($rs->num_rows > 0) {
-            for($i=0;$i<$rs->num_rows;$i++) {
-                $row_category = $rs->fetch_assoc();
-                
-                array_push($arrCategory3, $row_category);
-            }
-        }
-    }
-    
-    if($row["cate3_idx"] && $row["cate3_idx"] > 0) {
-        $wq = new WhereQuery(true, true);
-        $wq->addAndString2("imct_fg_del","=","0");
-        $wq->addAndString("depth","=","4");
-        $wq->addAndString("upper_imct_idx","=",$row["cate3_idx"]);
-        $wq->addOrderBy("sort","desc");
-        $wq->addOrderBy("title","asc");
-        
-        $rs = CategoryMgr::getInstance()->getList($wq);
-        
-        if($rs->num_rows > 0) {
-            for($i=0;$i<$rs->num_rows;$i++) {
-                $row_category = $rs->fetch_assoc();
-                
-                array_push($arrCategory4, $row_category);
-            }
-        }
-    }
 } else {
     //    if(!empty($userid)) {
     if($item_code) {
@@ -134,7 +61,7 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
-	$(".select_brand").select2();
+	$(".sel_item").select2();
 
 	var w = $(".select2").css('width');
 	add_w = parseInt(w)+50;
@@ -142,8 +69,8 @@ $(document).ready(function() {
 });
 
 function reset_Select2(){
-	$(".select_brand").val('');
-	$(".select_brand").trigger('change');
+	$(".sel_item").val('');
+	$(".sel_item").trigger('change');
 }
 </script>
 
@@ -160,7 +87,7 @@ function reset_Select2(){
                         <li><a href="#">인쇄</a></li>
                     </ul>-->
                 </div>
-				<form name="writeForm" action="./goods_write_act.php" method="post">
+				<form name="writeForm" action="./goods_item_write_act.php" method="post">
 					<input type="hidden" name="mode" value="<?=$mode?>" />
 					<input type="hidden" name="auto_defense" />
 
@@ -171,16 +98,24 @@ function reset_Select2(){
                         </colgroup>
                         <tbody>
                             <tr>
-                                <th>상품코드</th>
+                                <th>상품</th>
                                 <td>
 <?php
 if ($mode=="UPD") {
 ?>
-									<div style="height:30px;vertical-align:middle;padding:0 10px;margin:3px 0px;line-height:29px;"><?=$row['code']?><input type="hidden" value="<?=$row['code']?>" name="code" /></div>
+									<div style="height:30px;vertical-align:middle;padding:0 10px;margin:3px 0px;line-height:29px;">[<?=$row['code']?>] <?=$row['name']?><input type="hidden" value="<?=$row['code']?>" name="code" /></div>
 <?php
 } else {
 ?>    									
-                                    <input type="text" name="code" value="" placeholder="상품코드를 입력하세요." style="width: 200px;">
+                                    <select name="code" class="sel_item" style="line-height: 30px;height:30px;">
+                						<?php
+                						foreach($arrGoods as $lt){
+                							?>
+                							<option value="<?=$lt['code']?>" <?=$row['code']==$lt['code']?"selected":""?> name="<?=$lt['name']?>">[<?=$lt['code']?>] <?=$lt['name']?></option>
+                							<?php
+                						}
+                						?>
+                					</select>
 <?php
 }
 ?>
@@ -203,75 +138,9 @@ if ($mode=="UPD") {
                                 </td>
                             </tr>
                             <tr>
-                                <th>상품명</th>
-                                <td>
-                                    <input type="text" name="name" value="<?=$row['name']?>" placeholder="상품명을 입력하세요." style="width: 80%;">
-                                </td>
-                            </tr>
-                            <tr>
                                 <th>품목(옵션)명</th>
                                 <td>
                                     <input type="text" name="item_name" value="<?=$row['item_name']?>" placeholder="품목(옵션)명을 입력하세요." style="width: 80%;">
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>브랜드</th>
-                                <td>
-                					<select name="imb_idx" class="select_brand">
-                						<option value="">브랜드 선택</option>
-                						<?php
-                						foreach($arrBrand as $lt){
-                							?>
-                							<option value="<?=$lt['imb_idx']?>" <?=$row['imb_idx']==$lt['imb_idx']?"selected":""?>><?=$lt['name']?></option>
-                							<?php
-                						}
-                						?>
-                					</select>
-                                </td>
-                            </tr>
-							<tr>
-                                <th>카테고리</th>
-                                <td>
-                					<select name="cate1_idx" class="sel_category" depth="1">
-                						<option value="">카테고리 선택</option>
-                						<?php
-                						foreach($arrCategory1 as $lt){
-                							?>
-                							<option value="<?=$lt['imct_idx']?>" <?=$row['cate1_idx']==$lt['imct_idx']?"selected":""?>><?=$lt['title']?></option>
-                							<?php
-                						}
-                						?>
-                					</select>
-                					<select name="cate2_idx" class="sel_category" depth="2" style="<?=$row['cate1_idx']>0 && $arrCategory2?"":"display:none;"?>">
-                						<option value="">카테고리 선택</option>
-                						<?php
-                						foreach($arrCategory2 as $lt){
-                							?>
-                							<option value="<?=$lt['imct_idx']?>" <?=$row['cate2_idx']==$lt['imct_idx']?"selected":""?>><?=$lt['title']?></option>
-                							<?php
-                						}
-                						?>
-                					</select>
-                					<select name="cate3_idx" class="sel_category" depth="3" style="<?=$row['cate2_idx']>0 && $arrCategory3?"":"display:none;"?>">
-                						<option value="">카테고리 선택</option>
-                						<?php
-                						foreach($arrCategory3 as $lt){
-                							?>
-                							<option value="<?=$lt['imct_idx']?>" <?=$row['cate3_idx']==$lt['imct_idx']?"selected":""?>><?=$lt['title']?></option>
-                							<?php
-                						}
-                						?>
-                					</select>
-                					<select name="cate4_idx" class="sel_category" depth="4" style="<?=$row['cate3_idx']>0 && $arrCategory4?"":"display:none;"?>">
-                						<option value="">카테고리 선택</option>
-                						<?php
-                						foreach($arrCategory4 as $lt){
-                							?>
-                							<option value="<?=$lt['imct_idx']?>" <?=$row['cate4_idx']==$lt['imct_idx']?"selected":""?>><?=$lt['title']?></option>
-                							<?php
-                						}
-                						?>
-                					</select>
                                 </td>
                             </tr>
 <?php /*                            
@@ -315,7 +184,7 @@ if ($mode=="UPD") {
 if ($mode=="UPD") {
 ?>
 					<div class="wrt_searchBtn" style="margin-right: 0;">
-						<a href="#" name="btnDel">비노출</a>
+						<a href="#" name="btnDel">삭제</a>
 					</div>
 <?php
 }
@@ -329,18 +198,13 @@ if ($mode=="UPD") {
 var mc_consult_submitted = false;
 
 $(document).on("click","a[name=btnSave]",function() {
-	if(mc_consult_submitted == true) { return false; }
+//	if(mc_consult_submitted == true) { return false; }
 	
 	var f = document.writeForm;
 
-	if ( VC_inValidText(f.code, "상품코드") ) return false;
-	if ( VC_inValidText(f.name, "상품명") ) return false;
 	if ( VC_inValidText(f.item_code, "품목(옵션)코드") ) return false;
 	if ( VC_inValidText(f.item_name, "품목(옵션)명") ) return false;
 	
-	if ( VC_isUnselect(f.imb_idx, "브랜드") ) return false;
-	if ( VC_isUnselect(f.cate1_idx, "카테고리") ) return false;
-
 	f.auto_defense.value = "identicharmc!@";
 	mc_consult_submitted = true;
 
@@ -350,7 +214,7 @@ $(document).on("click","a[name=btnSave]",function() {
 });
 
 $(document).on("click","a[name=btnDel]",function() {
-	if (!confirm("정말 비노출하시겠습니까?    ")) {
+	if (!confirm("정말 삭제하시겠습니까?    ")) {
 		return false;
 	}
 	
