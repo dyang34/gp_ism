@@ -3,7 +3,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/blm_default_set.php";
 
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/RequestUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
-require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsItemMgr.php";
 
 $_imb_idx = RequestUtil::getParam("_imb_idx", "");
 $_cate1_idx = RequestUtil::getParam("_cate1_idx", "");
@@ -42,7 +42,7 @@ if ($_order_by=="cate1_name") {
 
 $wq->addOrderBy("reg_date", "desc");
 
-$rs = GoodsMgr::getInstance()->getList2($wq, $pg);
+$rs = GoodsItemMgr::getInstance()->getList2($wq, $pg);
 
 Header("Content-type: application/vnd.ms-excel");
 Header("Content-Disposition: attachment; filename=ISM_상품 리스트_".date('Ymd').".xls");

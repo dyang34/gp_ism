@@ -4,7 +4,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/blm_default_set.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/RequestUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/Page.php";
-require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsItemMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/brand/BrandMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/category/CategoryMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/basic/BasicDataMgr.php";
@@ -147,7 +147,7 @@ if ($_order_by=="cate1_name") {
 
 $wq->addOrderBy("reg_date", "desc");
 
-$rs = GoodsMgr::getInstance()->getListPerPage2($wq, $pg);
+$rs = GoodsItemMgr::getInstance()->getListPerPage2($wq, $pg);
 
 include $_SERVER['DOCUMENT_ROOT']."/ism/include/head.php";
 include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
@@ -173,7 +173,7 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                 <div style="padding-left:20px;">
                     <h3 class="icon-search">품목 검색</h3>
                     <ul class="icon_Btn">
-                    	<li><a href="./goods_write.php">추가</a></li>
+                    	<li><a href="./goods_item_write.php">추가</a></li>
                     	<li><a href="#" name="btnExcelDownload">엑셀</a></li>	
 <?php /*                    
                         <li><a href="#">조회</a></li>
@@ -184,7 +184,7 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
 */?>
                     </ul>
                 </div>
-				<form name="searchForm" method="get" action="goods_list.php">
+				<form name="searchForm" method="get" action="goods_item_list.php">
 				    <input type="hidden" name="_order_by" value="<?=$_order_by?>">
     				<input type="hidden" name="_order_by_asc" value="<?=$_order_by_asc?>">
 				
@@ -346,9 +346,9 @@ if($rs->num_rows > 0) {
                     <tr>
                         <td class="tbl_first" style="text-align:center;"><?=number_format($pg->getMaxNumOfPage()-$i)?></td>
                         <td><?=$row["code"]?></td>
-                        <td><a href="./goods_write.php?mode=UPD&item_code=<?=$row["item_code"]?>"><?=$row["name"]?></a></td>
+                        <td><a href="./goods_item_write.php?mode=UPD&item_code=<?=$row["item_code"]?>"><?=$row["name"]?></a></td>
                         <td><?=$row["item_code"]?></td>
-                        <td><a href="./goods_write.php?mode=UPD&item_code=<?=$row["item_code"]?>"><?=$row["item_name"]?></a></td>
+                        <td><a href="./goods_item_write.php?mode=UPD&item_code=<?=$row["item_code"]?>"><?=$row["item_name"]?></a></td>
                         <td class="txt_c"><?=$row["brand_name"]?></td>
                         <td class="txt_c"><?=$row["cate1_name"]?></td>
                         <td class="txt_c"><?=$row["cate2_name"]?></td>
@@ -375,7 +375,7 @@ if($rs->num_rows > 0) {
 			<p class="hide"><strong>Pagination</strong></p>
 			<div style="position: relative;">
     			<?=$pg->getNaviForFuncGP("goPage", "<<", "<", ">", ">>")?>
-    			<div style="position: absolute; right: 17px; bottom: 3px; text-align: center; line-height: 30px; border-radius: 10px; background-color: #313A3D;" class="rig_new"><a href="./goods_write.php" style="display:inline-block;padding: 5px 22px;color: #fff;">등록하기</a></div>
+    			<div style="position: absolute; right: 17px; bottom: 3px; text-align: center; line-height: 30px; border-radius: 10px; background-color: #313A3D;" class="rig_new"><a href="./goods_item_write.php" style="display:inline-block;padding: 5px 22px;color: #fff;">등록하기</a></div>
     		</div>
 
 <script type="text/javascript">
@@ -422,7 +422,7 @@ $(document).on('change','.sel_category',function() {
 $(document).on('click','a[name=btnExcelDownload]', function() {
 	var f = document.pageForm;
 	f.target = "_new";
-	f.action = "goods_list_xls.php";
+	f.action = "goods_item_list_xls.php";
 	
 	f.submit();
 });
@@ -430,7 +430,7 @@ $(document).on('click','a[name=btnExcelDownload]', function() {
 var goPage = function(page) {
 	var f = document.pageForm;
 	f.currentPage.value = page;
-	f.action = "goods_list.php";
+	f.action = "goods_item_list.php";
 	f.submit();
 }
 
@@ -443,7 +443,7 @@ var goSort = function(p_order_by, p_order_by_asc) {
 	f.currentPage.value = 1;
 	f._order_by.value = p_order_by;
 	f._order_by_asc.value = p_order_by_asc;
-	f.action = "goods_list.php";
+	f.action = "goods_item_list.php";
 	f.submit();
 }
 
@@ -485,7 +485,7 @@ $(document).on("click","a[name=btnApplyStock]",function() {
                     alert("옵션코드 에러입니다.    ");
                     break;                    
                 case "no_data" :
-                    alert("해당 제품코드의 재고를 찾을 수 없습니다.    ");
+                    alert("해당 품목코드의 재고를 찾을 수 없습니다.    ");
                     break;                    
                 case "error" :
                     alert("시스템 연동시 에러가 발생하였습니다.    ");

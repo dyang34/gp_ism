@@ -1,10 +1,10 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsDao.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsItemDao.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/A_Mgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/DbUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
 
-class GoodsMgr extends A_Mgr
+class GoodsItemMgr extends A_Mgr
 {
     private static $instance = null;
     
@@ -27,7 +27,7 @@ class GoodsMgr extends A_Mgr
         try {
             $db = DbUtil::getConnection();
             
-            $row = GoodsDao::getInstance()->selectByKey($db, $key);
+            $row = GoodsItemDao::getInstance()->selectByKey($db, $key);
             
         } catch(Exception $e) {
             echo $e->getMessage();
@@ -45,7 +45,7 @@ class GoodsMgr extends A_Mgr
         try {
             $db = DbUtil::getConnection();
             
-            $row = GoodsDao::getInstance()->selectFirst($db, $wq);
+            $row = GoodsItemDao::getInstance()->selectFirst($db, $wq);
 
         } catch(Exception $e) {
             echo $e->getMessage();
@@ -66,7 +66,7 @@ class GoodsMgr extends A_Mgr
         try {
             $db = DbUtil::getConnection();
             
-            $result = GoodsDao::getInstance()->select($db, $wq);
+            $result = GoodsItemDao::getInstance()->select($db, $wq);
             
         } catch(Exception $e) {
             echo $e->getMessage();
@@ -87,7 +87,7 @@ class GoodsMgr extends A_Mgr
         try {
             $db = DbUtil::getConnection();
             
-            $result = GoodsDao::getInstance()->select2($db, $wq);
+            $result = GoodsItemDao::getInstance()->select2($db, $wq);
             
         } catch(Exception $e) {
             echo $e->getMessage();
@@ -108,8 +108,8 @@ class GoodsMgr extends A_Mgr
         try {
             $db = DbUtil::getConnection();
             
-            $pg->setTotalCount(GoodsDao::getInstance()->selectCount($db, $wq));
-            $result = GoodsDao::getInstance()->selectPerPage($db, $wq, $pg);
+            $pg->setTotalCount(GoodsItemDao::getInstance()->selectCount($db, $wq));
+            $result = GoodsItemDao::getInstance()->selectPerPage($db, $wq, $pg);
             
         } catch(Exception $e) {
             echo $e->getMessage();
@@ -130,8 +130,8 @@ class GoodsMgr extends A_Mgr
         try {
             $db = DbUtil::getConnection();
             
-            $pg->setTotalCount(GoodsDao::getInstance()->selectCount($db, $wq));
-            $result = GoodsDao::getInstance()->selectPerPage2($db, $wq, $pg);
+            $pg->setTotalCount(GoodsItemDao::getInstance()->selectCount($db, $wq));
+            $result = GoodsItemDao::getInstance()->selectPerPage2($db, $wq, $pg);
             
         } catch(Exception $e) {
             echo $e->getMessage();
@@ -149,7 +149,7 @@ class GoodsMgr extends A_Mgr
         try {
             $db = DbUtil::getConnection();
             
-            $result = GoodsDao::getInstance()->selectCount($db, $wq);
+            $result = GoodsItemDao::getInstance()->selectCount($db, $wq);
             
         } catch(Exception $e) {
             echo $e->getMessage();
@@ -167,7 +167,25 @@ class GoodsMgr extends A_Mgr
         try {
             $db = DbUtil::getConnection();
             
-            $result = GoodsDao::getInstance()->exists($db, $wq);
+            $result = GoodsItemDao::getInstance()->exists($db, $wq);
+            
+        } catch(Exception $e) {
+            echo $e->getMessage();
+        }
+        
+        @ $db->close();
+        return $result;
+    }
+    
+    function getMaxIdx($wq) {
+        
+        $result = null;
+        $db = null;
+        
+        try {
+            $db = DbUtil::getConnection();
+            
+            $result = GoodsItemDao::getInstance()->selectMaxIdx($db, $wq);
             
         } catch(Exception $e) {
             echo $e->getMessage();
@@ -187,7 +205,30 @@ class GoodsMgr extends A_Mgr
             
             //            $this->startTran($db);
             
-            $isOk = GoodsDao::getInstance()->insert($db, $arrVal);
+            $isOk = GoodsItemDao::getInstance()->insert($db, $arrVal);
+            
+            //            $this->commit($db);
+            
+        } catch(Exception $e) {
+            //            $this->rollback($db);
+            echo $e->getMessage();
+        }
+        
+        @ $db->close();
+        return $isOk;
+    }
+    
+    function add_check($arrVal) {
+        
+        $isOk = null;
+        $db = null;
+        
+        try {
+            $db = DbUtil::getConnection();
+            
+            //            $this->startTran($db);
+            
+            $isOk = GoodsItemDao::getInstance()->insert_check($db, $arrVal);
             
             //            $this->commit($db);
             
@@ -210,7 +251,7 @@ class GoodsMgr extends A_Mgr
             
             //$this->startTran($db);
             
-            $isOk = GoodsDao::getInstance()->update($db, $uq, $key);
+            $isOk = GoodsItemDao::getInstance()->update($db, $uq, $key);
             
             //$this->commit($db);
             
@@ -233,7 +274,7 @@ class GoodsMgr extends A_Mgr
             
             //$this->startTran($db);
             
-            $isOk = GoodsDao::getInstance()->delete($db, $key);
+            $isOk = GoodsItemDao::getInstance()->delete($db, $key);
             
             //$this->commit($db);
             

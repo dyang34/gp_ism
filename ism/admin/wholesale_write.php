@@ -4,7 +4,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/blm_default_set.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/RequestUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/order/OrderMgr.php";
-require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsItemMgr.php";
 
 $menuCate = 4;
 $menuNo = 8;
@@ -40,7 +40,7 @@ $wq->addAndString2("img_fg_del","=","0");
 
 $wq->addOrderBy("item_name","asc");
 
-$rs = GoodsMgr::getInstance()->getList($wq);
+$rs = GoodsItemMgr::getInstance()->getList($wq);
 
 $arrGoods= array();
 if($rs->num_rows > 0) {

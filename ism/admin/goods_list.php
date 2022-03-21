@@ -23,8 +23,6 @@ $_cate4_idx = RequestUtil::getParam("_cate4_idx", "");
 
 $_code = RequestUtil::getParam("_code", "");
 $_name = RequestUtil::getParam("_name", "");
-$_item_code = RequestUtil::getParam("_item_code", "");
-$_item_name = RequestUtil::getParam("_item_name", "");
 $_order_by = RequestUtil::getParam("_order_by", "reg_date");
 $_order_by_asc = RequestUtil::getParam("_order_by_asc", "desc");
 
@@ -132,10 +130,8 @@ $wq->addAndString("cate2_idx","=",$_cate2_idx);
 $wq->addAndString("cate3_idx","=",$_cate3_idx);
 $wq->addAndString("cate4_idx","=",$_cate4_idx);
 
-$wq->addAndLike("a.code",$_code);
-$wq->addAndLike("item_code",$_item_code);
+$wq->addAndLike("code",$_code);
 $wq->addAndLike("name",$_name);
-$wq->addAndLike("item_name",$_item_name);
 
 $wq->addOrderBy($_order_by, $_order_by_asc);
 
@@ -156,8 +152,6 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
     <input type="hidden" name="currentPage" value="<?=$currentPage?>">
     <input type="hidden" name="_code" value="<?=$_code?>">
     <input type="hidden" name="_name" value="<?=$_name?>">
-	<input type="hidden" name="_item_code" value="<?=$_item_code?>">
-	<input type="hidden" name="_item_name" value="<?=$_item_name?>">
     <input type="hidden" name="_imb_idx" value="<?=$_imb_idx?>">
     <input type="hidden" name="_cate1_idx" value="<?=$_cate1_idx?>">
     <input type="hidden" name="_cate2_idx" value="<?=$_cate2_idx?>">
@@ -263,12 +257,6 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                             	<th>상품명</th>
                             	<td colspan="3"><input type="text" placeholder="상품명으로 검색" name="_name" value="<?=$_name?>" style="width: 100%;"></td>
                             </tr>
-                            <tr>
-                            	<th>품목(옵션)코드</th>
-                            	<td><input type="text" placeholder="품목(옵션)명으로 검색" name="_item_code" value="<?=$_item_code?>" style="width: 100%;"></td>
-                            	<th>품목(옵션)명</th>
-                            	<td colspan="3"><input type="text" placeholder="품목(옵션)명으로 검색" name="_item_name" value="<?=$_item_name?>" style="width: 100%;"></td>
-                            </tr>
                             
                         </tbody>
                     </table>
@@ -290,12 +278,8 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
 					<a href="#none" name="_btn_sort" order_by="stock_qty" order_by_asc="asc" class="<?=$_order_by=="stock_qty" && $_order_by_asc=="asc"?"on":""?>">재고<em>▲</em></a>
 					<a href="#none" name="_btn_sort" order_by="code" order_by_asc="asc" class="<?=$_order_by=="code" && $_order_by_asc=="asc"?"on":""?>">상품코드<em>▲</em></a>
 					<a href="#none" name="_btn_sort" order_by="code" order_by_asc="desc" class="<?=$_order_by=="code" && $_order_by_asc=="desc"?"on":""?>">상품코드<em>▼</em></a>
-					<a href="#none" name="_btn_sort" order_by="item_code" order_by_asc="asc" class="<?=$_order_by=="item_code" && $_order_by_asc=="asc"?"on":""?>">품목(옵션)코드<em>▲</em></a>
-					<a href="#none" name="_btn_sort" order_by="item_code" order_by_asc="desc" class="<?=$_order_by=="item_code" && $_order_by_asc=="desc"?"on":""?>">품목(옵션)코드<em>▼</em></a>
 					<a href="#none" name="_btn_sort" order_by="name" order_by_asc="asc" class="<?=$_order_by=="name" && $_order_by_asc=="asc"?"on":""?>">상품명<em>▲</em></a>
 					<a href="#none" name="_btn_sort" order_by="name" order_by_asc="desc" class="<?=$_order_by=="name" && $_order_by_asc=="desc"?"on":""?>">상품명<em>▼</em></a>
-					<a href="#none" name="_btn_sort" order_by="item_name" order_by_asc="asc" class="<?=$_order_by=="item_name" && $_order_by_asc=="asc"?"on":""?>">품목(옵션)명<em>▲</em></a>
-					<a href="#none" name="_btn_sort" order_by="item_name" order_by_asc="desc" class="<?=$_order_by=="item_name" && $_order_by_asc=="desc"?"on":""?>">품목(옵션)명<em>▼</em></a>
 					<a href="#none" name="_btn_sort" order_by="brand_name" order_by_asc="asc" class="<?=$_order_by=="brand_name"?"on":""?>">브랜드순<em>▲</em></a>
 					<a href="#none" name="_btn_sort" order_by="cate1_name" order_by_asc="asc" class="<?=$_order_by=="cate1_name"?"on":""?>">카테고리<em>▲</em></a>
 				</p>
@@ -313,28 +297,18 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                     <col >
                     <col >
                     <col >
-                    <col >
-                    <col >
-                    <col >
-                    <col >
-                    <col style="width:100px;">
                 </colgroup>
                 <thead>
                     <tr>
                         <th class="tbl_first">No</th>
                         <th>상품코드</th>
                         <th>상품명</th>
-                        <th>품목(옵션)코드</th>
-                        <th>품목(옵션)명</th>
                         <th>브랜드</th>
                         <th>카테고리1</th>
                         <th>카테고리2</th>
                         <th>카테고리3</th>
                         <th>카테고리4</th>
-                        <th>재고</th>
-                        <th>재고반영일</th>
                         <th>등록일</th>
-                        <th>작업</th>
                     </tr>
                 </thead>
                 <tbody style="border-bottom: 2px solid #395467">
@@ -346,24 +320,26 @@ if($rs->num_rows > 0) {
                     <tr>
                         <td class="tbl_first" style="text-align:center;"><?=number_format($pg->getMaxNumOfPage()-$i)?></td>
                         <td><?=$row["code"]?></td>
-                        <td><a href="./goods_write.php?mode=UPD&item_code=<?=$row["item_code"]?>"><?=$row["name"]?></a></td>
-                        <td><?=$row["item_code"]?></td>
-                        <td><a href="./goods_write.php?mode=UPD&item_code=<?=$row["item_code"]?>"><?=$row["item_name"]?></a></td>
+                        <td><a href="./goods_write.php?mode=UPD&code=<?=$row["code"]?>"><?=$row["name"]?></a></td>
                         <td class="txt_c"><?=$row["brand_name"]?></td>
                         <td class="txt_c"><?=$row["cate1_name"]?></td>
                         <td class="txt_c"><?=$row["cate2_name"]?></td>
                         <td class="txt_c"><?=$row["cate3_name"]?></td>
                         <td class="txt_c"><?=$row["cate4_name"]?></td>
+<?php /*                        
                         <td class="txt_r" name="td_stock_qty"><?=number_format($row["stock_qty"])?></td>
                         <td style="text-align:center;" name="td_stock_apply_date"><?=$row["stock_apply_date"]?></td>
+*/?>
                         <td style="text-align:center;"><?=substr($row["reg_date"],0,10)?></td>
-                        <td style="text-align:center;"><a href="#" name="btnApplyStock" item_code="<?=$row["item_code"]?>" style=" display: block; background-color: #1b80c3; padding: 6px 12px; border-radius: 20px; color: #fff;">재고반영</a></td>
+<?php /*                        
+                        <td style="text-align:center;"><a href="#" name="btnApplyStock" code="<?=$row["code"]?>" style=" display: block; background-color: #1b80c3; padding: 6px 12px; border-radius: 20px; color: #fff;">재고반영</a></td>
+*/?>
                     </tr>
 <?php
     }
 } else {
 ?>
-					<tr><td colspan="13" style="text-align:center;">No Data.</td></tr>
+					<tr><td colspan="9" style="text-align:center;">No Data.</td></tr>
 <?php
 }
 ?>                
@@ -457,7 +433,7 @@ $(document).on("click","a[name=btnSearch]",function() {
 $(document).on("click","a[name=btnApplyStock]",function() {
 	
 	var obj = $(this);
-	var item_code = obj.attr('item_code');
+	var code = obj.attr('code');
 	
 	obj_stock_qty = obj.parent().parent().find('td[name=td_stock_qty]');
 	obj_stock_apply_date = obj.parent().parent().find('td[name=td_stock_apply_date]');
@@ -470,7 +446,7 @@ $(document).on("click","a[name=btnApplyStock]",function() {
 		cache: false,
 		data: {
 			mode : 'stock_apply',
-			item_code : item_code
+			code : code
 		},
 		success: function (response) {
 			switch(response.RESULTCD){
@@ -481,7 +457,7 @@ $(document).on("click","a[name=btnApplyStock]",function() {
                 case "not_login" :
                     alert("로그인 후 작업하시기 바랍니다.    ");
                     break;                    
-                case "no_item_code" :
+                case "no_code" :
                     alert("옵션코드 에러입니다.    ");
                     break;                    
                 case "no_data" :

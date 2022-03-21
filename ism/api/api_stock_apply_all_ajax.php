@@ -6,7 +6,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/UpdateQuery.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/JsUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/login/LoginManager.php";
-require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsItemMgr.php";
 
 header("Cache-Control;no-cache");
 header("Pragma:no-cache");
@@ -67,7 +67,7 @@ if (!empty($div_idx)) {
 
 $wq->addOrderBy("stock_apply_date","asc");
 
-$rs = GoodsMgr::getInstance()->getList($wq);
+$rs = GoodsItemMgr::getInstance()->getList($wq);
 
 $url = "http://cbt.htns.com/api/v2/prdlist.do";
 $headers = array(
@@ -129,7 +129,7 @@ if($rs->num_rows > 0) {
             $uq->add("stock_qty", $cnt_stock);
             $uq->addNotQuot("stock_apply_date", "now()");
             
-            GoodsMgr::getInstance()->edit($uq, $row["item_code"]);
+            GoodsItemMgr::getInstance()->edit($uq, $row["item_code"]);
         }
     }
     

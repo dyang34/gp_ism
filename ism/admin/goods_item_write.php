@@ -4,15 +4,15 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/blm_default_set.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/RequestUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/JsUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
-require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsItemMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/brand/BrandMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/category/CategoryMgr.php";
 
 $menuCate = 3;
-$menuNo = 4;
+$menuNo = 24;
 
 $mode = RequestUtil::getParam("mode", "INS");
-$code = RequestUtil::getParam("code", "");
+$item_code = RequestUtil::getParam("item_code", "");
 
 $arrBrand = $arrCategory1 = $arrCategory2 = $arrCategory3 = $arrCategory4 = array();
 
@@ -49,12 +49,12 @@ if($rs->num_rows > 0) {
 
 if ($mode=="UPD") {
     //    if(empty($userid)) {
-    if(!$code) {
+    if(!$item_code) {
         JsUtil::alertBack("잘못된 경로로 접근하였습니다. (ErrCode:0x01)   ");
         exit;
     }
     
-    $row = GoodsMgr::getInstance()->getByKey($code);
+    $row = GoodsItemMgr::getInstance()->getByKey($item_code);
     
     //    if (empty($row)) {
     if (!$row) {
@@ -120,7 +120,7 @@ if ($mode=="UPD") {
     }
 } else {
     //    if(!empty($userid)) {
-    if($code) {
+    if($item_code) {
         JsUtil::alertBack("잘못된 경로로 접근하였습니다. (ErrCode:0x04)   ");
         exit;
     }
@@ -150,7 +150,7 @@ function reset_Select2(){
 			<!-- 202112123 등록하기(s) -->
             <div class="gp_rig_search">
                 <div style="padding-left:20px;">
-                    <h3 class="wrt_icon_search">상품 등록하기</h3>
+                    <h3 class="wrt_icon_search">품목 등록하기</h3>
                     <!--<ul class="icon_Btn">
                         <li><a href="#">조회</a></li>  
                         <li><a href="#">추가</a></li>
@@ -187,9 +187,31 @@ if ($mode=="UPD") {
                                 </td>
                             </tr>
                             <tr>
+                                <th>품목(옵션)코드</th>
+                                <td>
+<?php
+if ($mode=="UPD") {
+?>
+									<div style="height:30px;vertical-align:middle;padding:0 10px;margin:3px 0px;line-height:29px;"><?=$row['item_code']?><input type="hidden" value="<?=$row['item_code']?>" name="item_code" /></div>
+<?php
+} else {
+?>    									
+    								<input type="text" name="item_code" value="" placeholder="품목(옵션)코드를 입력하세요." style="width: 200px">
+<?php
+}
+?>
+                                </td>
+                            </tr>
+                            <tr>
                                 <th>상품명</th>
                                 <td>
                                     <input type="text" name="name" value="<?=$row['name']?>" placeholder="상품명을 입력하세요." style="width: 80%;">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>품목(옵션)명</th>
+                                <td>
+                                    <input type="text" name="item_name" value="<?=$row['item_name']?>" placeholder="품목(옵션)명을 입력하세요." style="width: 80%;">
                                 </td>
                             </tr>
                             <tr>
@@ -293,7 +315,7 @@ if ($mode=="UPD") {
 if ($mode=="UPD") {
 ?>
 					<div class="wrt_searchBtn" style="margin-right: 0;">
-						<a href="#" name="btnDel">삭제</a>
+						<a href="#" name="btnDel">비노출</a>
 					</div>
 <?php
 }
@@ -307,12 +329,14 @@ if ($mode=="UPD") {
 var mc_consult_submitted = false;
 
 $(document).on("click","a[name=btnSave]",function() {
-//	if(mc_consult_submitted == true) { return false; }
+	if(mc_consult_submitted == true) { return false; }
 	
 	var f = document.writeForm;
 
 	if ( VC_inValidText(f.code, "상품코드") ) return false;
 	if ( VC_inValidText(f.name, "상품명") ) return false;
+	if ( VC_inValidText(f.item_code, "품목(옵션)코드") ) return false;
+	if ( VC_inValidText(f.item_name, "품목(옵션)명") ) return false;
 	
 	if ( VC_isUnselect(f.imb_idx, "브랜드") ) return false;
 	if ( VC_isUnselect(f.cate1_idx, "카테고리") ) return false;
@@ -326,7 +350,7 @@ $(document).on("click","a[name=btnSave]",function() {
 });
 
 $(document).on("click","a[name=btnDel]",function() {
-	if (!confirm("정말 삭제하시겠습니까?    ")) {
+	if (!confirm("정말 비노출하시겠습니까?    ")) {
 		return false;
 	}
 	

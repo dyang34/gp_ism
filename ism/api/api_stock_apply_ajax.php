@@ -6,7 +6,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/UpdateQuery.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/JsUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/login/LoginManager.php";
-require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsItemMgr.php";
 
 define('KEY', 'nCa3qJ5klW3pMjnW'); //128bit (16자리)
 define('KEY_128', substr(KEY, 0, 128 / 8)); //256bit (32자리)
@@ -84,12 +84,12 @@ if($cnt_stock >= 0) {
     $uq->add("stock_qty", $cnt_stock);
     $uq->addNotQuot("stock_apply_date", "now()");
     
-    GoodsMgr::getInstance()->edit($uq, $item_code);
+    GoodsItemMgr::getInstance()->edit($uq, $item_code);
     
     $cnt_applied++;
 }
 
-$row = GoodsMgr::getInstance()->getByKey($item_code);
+$row = GoodsItemMgr::getInstance()->getByKey($item_code);
 $rtnVal["stock_qty"] = $row["stock_qty"];
 $rtnVal["stock_apply_date"] = $row["stock_apply_date"];
 

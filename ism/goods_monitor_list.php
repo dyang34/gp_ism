@@ -4,7 +4,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/blm_default_set.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/RequestUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/Page.php";
-require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsItemMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/brand/BrandMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/category/CategoryMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/basic/BasicDataMgr.php";
@@ -147,7 +147,7 @@ if ($_order_by=="cate1_name") {
 
 $wq->addOrderBy("reg_date", "desc");
 
-$rs = GoodsMgr::getInstance()->getListPerPage2($wq, $pg);
+$rs = GoodsItemMgr::getInstance()->getListPerPage2($wq, $pg);
 
 include $_SERVER['DOCUMENT_ROOT']."/ism/include/head.php";
 include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
@@ -483,7 +483,7 @@ $(document).on("click","a[name=btnApplyStock]",function() {
                     alert("옵션코드 에러입니다.    ");
                     break;                    
                 case "no_data" :
-                    alert("해당 제품코드의 재고를 찾을 수 없습니다.    ");
+                    alert("해당 품목코드의 재고를 찾을 수 없습니다.    ");
                     break;                    
                 case "error" :
                     alert("시스템 연동시 에러가 발생하였습니다.    ");
