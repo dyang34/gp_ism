@@ -376,6 +376,8 @@ if($rs->num_rows > 0) {
     			<?=$pg->getNaviForFuncGP("goPage", "<<", "<", ">", ">>")?>
     		</div>
 
+<a href="#none" onclick="javascript:goPageTop();"  style="position: fixed; right: 31px; bottom: 31px; width: 67px; height: 67px; line-height: 70px; background-color: #313A3D; border: none; border-radius: 50%; z-index: 999; box-sizing: border-box; color: #fff; letter-spacing: .3px; text-align: center;">TOP<img src="/ism/images/common/top.png" alt="" style=" margin: -2px 0 0 2px;"/></a>
+
 <script type="text/javascript">
 
 $(document).on('change','.sel_category',function() {
