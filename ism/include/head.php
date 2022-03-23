@@ -22,4 +22,5 @@ error_reporting(E_ALL ^ E_NOTICE);
         <link type="text/css" rel="stylesheet" href="/ism/css/category_style.css?t=<?php echo time(); ?>" />
         
         <script type="text/javascript" src="/ism/js/jquery-3.4.1.min.js"></script>
+        <script type="text/javascript" src="/ism/js/common.js"></script>
     </head>
