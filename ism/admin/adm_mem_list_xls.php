@@ -37,6 +37,8 @@ th{font-size:11px;text-align:center;color:white;background-color:#000081;}
 		<th style="color:white;background-color:#000081;">아이디</th>
 		<th style="color:white;background-color:#000081;">이름</th>
 		<th style="color:white;background-color:#000081;">권한</th>
+		<th style="color:white;background-color:#000081;">관리 원가 노출</th>
+		<th style="color:white;background-color:#000081;">외부 접속</th>
 		<th style="color:white;background-color:#000081;">등록일</th>
 	</tr>
 <?php
@@ -49,6 +51,8 @@ if($rs->num_rows > 0) {
                         <td><?=$row["userid"]?></td>
                         <td><?=$row["iam_name"]?></td>
                         <td><?=$arrMemGrade[$row["iam_grade"]]?></td>
+						<td><?=$row["iam_fg_cost"]>0?"<font color='blue'>노출</font>":"<font color='gray'>비노출</font>"?></td>
+						<td><?=$row["iam_fg_outside"]>0?"<font color='blue'>가능</font>":"<font color='gray'>불가</font>"?></td>
                         <td><?=$row["reg_date"]?></td>
                     </tr>
 <?php

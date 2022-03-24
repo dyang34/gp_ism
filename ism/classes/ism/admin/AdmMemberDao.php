@@ -18,7 +18,7 @@ class AdmMemberDao extends A_Dao
 
 	function selectByKey($db, $key) {
 		 
-		$sql =" select userid, iam_name, iam_grade, iam_fg_del, iam_last_login, reg_date "
+		$sql =" select userid, iam_name, iam_grade, iam_fg_del, iam_last_login, reg_date, iam_fg_cost, iam_fg_outside "
 			 ." from ism_adm_member "
 			 ." where userid = ".$this->quot($db, $key)
 		 	 ;
@@ -36,7 +36,7 @@ class AdmMemberDao extends A_Dao
 
 	function selectByKeyForLogin($db, $key) {
 	    
-	    $sql =" select userid, iam_name, iam_grade, iam_fg_del, iam_last_login, reg_date "
+	    $sql =" select userid, iam_name, iam_grade, iam_fg_del, iam_last_login, reg_date, iam_fg_cost, iam_fg_outside "
 	        ." from ism_adm_member "
             ." where userid = ".$this->quot($db, $key)
         ;
@@ -54,7 +54,7 @@ class AdmMemberDao extends A_Dao
 	
 	function selectFirst($db, $wq) {
 
-		$sql =" select userid, iam_name, iam_grade, iam_fg_del, iam_last_login, reg_date "
+		$sql =" select userid, iam_name, iam_grade, iam_fg_del, iam_last_login, reg_date, iam_fg_cost, iam_fg_outside "
 			 ." from ism_adm_member"
 			 .$wq->getWhereQuery()
 			 .$wq->getOrderByQuery()
@@ -75,7 +75,7 @@ class AdmMemberDao extends A_Dao
 	function selectFirstForLogin($db, $wq) {
 	    
 	    
-	    $sql =" select userid, iam_name, iam_grade, iam_fg_del, iam_last_login, reg_date "
+	    $sql =" select userid, iam_name, iam_grade, iam_fg_del, iam_last_login, reg_date, iam_fg_cost, iam_fg_outside "
 	        ." from ism_adm_member"
             .$wq->getWhereQuery()
         ;
@@ -93,7 +93,7 @@ class AdmMemberDao extends A_Dao
 	
 	function select($db, $wq) {
 	    
-	    $sql =" select userid, iam_name, iam_grade, iam_fg_del, iam_last_login, reg_date "
+	    $sql =" select userid, iam_name, iam_grade, iam_fg_del, iam_last_login, reg_date, iam_fg_cost, iam_fg_outside "
 	         ." from ism_adm_member"
 	         .$wq->getWhereQuery()
 	         .$wq->getOrderByQuery()
@@ -105,7 +105,7 @@ class AdmMemberDao extends A_Dao
 	function selectPerPage($db, $wq, $pg) {
 		
 		$sql =" select @rnum:=@rnum+1 as rnum, r.* from ("
-			 ."		select @rnum:=0, userid, iam_name, iam_grade, iam_fg_del, iam_last_login, reg_date "
+			 ."		select @rnum:=0, userid, iam_name, iam_grade, iam_fg_del, iam_last_login, reg_date, iam_fg_cost, iam_fg_outside "
 			 ."		from ism_adm_member"
 	         .$wq->getWhereQuery()
 	         .$wq->getOrderByQuery()
@@ -166,11 +166,13 @@ class AdmMemberDao extends A_Dao
 	
 	function insert($db, $arrVal) {
 	    
-	    $sql =" insert ism_adm_member(userid, passwd, iam_name, iam_grade, reg_date)"
+	    $sql =" insert ism_adm_member(userid, passwd, iam_name, iam_grade, iam_fg_cost, iam_fg_outside, reg_date)"
 	        ." values ('".$this->checkMysql($db, $arrVal["userid"])
 	        ."', password('".$this->checkMysql($db, $arrVal["passwd"])."')"
 	            .", '".$this->checkMysql($db, $arrVal["iam_name"])
 	            ."', '".$this->checkMysql($db, $arrVal["iam_grade"])
+	            ."', '".$this->checkMysql($db, $arrVal["iam_fg_cost"])
+	            ."', '".$this->checkMysql($db, $arrVal["iam_fg_outside"])
 	            ."', now())"
 	                ;
 	                

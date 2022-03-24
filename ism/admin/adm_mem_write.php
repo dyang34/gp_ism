@@ -114,6 +114,24 @@ for($ii=0;$ii<count($arrMemGrade);$ii++) {
                 					</select>
                                 </td>
                             </tr>
+                            <tr>
+                                <th>관리 원가 노출</th>
+                                <td>
+                					<select name="iam_fg_cost" class="select_brand">
+										<option value="0" <?=$row['iam_fg_cost']=="0"?"selected":""?>>비노출</option>
+										<option value="1" <?=$row['iam_fg_cost']=="1"?"selected":""?>>노출</option>
+                					</select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>외부 접속</th>
+                                <td>
+                					<select name="iam_fg_outside" class="select_brand">
+										<option value="0" <?=$row['iam_fg_outside']=="0"?"selected":""?>>불가</option>
+										<option value="1" <?=$row['iam_fg_outside']=="1"?"selected":""?>>가능</option>
+                					</select>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
 				</form>
@@ -158,11 +176,11 @@ if ($mode=="INS") {
 	
 	
 	//var reg_engnum = /^[A-Za-z0-9+]{4,20}$/;
-	var reg_engnum = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{4,20}$/
+	var reg_engnum = /^[A-Za-z0-9+\d$@$!%*#?&]{4,20}$/;
 	
 	if (f.passwd.value!="") {
     	if (!reg_engnum.test(f.passwd.value)) {
-            alert("비밀번호는 숫자와 영문, 일부 특수문자(!@#$%^&*)만 가능하며, 4~20자리여야 합니다.    ");
+            alert("비밀번호는 숫자와 영문, 일부 특수문자($@$!%*#?&)만 가능하며, 4~20자리여야 합니다.    ");
             f.passwd.focus();
             return;
     	}

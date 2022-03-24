@@ -18,6 +18,8 @@ $userid = RequestUtil::getParam("userid", "");
 $passwd = RequestUtil::getParam("passwd", "");
 $iam_name = RequestUtil::getParam("iam_name", "");
 $iam_grade = RequestUtil::getParam("iam_grade", "");
+$iam_fg_cost = RequestUtil::getParam("iam_fg_cost", "");
+$iam_fg_outside = RequestUtil::getParam("iam_fg_outside", "");
 
 $auto_defense = RequestUtil::getParam("auto_defense", "");
 
@@ -57,6 +59,8 @@ try {
         $arrIns["passwd"] = $passwd;
         $arrIns["iam_name"] = $iam_name;
         $arrIns["iam_grade"] = $iam_grade;
+        $arrIns["iam_fg_cost"] = $iam_fg_cost;
+        $arrIns["iam_fg_outside"] = $iam_fg_outside;
         
         AdmMemberMgr::getInstance()->add($arrIns);
         
@@ -83,6 +87,8 @@ try {
         $uq = new UpdateQuery();
         $uq->add("iam_name", $iam_name);
         $uq->add("iam_grade", $iam_grade);
+        $uq->add("iam_fg_cost", $iam_fg_cost);
+        $uq->add("iam_fg_outside", $iam_fg_outside);
         
         if (!empty($passwd)) {
             $uq->addWithBind("passwd", $passwd, "password('?')");

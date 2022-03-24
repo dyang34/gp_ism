@@ -128,6 +128,8 @@ for($ii=0;$ii<count($arrMemGrade);$ii++) {
                         <th>아이디</th>
                         <th>이름</th>
                         <th>권한</th>
+                        <th>관리 원가 노출</th>
+                        <th>외부 접속</th>
                         <th>등록일</th>
                     </tr>
                 </thead>
@@ -142,13 +144,15 @@ if($rs->num_rows > 0) {
                         <td><a href="./adm_mem_write.php?mode=UPD&userid=<?=$row["userid"]?>"><?=$row["userid"]?></a></td>
                         <td><?=$row["iam_name"]?></td>
                         <td style="text-align:center;"><?=$arrMemGrade[$row["iam_grade"]]?></td>
+						<td style="text-align:center;"><?=$row["iam_fg_cost"]>0?"<font color='blue'>노출</font>":"<font color='gray'>비노출</font>"?></td>
+						<td style="text-align:center;"><?=$row["iam_fg_outside"]>0?"<font color='blue'>가능</font>":"<font color='gray'>불가</font>"?></td>
                         <td style="text-align:center;"><?=$row["reg_date"]?></td>
                     </tr>
 <?php
     }
 } else {
 ?>
-					<tr><td colspan="5" style="text-align:center;">No Data.</td></tr>
+					<tr><td colspan="7" style="text-align:center;">No Data.</td></tr>
 <?php
 }
 ?>                
