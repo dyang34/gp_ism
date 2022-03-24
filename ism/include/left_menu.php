@@ -7,9 +7,11 @@
                 <a href='#' class="btn <?=$menuCate==1?"on":""?>">판매 통계<span></span></a>
                 <div class="subMenu">
                     <a href="/ism/order_list.php " class="<?=$menuNo==1?"on":""?>">- 판매 내역</a>
+<?php /*                    
                     <a href="/ism/order_list_by_channel.php" class="<?=$menuNo==2?"on":""?>">- 채널별 집계</a>
                     <a href="/ism/order_list_by_brand.php" class="<?=$menuNo==11?"on":""?>">- 브랜드별 집계</a>
                     <a href="/ism/order_list_by_category.php" class="<?=$menuNo==12?"on":""?>">- 카테고리별 집계</a>
+*/?>
                     <a href="/ism/order_list_aggr.php" class="<?=$menuNo==22?"on":""?>">- 통합 판매 집계</a>
                     <a href="/ism/goods_monitor_list.php" class="<?=$menuNo==23?"on":""?>">- 품목 리스트</a>
     			</div>
