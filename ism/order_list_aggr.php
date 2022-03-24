@@ -411,7 +411,7 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                             </tr>
                             <tr>
                             	<th>품목(옵션)코드</th>
-                            	<td><input type="text" placeholder="품목(옵션)명으로 검색" name="_item_code" style="width: 100%;" value=<?=$_item_code?>></td>
+                            	<td><input type="text" placeholder="품목(옵션)코드로 검색" name="_item_code" style="width: 100%;" value=<?=$_item_code?>></td>
                             	<th>품목(옵션)명</th>
                             	<td colspan="3"><input type="text" placeholder="품목(옵션)명으로 검색" name="_item_name" style="width: 100%;" value=<?=$_item_name?>></td>
                             </tr>
@@ -645,15 +645,76 @@ if ($rs->num_rows > 0) {
         if ($_grp_day_type=="grp_order_date_day") {
             $idx_day_of_week = date('w', strtotime(substr($row["order_date"],0,10)));
             $date_txt = substr($row["order_date"],0,10)." ".$arrDayOfWeek[$idx_day_of_week];
+            
+            $order_list_link_param = "_order_date_from=".substr($row["order_date"],0,10);
+            $order_list_link_param .= "&_order_date_to=".substr($row["order_date"],0,10);
+            
         } else if ($_grp_day_type=="grp_order_date_week") {
             $date_txt = $row["order_date"];
+            
+            $order_list_link_param = "_order_date_from=".substr($row["order_date"],0,10);
+            $order_list_link_param .= "&_order_date_to=".substr($row["order_date"],18,10);
+            
         } else {
             $date_txt = substr($row["order_date"],0,7);
+            
+            $order_list_link_param = "_order_date_from=".substr($row["order_date"],0,7)."-01";
+            $order_list_link_param .= "&_order_date_to=".date("Y-m-t", strtotime(substr($row["order_date"],0,7)."-01"));
         }
 ?>
                     
                     <tr>
-                        <td class="tbl_first txt_c" style="<?=$idx_day_of_week=="6"?"color:blue;":($idx_day_of_week=="0"?"color:red;":"")?>"><?=$date_txt?></td>
+                        <td class="tbl_first txt_c" style="<?=$idx_day_of_week=="6"?"color:blue;":($idx_day_of_week=="0"?"color:red;":"")?>">
+<?php
+
+if (in_array("grp_goods", $arrGroupBy)) {
+    $order_list_link_param .= "&_goods_mst_code=".$row["code"];
+}
+
+if (in_array("grp_item", $arrGroupBy)) {
+    $order_list_link_param .= "&_item_code=".$row["item_code"];
+}
+
+if (in_array("grp_cate1", $arrGroupBy)) {
+    $order_list_link_param .= "&_cate1_idx=".$row["cate1_idx"];
+}
+
+if (in_array("grp_cate2", $arrGroupBy)) {
+    $order_list_link_param .= "&_cate1_idx=".$row["cate1_idx"];
+    $order_list_link_param .= "&_cate2_idx=".$row["cate2_idx"];
+}
+
+if (in_array("grp_cate3", $arrGroupBy)) {
+    $order_list_link_param .= "&_cate1_idx=".$row["cate1_idx"];
+    $order_list_link_param .= "&_cate2_idx=".$row["cate2_idx"];
+    $order_list_link_param .= "&_cate3_idx=".$row["cate3_idx"];
+}
+
+if (in_array("grp_cate4", $arrGroupBy)) {
+    $order_list_link_param .= "&_cate1_idx=".$row["cate1_idx"];
+    $order_list_link_param .= "&_cate2_idx=".$row["cate2_idx"];
+    $order_list_link_param .= "&_cate3_idx=".$row["cate3_idx"];
+    $order_list_link_param .= "&_cate4_idx=".$row["cate4_idx"];
+}
+
+if (in_array("grp_brand", $arrGroupBy)) {
+    $order_list_link_param .= "&_imb_idx=".$row["imb_idx"];
+}
+
+if (in_array("grp_channel", $arrGroupBy)) {
+    $order_list_link_param .= "&_imc_idx=".$row["imc_idx"];
+}
+
+if (in_array("grp_order_type", $arrGroupBy)) {
+    $order_list_link_param .= "&_order_type=".$row["order_type"];
+}
+
+if (in_array("grp_tax_type", $arrGroupBy)) {
+    $order_list_link_param .= "&_tax_type=".$row["tax_type"];
+}
+?>
+                        <a href="./order_list.php?<?=$order_list_link_param?>" target="_blank"><?=$date_txt?></a>
+                        </td>
                         
 <?php 
             if (in_array("grp_goods", $arrGroupBy)) {
@@ -769,10 +830,10 @@ $(document).on("click","a[name=btnSearch]",function() {
 	var fromDate = new Date(arrFromDate[0],arrFromDate[1]-1,arrFromDate[2]);
 	var toDate = new Date(arrToDate[0],arrToDate[1]-1,arrToDate[2]);
 
-	toDate.setMonth(toDate.getMonth()-6);
+	toDate.setMonth(toDate.getMonth()-12);
 	
 	if (fromDate < toDate) {
-		alert("최대 6개월 단위로 조회하실 수 있습니다.    ");
+		alert("최대 12개월 단위로 조회하실 수 있습니다.    ");
 		f._order_date_from.focus();
 	
 		return false;

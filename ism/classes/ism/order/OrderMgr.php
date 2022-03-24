@@ -101,7 +101,7 @@ class OrderMgr extends A_Mgr
                         $add_select1 .= ",concat(DATE_FORMAT(DATE_SUB(order_date, INTERVAL (DAYOFWEEK(order_date)-1) DAY), '%Y-%m-%d'),'~',DATE_FORMAT(DATE_SUB(order_date, INTERVAL (DAYOFWEEK(order_date)-7) DAY), '%Y-%m-%d')) as order_date";
 */                        
                         $group_by .= ",date_format(order_date, '%Y-%u')";
-                        $add_select1 .= ",concat(DATE_FORMAT(DATE_SUB(order_date, INTERVAL (DAYOFWEEK(order_date)-2) DAY), '%Y-%m-%d'),' <br/>~ ',DATE_FORMAT(DATE_SUB(order_date, INTERVAL (DAYOFWEEK(order_date)-8) DAY), '%Y-%m-%d')) as order_date";
+                        $add_select1 .= ",concat(DATE_FORMAT(DATE_SUB(order_date, INTERVAL (DAYOFWEEK(order_date)-2-(case when DAYOFWEEK(order_date)=1 then -7 ELSE 0 end)) DAY), '%Y-%m-%d'),' <br/>~ ',DATE_FORMAT(DATE_SUB(order_date, INTERVAL (DAYOFWEEK(order_date)-8-(case when DAYOFWEEK(order_date)=1 then -7 ELSE 0 end)) DAY), '%Y-%m-%d')) as order_date";
                         break;
                     case "grp_order_date_month":
                         $group_by .= ",date_format(order_date, '%Y-%m')";
@@ -260,7 +260,7 @@ class OrderMgr extends A_Mgr
                          $add_select1 .= ",concat(DATE_FORMAT(DATE_SUB(order_date, INTERVAL (DAYOFWEEK(order_date)-1) DAY), '%Y-%m-%d'),'~',DATE_FORMAT(DATE_SUB(order_date, INTERVAL (DAYOFWEEK(order_date)-7) DAY), '%Y-%m-%d')) as order_date";
                          */
                         $group_by .= ",date_format(order_date, '%Y-%u')";
-                        $add_select1 .= ",concat(DATE_FORMAT(DATE_SUB(order_date, INTERVAL (DAYOFWEEK(order_date)-2) DAY), '%Y-%m-%d'),' <br/>~ ',DATE_FORMAT(DATE_SUB(order_date, INTERVAL (DAYOFWEEK(order_date)-8) DAY), '%Y-%m-%d')) as order_date";
+                        $add_select1 .= ",concat(DATE_FORMAT(DATE_SUB(order_date, INTERVAL (DAYOFWEEK(order_date)-2-(case when DAYOFWEEK(order_date)=1 then -7 ELSE 0 end)) DAY), '%Y-%m-%d'),' <br/>~ ',DATE_FORMAT(DATE_SUB(order_date, INTERVAL (DAYOFWEEK(order_date)-8-(case when DAYOFWEEK(order_date)=1 then -7 ELSE 0 end)) DAY), '%Y-%m-%d')) as order_date";
                         break;
                     case "grp_order_date_month":
                         $group_by .= ",date_format(order_date, '%Y-%m')";
