@@ -652,14 +652,45 @@ if ($rs->num_rows > 0) {
         } else if ($_grp_day_type=="grp_order_date_week") {
             $date_txt = $row["order_date"];
             
-            $order_list_link_param = "_order_date_from=".substr($row["order_date"],0,10);
-            $order_list_link_param .= "&_order_date_to=".substr($row["order_date"],18,10);
+            $weekly_start_date = substr($row["order_date"],0,10);
+            $weekly_end_date = substr($row["order_date"],18,10);
+            
+            if($weekly_start_date < $_order_date_from) {
+                $weekly_start_date = $_order_date_from;
+            }
+
+            if($weekly_end_date > $_order_date_to) {
+                $weekly_end_date = $_order_date_to;
+            }
+            
+            $date_txt = $weekly_start_date."
+ ~".$weekly_end_date;
+            
+            $order_list_link_param = "_order_date_from=".$weekly_start_date;
+            $order_list_link_param .= "&_order_date_to=".$weekly_end_date;
             
         } else {
             $date_txt = substr($row["order_date"],0,7);
             
-            $order_list_link_param = "_order_date_from=".substr($row["order_date"],0,7)."-01";
-            $order_list_link_param .= "&_order_date_to=".date("Y-m-t", strtotime(substr($row["order_date"],0,7)."-01"));
+            $monthly_start_date = substr($row["order_date"],0,7)."-01";
+            $monthly_end_date = date("Y-m-t", strtotime(substr($row["order_date"],0,7)."-01"));
+            
+            if ($monthly_start_date < $_order_date_from || $monthly_end_date > $_order_date_to) {
+                if($monthly_start_date < $_order_date_from) {
+                    $monthly_start_date = $_order_date_from;
+                }
+                
+                if($monthly_end_date > $_order_date_to) {
+                    $monthly_end_date = $_order_date_to;
+                }
+            
+                $date_txt = $monthly_start_date."
+ ~".$monthly_end_date;
+                
+            }
+            
+            $order_list_link_param = "_order_date_from=".$monthly_start_date;
+            $order_list_link_param .= "&_order_date_to=".$monthly_end_date;
         }
 ?>
                     
