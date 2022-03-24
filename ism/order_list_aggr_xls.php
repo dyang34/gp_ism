@@ -232,7 +232,6 @@ if ($rs->num_rows > 0) {
             $idx_day_of_week = date('w', strtotime(substr($row["order_date"],0,10)));
             $date_txt = substr($row["order_date"],0,10)." ".$arrDayOfWeek[$idx_day_of_week];
         } else if ($_grp_day_type=="grp_order_date_week") {
-            $date_txt = str_replace("<br/>","",$row["order_date"]);
             
             $weekly_start_date = substr($row["order_date"],0,10);
             $weekly_end_date = substr($row["order_date"],18,10);
@@ -245,8 +244,7 @@ if ($rs->num_rows > 0) {
                 $weekly_end_date = $_order_date_to;
             }
             
-            $date_txt = $weekly_start_date."
- ~".$weekly_end_date;
+            $date_txt = $weekly_start_date." ~ ".$weekly_end_date;
             
         } else {
             $date_txt = substr($row["order_date"],0,7);
@@ -263,8 +261,7 @@ if ($rs->num_rows > 0) {
                     $monthly_end_date = $_order_date_to;
                 }
                 
-                $date_txt = $monthly_start_date."
- ~".$monthly_end_date;
+                $date_txt = $monthly_start_date." ~ ".$monthly_end_date;
                 
             }
         }

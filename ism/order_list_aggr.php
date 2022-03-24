@@ -650,7 +650,6 @@ if ($rs->num_rows > 0) {
             $order_list_link_param .= "&_order_date_to=".substr($row["order_date"],0,10);
             
         } else if ($_grp_day_type=="grp_order_date_week") {
-            $date_txt = $row["order_date"];
             
             $weekly_start_date = substr($row["order_date"],0,10);
             $weekly_end_date = substr($row["order_date"],18,10);
@@ -663,8 +662,7 @@ if ($rs->num_rows > 0) {
                 $weekly_end_date = $_order_date_to;
             }
             
-            $date_txt = $weekly_start_date."
- ~".$weekly_end_date;
+            $date_txt = $weekly_start_date."<br/>~ ".$weekly_end_date;
             
             $order_list_link_param = "_order_date_from=".$weekly_start_date;
             $order_list_link_param .= "&_order_date_to=".$weekly_end_date;
@@ -684,8 +682,7 @@ if ($rs->num_rows > 0) {
                     $monthly_end_date = $_order_date_to;
                 }
             
-                $date_txt = $monthly_start_date."
- ~".$monthly_end_date;
+                $date_txt = $monthly_start_date."<br/>~ ".$monthly_end_date;
                 
             }
             
