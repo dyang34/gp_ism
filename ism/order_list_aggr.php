@@ -741,6 +741,8 @@ if (in_array("grp_order_type", $arrGroupBy)) {
 if (in_array("grp_tax_type", $arrGroupBy)) {
     $order_list_link_param .= "&_tax_type=".$row["tax_type"];
 }
+
+$order_list_link_param .= "&_except_cancel=1";
 ?>
                         <a href="./order_list.php?<?=$order_list_link_param?>" target="_blank"><?=$date_txt?></a>
                         </td>

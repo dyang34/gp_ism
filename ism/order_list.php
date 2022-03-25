@@ -30,6 +30,7 @@ $_goods_mst_code = RequestUtil::getParam("_goods_mst_code", "");
 $_goods_name = RequestUtil::getParam("_goods_name", "");
 $_item_code = RequestUtil::getParam("_item_code", "");
 $_item_name = RequestUtil::getParam("_item_name", "");
+$_except_cancel = RequestUtil::getParam("_except_cancel", "");
 
 $_order_by = RequestUtil::getParam("_order_by", "order_date");
 $_order_by_asc = RequestUtil::getParam("_order_by_asc", "desc");
@@ -162,6 +163,10 @@ $wq->addAndString("a.item_code", "=", $_item_code);
 
 $wq->addAndLike("name",$_goods_name);
 $wq->addAndLike("item_name",$_item_name);
+
+if($_except_cancel) {
+    $wq->addAndNotIn("status", array("취소접수","취소완료","삭제"));
+}
 
 $wq->addOrderBy($_order_by, $_order_by_asc);
 
@@ -321,7 +326,9 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                             	<th>품목(옵션)코드</th>
                             	<td><input type="text" placeholder="품목(옵션)명으로 검색" name="_item_code" style="width: 100%;" value=<?=$_item_code?>></td>
                             	<th>품목(옵션)명</th>
-                            	<td colspan="3"><input type="text" placeholder="품목(옵션)명으로 검색" name="_item_name" style="width: 100%;" value=<?=$_item_name?>></td>
+                            	<td><input type="text" placeholder="품목(옵션)명으로 검색" name="_item_name" style="width: 100%;" value=<?=$_item_name?>></td>
+                            	<th>상태</th>
+                            	<td><input type="checkbox" value="1" name="_except_cancel" id="_except_cancel" <?=$_except_cancel?"checked='checked'":""?>><label for="_except_cancel">취소/삭제 주문 제외</label></td>
                             </tr>
                         </tbody>
                     </table>

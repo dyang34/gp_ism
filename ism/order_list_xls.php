@@ -21,6 +21,7 @@ $_goods_mst_code = RequestUtil::getParam("_goods_mst_code", "");
 $_goods_name = RequestUtil::getParam("_goods_name", "");
 $_item_code = RequestUtil::getParam("_item_code", "");
 $_item_name = RequestUtil::getParam("_item_name", "");
+$_except_cancel = RequestUtil::getParam("_except_cancel", "");
 
 $_order_by = RequestUtil::getParam("_order_by", "order_date");
 $_order_by_asc = RequestUtil::getParam("_order_by_asc", "desc");
@@ -43,6 +44,10 @@ $wq->addAndString("a.item_code", "=", $_item_code);
 
 $wq->addAndLike("name",$_goods_name);
 $wq->addAndLike("item_name",$_item_name);
+
+if($_except_cancel) {
+    $wq->addAndNotIn("status", array("취소접수","취소완료","삭제"));
+}
 
 $wq->addOrderBy($_order_by, $_order_by_asc);
 
