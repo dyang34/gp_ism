@@ -55,7 +55,7 @@ if($mode=="login"){
             //$key = md5($_SERVER["SERVER_ADDR"] . $_SERVER["REMOTE_ADDR"] . $_SERVER["HTTP_USER_AGENT"] . $row["passwd"]);
             
             CookieUtil::setCookieP3pMd5('ism_adm_ck_userid', $row["userid"], 86400 * 31);
-            CookieUtil::setCookieP3pMd5('ism_adm_ck_auto', "blm_auto_login", 86400 * 31);
+            CookieUtil::setCookieP3pMd5('ism_adm_ck_auto', "ism_adm_auto_login", 86400 * 31);
             //CookieUtil::setCookieP3pMd5('blm_ck_auto', $key, 86400 * 31);
             
         } else{

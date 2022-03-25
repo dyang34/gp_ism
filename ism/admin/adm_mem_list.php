@@ -117,6 +117,8 @@ for($ii=0;$ii<count($arrMemGrade);$ii++) {
 					<a href="#none" name="_btn_sort" order_by="iam_name" order_by_asc="desc" class="<?=$_order_by=="name" && $_order_by_asc=="desc"?"on":""?>">이름<em>▼</em></a>
 					<a href="#none" name="_btn_sort" order_by="iam_grade" order_by_asc="asc" class="<?=$_order_by=="iam_grade" && $_order_by_asc=="asc"?"on":""?>">권한<em>▲</em></a>
 					<a href="#none" name="_btn_sort" order_by="iam_grade" order_by_asc="desc" class="<?=$_order_by=="iam_grade" && $_order_by_asc=="desc"?"on":""?>">권한<em>▼</em></a>
+					<a href="#none" name="_btn_sort" order_by="iam_last_login" order_by_asc="asc" class="<?=$_order_by=="iam_last_login" && $_order_by_asc=="asc"?"on":""?>">최종로그인<em>▲</em></a>
+					<a href="#none" name="_btn_sort" order_by="iam_last_login" order_by_asc="desc" class="<?=$_order_by=="iam_last_login" && $_order_by_asc=="desc"?"on":""?>">최종로그인<em>▼</em></a>
 				</p>
 			</div>
            
@@ -130,6 +132,7 @@ for($ii=0;$ii<count($arrMemGrade);$ii++) {
                         <th>권한</th>
                         <th>관리 원가 노출</th>
                         <th>외부 접속</th>
+                        <th>최종 로그인</th>
                         <th>등록일</th>
                     </tr>
                 </thead>
@@ -146,13 +149,14 @@ if($rs->num_rows > 0) {
                         <td style="text-align:center;"><?=$arrMemGrade[$row["iam_grade"]]?></td>
 						<td style="text-align:center;"><?=$row["iam_fg_cost"]>0?"<font color='blue'>노출</font>":"<font color='gray'>비노출</font>"?></td>
 						<td style="text-align:center;"><?=$row["iam_fg_outside"]>0?"<font color='blue'>가능</font>":"<font color='gray'>불가</font>"?></td>
+						<td style="text-align:center;"><?=$row["iam_last_login"]?></td>
                         <td style="text-align:center;"><?=$row["reg_date"]?></td>
                     </tr>
 <?php
     }
 } else {
 ?>
-					<tr><td colspan="7" style="text-align:center;">No Data.</td></tr>
+					<tr><td colspan="8" style="text-align:center;">No Data.</td></tr>
 <?php
 }
 ?>                

@@ -1,5 +1,5 @@
 <?php 
-require_once $_SERVER['DOCUMENT_ROOT']."/classes/cms/util/CookieUtil.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/CookieUtil.php";
 
 CookieUtil::removeCookieMd5("ism_adm_ck_auto");
 CookieUtil::removeCookieMd5("ism_adm_ck_userid");
