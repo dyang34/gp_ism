@@ -152,6 +152,7 @@ if($_cate3_idx && $_cate3_idx > 0) {
 }
 
 $wq = new WhereQuery(true, true);
+$wq->addAndNotIn("status", array("취소접수","취소완료","삭제"));
 $wq->addAndString("order_date", ">=", $_order_date_from);
 $wq->addAndStringBind("order_date", "<", $_order_date_to, "date_add('?', interval 1 day)");
 $wq->addAndString("imc_idx", "=", $_imc_idx);

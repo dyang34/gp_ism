@@ -35,6 +35,7 @@ $_order_by_asc = RequestUtil::getParam("_order_by_asc", "desc");
 $arrDayOfWeek = array("일","월","화","수","목","금","토");
 
 $wq = new WhereQuery(true, true);
+$wq->addAndNotIn("status", array("취소접수","취소완료","삭제"));
 $wq->addAndString("order_date", ">=", $_order_date_from);
 $wq->addAndStringBind("order_date", "<", $_order_date_to, "date_add('?', interval 1 day)");
 $wq->addAndString("imc_idx", "=", $_imc_idx);
