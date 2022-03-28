@@ -59,12 +59,13 @@ class OrderDao extends A_Dao
 	function select($db, $wq) {
 	    
 	        //$sql =" select no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, a.item_code, order_no, order_no_mall, order_no_sub, order_no_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, a.reg_date, g.code, g.name, g.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3 "
-	            $sql =" select order_date, channel, amount, ea, a.item_code, order_no, price_collect, status, tax_type, grp_code, a.reg_date, g.code, g.name, gi.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3, imc_idx, order_no_mall "
+	            $sql =" select order_date, amount, ea, a.item_code, order_no, price_collect, status, tax_type, grp_code, a.reg_date, g.code, g.name, gi.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3, imc_idx, order_no_mall "
 	            ." ,(select name from ism_mst_brand b where b.imb_idx = g.imb_idx) as brand_name "
 	                ."		,(select title from ism_mst_category c1 where c1.imct_idx = g.cate1_idx) as cate1_name "
 	                    ."		,(select title from ism_mst_category c2 where c2.imct_idx = g.cate2_idx) as cate2_name "
 	                        ."		,(select title from ism_mst_category c3 where c3.imct_idx = g.cate3_idx) as cate3_name "
 	                            ."		,(select title from ism_mst_category c4 where c4.imct_idx = g.cate4_idx) as cate4_name "
+	                                ."		,(select name from ism_mst_channel cn where cn.imc_idx = a.imc_idx) as channel "
 	            ." from ism_order a "
 //	            ." left join ism_mst_goods g "   // 너무 느림.
 	            ." inner join ism_mst_goods_item gi "
@@ -105,8 +106,9 @@ class OrderDao extends A_Dao
 		
 		$sql =" select @rnum:=@rnum+1 as rnum, r.* from ("
 //			     ."		select @rnum:=0, no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, a.item_code, order_no, order_no_mall, order_no_sub, order_no_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, a.reg_date, g.code, g.name, g.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3 "
-			     ."		select @rnum:=0, order_date, channel, amount, ea, a.item_code, order_no, price_collect, status, tax_type, grp_code, a.reg_date, g.code, g.name, gi.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3, imc_idx "
+			     ."		select @rnum:=0, order_date, amount, ea, a.item_code, order_no, price_collect, status, tax_type, grp_code, a.reg_date, g.code, g.name, gi.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3, imc_idx "
 			         ." ,(select name from ism_mst_brand b where b.imb_idx = g.imb_idx) as brand_name "
+			             ."		,(select name from ism_mst_channel cn where cn.imc_idx = a.imc_idx) as channel "
 /*			             
 			             ."		,(select title from ism_mst_category c1 where c1.imct_idx = a.cate1_idx) as cate1_name "
 			                 ."		,(select title from ism_mst_category c2 where c2.imct_idx = a.cate2_idx) as cate2_name "
@@ -182,6 +184,52 @@ class OrderDao extends A_Dao
 	    */
 	    
         return $db->query($sql);
+	}
+	
+	function selectAggrSum($db, $wq) {
+	    
+	    $sql =" select sum(amount) amount, sum(ea) ea, sum(price_collect) price_collect, count(*) as cnt "
+	    ." from ism_order a "
+	    //                ." left join ism_mst_goods g "        // 너무 느림.
+	    ." inner join ism_mst_goods_item gi "
+	        ." on a.item_code = gi.item_code "
+	            ." and gi.imgi_fg_del = 0 "
+	                ." inner join ism_mst_goods g "
+	                    ." on gi.code = g.code "
+	                        ." and g.img_fg_del = 0 "
+	                            .$wq->getWhereQuery()
+	                                ;
+	                                
+	                                /*
+	                                 echo $sql =" select @rnum:=@rnum+1 as rnum, r.*  from ("
+	                                 //	        ."		select @rnum:=0, io_idx, no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, item_code, order_no, order_no_mall, order_no_sub, order_no_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, reg_date "
+	                                 
+	                                 ."	select @rnum:=0, r2.* ".$add_select2." from ("
+	                                 
+	                                 ."	select sum(amount) amount, sum(ea) ea, sum(price_collect) price_collect, count(*) as cnt ".$add_select1
+	                                 ." from ism_order a "
+	                                 //                ." left join ism_mst_goods g "        // 너무 느림.
+	                                 ." inner join ism_mst_goods g "
+	                                 ." on a.item_code = g.item_code "
+	                                 .$wq->getWhereQuery()
+	                                 ." group by ".$group_by
+	                                 ." ) r2"
+	                                 .$wq->getOrderByQuery()
+	                                 ."		limit ".$pg->getStartIdx().", ".$pg->getPageSize()
+	                                 ." ) r"
+	                                 ;
+	                                 */
+	                                
+        $row = null;
+        $result = $db->query($sql);
+        if ( $result->num_rows > 0 ) {
+            $row = $result->fetch_assoc();
+        }
+        
+        @ $result->free();
+        
+        return $row;
+	                            
 	}
 	
 	function selectAggrCount($db, $wq, $group_by) {
@@ -284,11 +332,11 @@ class OrderDao extends A_Dao
     	    ."', '".$this->checkMysql($db, $arrVal["ea"])
     	    ."', '".$this->checkMysql($db, $arrVal["price_collect"])
     	    ."', '".$this->checkMysql($db, $arrVal["tax_type"])
-    	    ."','2"
-            ."','21"
-    	    ."','도매판매"
+    	    ."', '".$this->checkMysql($db, $arrVal["order_type"])
+    	    ."', '".$this->checkMysql($db, $arrVal["imc_idx"])
+    	    ."', '".$this->checkMysql($db, $arrVal["status"])
     	    ."',concat('W',DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'),lpad(FLOOR(RAND()*1000),3,0))"
-    	    .",(select name from ism_mst_channel where imc_idx = 21)"
+            ."', '".$this->checkMysql($db, $arrVal["channel"])
     	    .",(select code from ism_mst_goods_item where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"
     	    .",(select name from ism_mst_goods_item gi inner join ism_mst_goods g on gi.code = g.code where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"
     	    .",(select item_name from ism_mst_goods_item where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"

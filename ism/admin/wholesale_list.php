@@ -29,13 +29,25 @@ $_goods_mst_code = RequestUtil::getParam("_goods_mst_code", "");
 $_goods_name = RequestUtil::getParam("_goods_name", "");
 $_item_code = RequestUtil::getParam("_item_code", "");
 $_item_name = RequestUtil::getParam("_item_name", "");
+$_order_type = RequestUtil::getParam("_order_type", "");
 
 $_order_by = RequestUtil::getParam("_order_by", "order_date");
 $_order_by_asc = RequestUtil::getParam("_order_by_asc", "desc");
 
 $pg = new Page($currentPage, $pageSize);
 
-$arrChannel = $arrBrand = $arrCategory1 = $arrCategory2 = $arrCategory3 = $arrCategory4 = array();
+$arrChannel = $arrBrand = $arrCategory1 = $arrCategory2 = $arrCategory3 = $arrCategory4 = $arrSalesType = array();
+
+$wq = new WhereQuery(true, true);
+$wq->addAndString("imst_idx", "<>", "1");
+$rs = SalesTypeMgr::getInstance()->getList($wq);
+if ($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row = $rs->fetch_assoc();
+        
+        $arrSalesType[$row["imst_idx"]] = $row["title"];
+    }
+}
 
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("imc_fg_del","=","0");
@@ -153,7 +165,8 @@ $wq->addAndString("cate2_idx", "=", $_cate2_idx);
 $wq->addAndString("cate3_idx", "=", $_cate3_idx);
 $wq->addAndString("cate4_idx", "=", $_cate4_idx);
 $wq->addAndString("tax_type", "=", $_tax_type);
-$wq->addAndString("order_type","=","2");
+$wq->addAndString("order_type", "<>", "1");
+$wq->addAndString("order_type", "=", $_order_type);
 $wq->addAndString("goods_mst_code", "=", $_goods_mst_code);
 $wq->addAndString("a.item_code", "=", $_item_code);
 
@@ -287,10 +300,10 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                 					</select>
                                 </td>
 <?php /*                                
-								<th>채널</th>
+								<th>거래처(채널)</th>
                                 <td>
                                     <select name="_imc_idx" class="select_brand">
-                						<option value="">채널 선택</option>
+                						<option value="">거래처(채널) 선택</option>
                 						<?php
                 						foreach($arrChannel as $lt){
                 							?>
@@ -359,9 +372,8 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                         <th>주문일시</th>
 */?>
                         <th>주문일시</th>
-<?php /*                        
-                        <th>채널</th>
-*/?>
+                        <th>판매유형</th>
+                        <th>거래처(채널)</th>
                         <th>브랜드</th>
                         <th>상품코드</th>
                         <th>상품명</th>
@@ -388,9 +400,8 @@ if ($rs->num_rows > 0) {
                     	<td class="tbl_first" style="text-align:center;"><?=number_format($pg->getMaxNumOfPage() - $i)?></td>
 */?>
                         <td class="tbl_first txt_c"><?=substr($row["order_date"],0,10)?></td>
-<?php /*                        
+                        <td class="txt_c"><?=$arrSalesType[$row["order_type"]]?></td>
                         <td class="txt_c"><?=$row["channel"]?></td>
-*/?>
                         <td class="txt_c"><?=$row["brand_name"]?></td>
                         <td><?=$row["code"]?></td>
                         <td><?=$row["name"]?></td>

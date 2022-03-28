@@ -388,6 +388,29 @@ class OrderMgr extends A_Mgr
         return $result;
     }
     
+    function getListAggrSum($wq) {
+        
+        $result = null;
+        $db = null;
+        
+        $group_by = "";
+        $add_select1 = "";
+        $add_select2 = "";
+        
+        try {
+            
+            $db = DbUtil::getConnection();
+            
+            $row = OrderDao::getInstance()->selectAggrSum($db, $wq);
+            
+        } catch(Exception $e) {
+            echo $e->getMessage();
+        }
+        
+        @ $db->close();
+        return $row;
+    }
+    
     function getCount($wq) {
         
         $result = null;

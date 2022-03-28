@@ -13,7 +13,7 @@ $rs = ChannelMgr::getInstance()->getList($wq);
 
 
 Header("Content-type: application/vnd.ms-excel");
-Header("Content-Disposition: attachment; filename=ISM_채널 리스트_".date('Ymd').".xls");
+Header("Content-Disposition: attachment; filename=ISM_거래처(채널) 리스트_".date('Ymd').".xls");
 Header("Content-Description: PHP5 Generated Data");
 Header("Pragma: no-cache");
 Header("Expires: 0");

@@ -22,6 +22,7 @@ if (!LoginManager::getUserLoginInfo("iam_grade")) {
 					</div>
 					<div class="right">
 						<ul>
+							<li style="margin-right: 20px;"><p style="font-size: 16px;"><span style=" font-weight: bold;"><?=LoginManager::getUserLoginInfo("iam_name")?></span> 님</p></li>
 							<li><a href="/admin_logout.php">Logout</a></li>
 						</ul>
 					</div>

@@ -21,7 +21,7 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
     </form>
 
 			<div style="padding-left:20px;">
-                <h3 class="icon-list wrt_icon_search">채널 <strong><?=number_format($rs->num_rows)?>건</strong></h3>
+                <h3 class="icon-list wrt_icon_search">거래처(채널) <strong><?=number_format($rs->num_rows)?>건</strong></h3>
                 <ul class="icon_Btn">
                     <li><a href="#" name="btnExcelDownload">엑셀</a></li>
                 </ul>

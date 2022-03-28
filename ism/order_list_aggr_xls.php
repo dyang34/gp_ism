@@ -2,6 +2,7 @@
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/blm_default_set.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/RequestUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/sales_type/SalesTypeMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/order/OrderMgr.php";
 
 // ini_set('memory_limit','512M');
@@ -33,6 +34,17 @@ $_order_by = RequestUtil::getParam("_order_by", "order_date");
 $_order_by_asc = RequestUtil::getParam("_order_by_asc", "desc");
 
 $arrDayOfWeek = array("일","월","화","수","목","금","토");
+
+$arrSalesType = array();
+$wq = new WhereQuery(true, true);
+$rs = SalesTypeMgr::getInstance()->getList($wq);
+if ($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row = $rs->fetch_assoc();
+        
+        $arrSalesType[$row["imst_idx"]] = $row["title"];
+    }
+}
 
 $wq = new WhereQuery(true, true);
 $wq->addAndNotIn("status", array("취소접수","취소완료","삭제"));
@@ -222,7 +234,7 @@ if (in_array("grp_tax_type", $arrGroupBy)) {
                         <th style="color:white;background-color:#000081;">수량</th>
                         <th style="color:white;background-color:#000081;">EA</th>
                         <th style="color:white;background-color:#000081;">금액</th>
-                        <th style="color:white;background-color:#000081;">건수</th>
+                        <th style="color:white;background-color:#000081;">주문수</th>
                     </tr>
 <?php
 if ($rs->num_rows > 0) {
@@ -332,7 +344,7 @@ if ($rs->num_rows > 0) {
             
             if (in_array("grp_order_type", $arrGroupBy)) {
             ?>
-            			<td class="txt_c"><?=$row["order_type"]=="1"?"온라인":"도매"?></td>
+            			<td class="txt_c"><?=$arrSalesType[$row["order_type"]]?></td>
             <?php
             }
             

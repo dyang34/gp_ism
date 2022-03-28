@@ -3,6 +3,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/blm_default_set.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/RequestUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsItemMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/sales_type/SalesTypeMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/order/OrderMgr.php";
 
 ini_set('memory_limit','-1');
@@ -27,6 +28,17 @@ $_order_by = RequestUtil::getParam("_order_by", "order_date");
 $_order_by_asc = RequestUtil::getParam("_order_by_asc", "desc");
 
 $arrDayOfWeek = array("일","월","화","수","목","금","토");
+$arrSalesType = array();
+
+$wq = new WhereQuery(true, true);
+$rs = SalesTypeMgr::getInstance()->getList($wq);
+if ($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row = $rs->fetch_assoc();
+        
+        $arrSalesType[$row["imst_idx"]] = $row["title"];
+    }
+}
 
 $wq = new WhereQuery(true, true);
 $wq->addAndString("order_date", ">=", $_order_date_from);
@@ -112,7 +124,7 @@ if ($rs->num_rows > 0) {
         <td><?=number_format($row["ea"])?></td>
         <td><?=number_format($row["price_collect"])?></td>
         <td><?=$row["status"]?></td>
-        <td><?=$row["order_type"]=="1"?"온라인":"도매"?></td>
+        <td><?=$arrSalesType[$row["order_type"]]?></td>
         <td><?=$row["tax_type"]?></td>
         <td><?=substr($row["reg_date"],0,10)?></td>
     </tr>

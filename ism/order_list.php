@@ -8,6 +8,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsItemMgr.php"
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/brand/BrandMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/channel/ChannelMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/category/CategoryMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/sales_type/SalesTypeMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/order/OrderMgr.php";
 
 $menuCate = 1;
@@ -39,7 +40,17 @@ $pg = new Page($currentPage, $pageSize);
 
 $arrDayOfWeek = array("일","월","화","수","목","금","토");
 
-$arrChannel = $arrBrand = $arrCategory1 = $arrCategory2 = $arrCategory3 = $arrCategory4 = array();
+$arrChannel = $arrBrand = $arrCategory1 = $arrCategory2 = $arrCategory3 = $arrCategory4 = $arrSalesType = array();
+
+$wq = new WhereQuery(true, true);
+$rs = SalesTypeMgr::getInstance()->getList($wq);
+if ($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row = $rs->fetch_assoc();
+        
+        $arrSalesType[$row["imst_idx"]] = $row["title"];
+    }
+}
 
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("imc_fg_del","=","0");
@@ -200,6 +211,7 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
     <input type="hidden" name="_goods_name" value="<?=$_goods_name?>">
 	<input type="hidden" name="_item_code" value="<?=$_item_code?>">
 	<input type="hidden" name="_item_name" value="<?=$_item_name?>">
+	<input type="hidden" name="_except_cancel" value="<?=$_except_cancel?>">
     <input type="hidden" name="_order_by" value="<?=$_order_by?>">
     <input type="hidden" name="_order_by_asc" value="<?=$_order_by_asc?>">
 </form>
@@ -317,8 +329,13 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                             	<td>
 									<select name="_order_type">
                                     	<option value="">판매 유형</option>
-                                    	<option value="1" <?=$_order_type=="1"?"selected":""?>>온라인</option>
-                                    	<option value="2" <?=$_order_type=="2"?"selected":""?>>도매</option>
+<?php                                     	
+foreach($arrSalesType as $key => $value) {
+?>
+                                    	<option value="<?=$key?>" <?=$_order_type==$key?"selected":""?>><?=$value?></option>
+<?php
+}
+?>
                                     </select>
                             	</td>
                             </tr>
@@ -415,7 +432,7 @@ if ($rs->num_rows > 0) {
                         <td class="txt_r"><?=number_format($row["ea"])?></td>
                         <td class="txt_r"><?=number_format($row["price_collect"])?></td>
                         <td class="txt_c"><?=$row["status"]?></td>
-                        <td class="txt_c" style="<?=$row["order_type"]=="2"?"color:green;":""?> ?>"><?=$row["order_type"]=="1"?"온라인":"도매"?></td>
+                        <td class="txt_c" style="<?=$row["order_type"]>"1"?"color:green;":""?> ?>"><?=$arrSalesType[$row["order_type"]]?></td>
                         <td class="txt_c"><?=$row["tax_type"]?></td>
                         <td class="txt_c"><?=substr($row["reg_date"],0,10)?></td>
                     </tr>

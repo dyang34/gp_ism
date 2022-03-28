@@ -7,6 +7,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/Page.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/brand/BrandMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/channel/ChannelMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/category/CategoryMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/sales_type/SalesTypeMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/order/OrderMgr.php";
 
 $menuCate = 1;
@@ -44,7 +45,17 @@ $_order_by_asc = RequestUtil::getParam("_order_by_asc", "desc");
 $pg = new Page($currentPage, $pageSize);
 
 $arrDayOfWeek = array("일","월","화","수","목","금","토");
-$arrChannel = $arrBrand = $arrCategory1 = $arrCategory2 = $arrCategory3 = $arrCategory4 = array();
+$arrChannel = $arrBrand = $arrCategory1 = $arrCategory2 = $arrCategory3 = $arrCategory4 = $arrSalesType = array();
+
+$wq = new WhereQuery(true, true);
+$rs = SalesTypeMgr::getInstance()->getList($wq);
+if ($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row = $rs->fetch_assoc();
+        
+        $arrSalesType[$row["imst_idx"]] = $row["title"];
+    }
+}
 
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("imc_fg_del","=","0");
@@ -223,6 +234,8 @@ if($_grp_order_type) {
 }
 
 $rs = OrderMgr::getInstance()->getListAggrPerPage($wq, $pg, $arrGroupBy);
+
+$row_sum = OrderMgr::getInstance()->getListAggrSum($wq);
 
 include $_SERVER['DOCUMENT_ROOT']."/ism/include/head.php";
 include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
@@ -405,8 +418,13 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                             	<td>
 									<select name="_order_type">
                                     	<option value="">판매 유형</option>
-                                    	<option value="1" <?=$_order_type=="1"?"selected":""?>>온라인</option>
-                                    	<option value="2" <?=$_order_type=="2"?"selected":""?>>도매</option>
+<?php                                     	
+foreach($arrSalesType as $key => $value) {
+?>
+                                    	<option value="<?=$key?>" <?=$_order_type==$key?"selected":""?>><?=$value?></option>
+<?php
+}
+?>
                                     </select>
                             	</td>
                             </tr>
@@ -428,34 +446,41 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
 			<!-- 상품검색(e) -->
                 
 			<div class="float-wrap">
-				<h3 class="float-l">집계 건수 <strong><?=number_format($pg->getTotalCount())?>건</strong></h3>
-				<p class="list-adding float-r">
-					<a href="#none" name="_btn_sort" order_by="order_date" order_by_asc="desc" class="<?=$_order_by=="order_date" && $_order_by_asc=="desc"?"on":""?>" >판매일순<em>▼</em></a>
+				<h3 class="float-l">집계 Data <strong><?=number_format($pg->getTotalCount())?>건</strong></h3>
+				<p class="list-adding float-r ism_total" style="border: 1px solid #395467; border-radius: 20px; padding: 7px 20px; background: #fff;">
+                    <span><span style="font-weight:bold">전체 수량</span> <em><?=number_format($row_sum["amount"])?></em>개</span>
+                    <span><span style="font-weight:bold">전체 EA</span> <em><?=number_format($row_sum["ea"])?></em>개</span>
+                    <span><span style="font-weight:bold">전체 금액</span> <em><?=number_format($row_sum["price_collect"])?></em>원</span>
+                    <span><span style="font-weight:bold">전체 주문수</span> <em><?=number_format($row_sum["cnt"])?></em>건</span>
+                </p>
+			</div>
+
+			<p class="list-adding float-r">
+				<a href="#none" name="_btn_sort" order_by="order_date" order_by_asc="desc" class="<?=$_order_by=="order_date" && $_order_by_asc=="desc"?"on":""?>" >판매일순<em>▼</em></a>
 <?php
 if ($_grp_code_type=="grp_goods" || $_grp_code_type=="grp_item") {
 ?>					
-					<a href="#none" name="_btn_sort" order_by="name" order_by_asc="asc" class="<?=$_order_by=="name" && $_order_by_asc=="asc"?"on":""?>">상품명<em>▲</em></a>
-					<a href="#none" name="_btn_sort" order_by="name" order_by_asc="desc" class="<?=$_order_by=="name" && $_order_by_asc=="desc"?"on":""?>">상품명<em>▼</em></a>
+				<a href="#none" name="_btn_sort" order_by="name" order_by_asc="asc" class="<?=$_order_by=="name" && $_order_by_asc=="asc"?"on":""?>">상품명<em>▲</em></a>
+				<a href="#none" name="_btn_sort" order_by="name" order_by_asc="desc" class="<?=$_order_by=="name" && $_order_by_asc=="desc"?"on":""?>">상품명<em>▼</em></a>
 <?php
 }
 ?>
 
 
-					<a href="#none" name="_btn_sort" order_by="code" order_by_asc="asc" class="<?=$_order_by=="code" && $_order_by_asc=="asc"?"on":""?>">상품코드<em>▲</em></a>
-					<a href="#none" name="_btn_sort" order_by="code" order_by_asc="desc" class="<?=$_order_by=="code" && $_order_by_asc=="desc"?"on":""?>">상품코드<em>▼</em></a>
-					<a href="#none" name="_btn_sort" order_by="item_code" order_by_asc="asc" class="<?=$_order_by=="item_code" && $_order_by_asc=="asc"?"on":""?>">품목(옵션)코드<em>▲</em></a>
-					<a href="#none" name="_btn_sort" order_by="item_code" order_by_asc="desc" class="<?=$_order_by=="item_code" && $_order_by_asc=="desc"?"on":""?>">품목(옵션)코드<em>▼</em></a>
-					<a href="#none" name="_btn_sort" order_by="name" order_by_asc="asc" class="<?=$_order_by=="name" && $_order_by_asc=="asc"?"on":""?>">상품명<em>▲</em></a>
-					<a href="#none" name="_btn_sort" order_by="name" order_by_asc="desc" class="<?=$_order_by=="name" && $_order_by_asc=="desc"?"on":""?>">상품명<em>▼</em></a>
-					<a href="#none" name="_btn_sort" order_by="item_name" order_by_asc="asc" class="<?=$_order_by=="item_name" && $_order_by_asc=="asc"?"on":""?>">품목(옵션)명<em>▲</em></a>
-					<a href="#none" name="_btn_sort" order_by="item_name" order_by_asc="desc" class="<?=$_order_by=="item_name" && $_order_by_asc=="desc"?"on":""?>">품목(옵션)명<em>▼</em></a>
-					<a href="#none" name="_btn_sort" order_by="brand_name" order_by_asc="asc" class="<?=$_order_by=="brand_name"?"on":""?>">브랜드순<em>▲</em></a>
-					<a href="#none" name="_btn_sort" order_by="cate1_name" order_by_asc="asc" class="<?=$_order_by=="cate1_name"?"on":""?>">카테고리<em>▲</em></a>
+				<a href="#none" name="_btn_sort" order_by="code" order_by_asc="asc" class="<?=$_order_by=="code" && $_order_by_asc=="asc"?"on":""?>">상품코드<em>▲</em></a>
+				<a href="#none" name="_btn_sort" order_by="code" order_by_asc="desc" class="<?=$_order_by=="code" && $_order_by_asc=="desc"?"on":""?>">상품코드<em>▼</em></a>
+				<a href="#none" name="_btn_sort" order_by="item_code" order_by_asc="asc" class="<?=$_order_by=="item_code" && $_order_by_asc=="asc"?"on":""?>">품목(옵션)코드<em>▲</em></a>
+				<a href="#none" name="_btn_sort" order_by="item_code" order_by_asc="desc" class="<?=$_order_by=="item_code" && $_order_by_asc=="desc"?"on":""?>">품목(옵션)코드<em>▼</em></a>
+				<a href="#none" name="_btn_sort" order_by="name" order_by_asc="asc" class="<?=$_order_by=="name" && $_order_by_asc=="asc"?"on":""?>">상품명<em>▲</em></a>
+				<a href="#none" name="_btn_sort" order_by="name" order_by_asc="desc" class="<?=$_order_by=="name" && $_order_by_asc=="desc"?"on":""?>">상품명<em>▼</em></a>
+				<a href="#none" name="_btn_sort" order_by="item_name" order_by_asc="asc" class="<?=$_order_by=="item_name" && $_order_by_asc=="asc"?"on":""?>">품목(옵션)명<em>▲</em></a>
+				<a href="#none" name="_btn_sort" order_by="item_name" order_by_asc="desc" class="<?=$_order_by=="item_name" && $_order_by_asc=="desc"?"on":""?>">품목(옵션)명<em>▼</em></a>
+				<a href="#none" name="_btn_sort" order_by="brand_name" order_by_asc="asc" class="<?=$_order_by=="brand_name"?"on":""?>">브랜드순<em>▲</em></a>
+				<a href="#none" name="_btn_sort" order_by="cate1_name" order_by_asc="asc" class="<?=$_order_by=="cate1_name"?"on":""?>">카테고리<em>▲</em></a>
 
 
 
-				</p>
-			</div>
+			</p>
            
             <!-- 메인TABLE(s) -->
             <table class="display" cellpadding="0" cellspacing="0">
@@ -634,7 +659,7 @@ if (in_array("grp_tax_type", $arrGroupBy)) {
                         <th>수량</th>
                         <th>EA</th>
                         <th>금액</th>
-                        <th>건수</th>
+                        <th>주문수</th>
                     </tr>
                 </thead>
                 <tbody style="border-bottom: 2px solid #395467">
@@ -808,7 +833,7 @@ $order_list_link_param .= "&_except_cancel=1";
             
             if (in_array("grp_order_type", $arrGroupBy)) {
             ?>
-            <td class="txt_c"><?=$row["order_type"]=="1"?"온라인":"도매"?></td>
+            <td class="txt_c"><?=$arrSalesType[$row["order_type"]]?></td>
             <?php
             }
             
