@@ -17,7 +17,7 @@ if (LoginManager::isUserLogined() && !empty(LoginManager::getUserLoginInfo("iam_
         JsUtil::replace($rtnUrl);
         exit;
     } else {
-        $rtnUrl = "./branch.php";
+        $rtnUrl = "/branch.php";
         JsUtil::replace($rtnUrl);
         exit;
     }

@@ -111,10 +111,9 @@ if($mode=="login"){
             $rtnUrl = urldecode($rtnUrl);
             
             if(!(strpos($rtnUrl, "http://") !== false || strpos($rtnUrl, "https://") !== false) )
-                $rtnUrl = "http://".$_SERVER[SERVER_NAME].$rtnUrl;
-                
+                $rtnUrl = "https://".$_SERVER[SERVER_NAME].$rtnUrl;
         } else {
-            $rtnUrl = "./branch.php";
+            $rtnUrl = "/branch.php";
         }
         
         JsUtil::replace($rtnUrl);

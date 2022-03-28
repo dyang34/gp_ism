@@ -1,4 +1,4 @@
-<?php 
+<?php
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/blm_default_set.php";
 
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/JsUtil.php";
@@ -23,7 +23,7 @@ switch(LoginManager::getUserLoginInfo('iam_grade')) {
         JsUtil::replace("/ism/order_list_aggr.php");
         break;
     default:
-        JsUtil::alertBack("비정상적인 접근입니다.");
+        JsUtil::alertBack("비정상적인 권한입니다.");
         exit;
         break;
 }
