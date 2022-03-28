@@ -55,6 +55,7 @@ if ($rs->num_rows > 0) {
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("imc_fg_del","=","0");
 
+$wq->addOrderBy("imst_idx","");
 $wq->addOrderBy("sort","desc");
 $wq->addOrderBy("name","asc");
 
@@ -240,32 +241,29 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
 							<tr>
                                 <th>판매일자</th>
                                 <td><input type="date" id="_order_date_from" name="_order_date_from" class="date_in" value="<?=$_order_date_from?>" style="padding:0 16px;">~<input type="date" id="_order_date_to" name="_order_date_to" value="<?=$_order_date_to?>" class="date_in" style="padding:0 16px;"></td>
-                                <th>채널</th>
-                                <td>
-                                    <select name="_imc_idx" class="select_brand">
-                						<option value="">채널 선택</option>
+                            	<th>판매유형/거래처(채널)</th>
+                            	<td colspan="3">
+									<select name="_order_type" class="sel_order_type">
+                                    	<option value="">판매 유형</option>
+<?php                                     	
+foreach($arrSalesType as $key => $value) {
+?>
+                                    	<option value="<?=$key?>" <?=$_order_type==$key?"selected":""?>><?=$value?></option>
+<?php
+}
+?>
+                                    </select>
+                                    <select name="_imc_idx" class="sel_channel">
+                						<option value="">거래처(채널) 선택</option>
                 						<?php
                 						foreach($arrChannel as $lt){
                 							?>
-                							<option value="<?=$lt['imc_idx']?>" <?=$_imc_idx==$lt['imc_idx']?"selected":""?>><?=$lt['name']?></option>
+                							<option value="<?=$lt['imc_idx']?>" <?=$_imc_idx==$lt['imc_idx']?"selected":""?>><?="[".$lt['sales_type_title']."] ".$lt['name']?></option>
                 							<?php
                 						}
                 						?>
                 					</select>
                                 </td>                           
-                                <th>브랜드</th>
-                                <td>
-                                    <select name="_imb_idx" class="select_brand">
-                						<option value="">브랜드 선택</option>
-                						<?php
-                						foreach($arrBrand as $lt){
-                							?>
-                							<option value="<?=$lt['imb_idx']?>" <?=$_imb_idx==$lt['imb_idx']?"selected":""?>><?=$lt['name']?></option>
-                							<?php
-                						}
-                						?>
-                					</select>
-                                </td>
 							</tr>
 							<tr>
                                 <th>카테고리</th>
@@ -311,6 +309,25 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                 						?>
                 					</select>
                                 </td>
+                                <th>브랜드</th>
+                                <td>
+                                    <select name="_imb_idx" class="select_brand">
+                						<option value="">브랜드 선택</option>
+                						<?php
+                						foreach($arrBrand as $lt){
+                							?>
+                							<option value="<?=$lt['imb_idx']?>" <?=$_imb_idx==$lt['imb_idx']?"selected":""?>><?=$lt['name']?></option>
+                							<?php
+                						}
+                						?>
+                					</select>
+                                </td>
+                            </tr>
+                            <tr>
+                            	<th>상품코드</th>
+                            	<td><input type="text" placeholder="상품코드로 검색" name="_goods_mst_code" style="width: 100%;" value=<?=$_goods_mst_code?>></td>
+                            	<th>상품명</th>
+                            	<td><input type="text" placeholder="상품명으로 검색" name="_goods_name" style="width: 100%;" value=<?=$_goods_name?>></td>
                                 <th>과세구분</th>
                                 <td>
                                 	<select name="_tax_type">
@@ -319,25 +336,6 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                                     	<option value="면세" <?=$_tax_type=="면세"?"selected":""?>>면세</option>
                                     </select>
 								</td>
-                            </tr>
-                            <tr>
-                            	<th>상품코드</th>
-                            	<td><input type="text" placeholder="상품코드로 검색" name="_goods_mst_code" style="width: 100%;" value=<?=$_goods_mst_code?>></td>
-                            	<th>상품명</th>
-                            	<td><input type="text" placeholder="상품명으로 검색" name="_goods_name" style="width: 100%;" value=<?=$_goods_name?>></td>
-                            	<th>판매유형</th>
-                            	<td>
-									<select name="_order_type">
-                                    	<option value="">판매 유형</option>
-<?php                                     	
-foreach($arrSalesType as $key => $value) {
-?>
-                                    	<option value="<?=$key?>" <?=$_order_type==$key?"selected":""?>><?=$value?></option>
-<?php
-}
-?>
-                                    </select>
-                            	</td>
                             </tr>
                             <tr>
                             	<th>품목(옵션)코드</th>
@@ -393,7 +391,8 @@ foreach($arrSalesType as $key => $value) {
                         <th>주문일시</th>
 */?>
                         <th>주문일시</th>
-                        <th>채널</th>
+                        <th>판매유형</th>
+                        <th>거래처(채널)</th>
                         <th>브랜드</th>
                         <th>상품코드</th>
                         <th>상품명</th>
@@ -404,7 +403,6 @@ foreach($arrSalesType as $key => $value) {
                         <th>EA</th>
                         <th>판매가</th>
                         <th>상태</th>
-                        <th>판매유형</th>
                         <th>과/면세</th>
                         <th>작업일</th>
                     </tr>
@@ -421,7 +419,8 @@ if ($rs->num_rows > 0) {
                     	<td class="tbl_first" style="text-align:center;"><?=number_format($pg->getMaxNumOfPage() - $i)?></td>
 */?>
                         <td class="tbl_first txt_c"><?=substr($row["order_date"],0,10)." ".$arrDayOfWeek[date('w', strtotime(substr($row["order_date"],0,10)))]?></td>
-                        <td class="txt_c" style="<?=$row["imc_idx"]=="21"?"color:green;":""?> ?>"><?=$row["channel"]?></td>
+                        <td class="txt_c" style="<?=$row["order_type"]>"1"?"color:green;":""?> ?>"><?=$arrSalesType[$row["order_type"]]?></td>
+                        <td class="txt_c" style="<?=$row["imc_idx"]>"1"?"color:green;":""?> ?>"><?=$row["channel"]?></td>
                         <td class="txt_c"><?=$row["brand_name"]?></td>
                         <td><?=$row["code"]?></td>
                         <td><?=$row["name"]?></td>
@@ -432,7 +431,6 @@ if ($rs->num_rows > 0) {
                         <td class="txt_r"><?=number_format($row["ea"])?></td>
                         <td class="txt_r"><?=number_format($row["price_collect"])?></td>
                         <td class="txt_c"><?=$row["status"]?></td>
-                        <td class="txt_c" style="<?=$row["order_type"]>"1"?"color:green;":""?> ?>"><?=$arrSalesType[$row["order_type"]]?></td>
                         <td class="txt_c"><?=$row["tax_type"]?></td>
                         <td class="txt_c"><?=substr($row["reg_date"],0,10)?></td>
                     </tr>
@@ -534,6 +532,23 @@ $(document).on('change','.sel_category',function() {
     		$('.sel_category[depth='+i+'] option:eq(0)').prop("selected",true);
     	}
 	}
+});
+
+$(document).on('change','.sel_order_type',function() {
+	var obj_select
+
+	obj_select = $('.sel_channel');
+
+	$.ajax({
+		url: "/ism/ajax/ajax_channel.php",
+		data: {imst_idx: $("option:selected", this).val()},
+		async: true,
+		cache: false,
+		error: function(xhr){	},
+		success: function(data){
+			obj_select.html(data);
+		}
+	});
 });
 
 $(document).on('click','a[name=btnExcelDownload]', function() {

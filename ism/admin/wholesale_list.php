@@ -8,6 +8,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsItemMgr.php"
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/brand/BrandMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/channel/ChannelMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/category/CategoryMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/sales_type/SalesTypeMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/order/OrderMgr.php";
 
 $menuCate = 4;
@@ -52,6 +53,7 @@ if ($rs->num_rows > 0) {
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("imc_fg_del","=","0");
 
+$wq->addOrderBy("imst_idx","");
 $wq->addOrderBy("sort","desc");
 $wq->addOrderBy("name","asc");
 
@@ -257,7 +259,7 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
 							</tr>
 							<tr>
                                 <th>카테고리</th>
-                                <td colspan="5">
+                                <td colspan="3">
 									<select name="_cate1_idx" class="sel_category" depth="1">
                 						<option value="">카테고리 선택</option>
                 						<?php
@@ -314,6 +316,19 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                 					</select>
                                 </td>                           
 */?>                                
+								<th>판매유형</th>
+                            	<td>
+									<select name="_order_type">
+                                    	<option value="">판매 유형</option>
+<?php                                     	
+foreach($arrSalesType as $key => $value) {
+?>
+                                    	<option value="<?=$key?>" <?=$_order_type==$key?"selected":""?>><?=$value?></option>
+<?php
+}
+?>
+                                    </select>
+                            	</td>
                             </tr>
                             <tr>
                             	<th>상품코드</th>

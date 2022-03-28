@@ -89,7 +89,8 @@ th{font-size:11px;text-align:center;color:white;background-color:#000081;}
 <table cellpadding=3 cellspacing=0 border=1 bordercolor='#bdbebd' style='border-collapse: collapse'>
     <tr>
         <th style="color:white;background-color:#000081;">주문일시</th>
-        <th style="color:white;background-color:#000081;">채널</th>
+        <th style="color:white;background-color:#000081;">판매유형</th>
+        <th style="color:white;background-color:#000081;">거래처(채널)</th>
         <th style="color:white;background-color:#000081;">브랜드</th>
         <th style="color:white;background-color:#000081;">상품코드</th>
         <th style="color:white;background-color:#000081;">상품명</th>
@@ -101,7 +102,6 @@ th{font-size:11px;text-align:center;color:white;background-color:#000081;}
         <th style="color:white;background-color:#000081;">EA</th>
         <th style="color:white;background-color:#000081;">판매가</th>
         <th style="color:white;background-color:#000081;">상태</th>
-        <th style="color:white;background-color:#000081;">판매유형</th>
         <th style="color:white;background-color:#000081;">과/면세</th>
         <th style="color:white;background-color:#000081;">작업일</th>
     </tr>
@@ -112,6 +112,7 @@ if ($rs->num_rows > 0) {
 ?>
     <tr>
         <td><?=substr($row["order_date"],0,10)." ".$arrDayOfWeek[date('w', strtotime(substr($row["order_date"],0,10)))]?></td>
+        <td><?=$arrSalesType[$row["order_type"]]?></td>
         <td><?=$row["channel"]?></td>
         <td><?=$row["brand_name"]?></td>
         <td><?=$row["code"]?></td>
@@ -124,7 +125,6 @@ if ($rs->num_rows > 0) {
         <td><?=number_format($row["ea"])?></td>
         <td><?=number_format($row["price_collect"])?></td>
         <td><?=$row["status"]?></td>
-        <td><?=$arrSalesType[$row["order_type"]]?></td>
         <td><?=$row["tax_type"]?></td>
         <td><?=substr($row["reg_date"],0,10)?></td>
     </tr>

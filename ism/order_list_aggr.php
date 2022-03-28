@@ -59,7 +59,7 @@ if ($rs->num_rows > 0) {
 
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("imc_fg_del","=","0");
-
+$wq->addOrderBy("imst_idx","");
 $wq->addOrderBy("sort","desc");
 $wq->addOrderBy("name","asc");
 
@@ -320,41 +320,38 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                                     	<option value="grp_cate3" <?=$_grp_category=="grp_cate3"?"selected='selected'":""?>>카테고리3</option>
                                     	<option value="grp_cate4" <?=$_grp_category=="grp_cate4"?"selected='selected'":""?>>카테고리4</option>
                                     </select>
-									<input type="checkbox" name="_grp_brand" id="_grp_brand" value="grp_brand" <?=$_grp_brand=="grp_brand"?"checked='checked'":""?>><label for="_grp_brand">브랜드</label>
-                                    <input type="checkbox" name="_grp_channel" id="_grp_channel" value="grp_channel" <?=$_grp_channel=="grp_channel"?"checked='checked'":""?>><label for="_grp_channel">채널</label>
                                     <input type="checkbox" name="_grp_order_type" id="_grp_order_type" value="grp_order_type" <?=$_grp_order_type=="grp_order_type"?"checked='checked'":""?>><label for="_grp_order_type">판매유형</label>
+                                    <input type="checkbox" name="_grp_channel" id="_grp_channel" value="grp_channel" <?=$_grp_channel=="grp_channel"?"checked='checked'":""?>><label for="_grp_channel">거래처(채널)</label>
+									<input type="checkbox" name="_grp_brand" id="_grp_brand" value="grp_brand" <?=$_grp_brand=="grp_brand"?"checked='checked'":""?>><label for="_grp_brand">브랜드</label>
                                     <input type="checkbox" name="_grp_tax_type" id="_grp_tax_type" value="grp_tax_type" <?=$_grp_tax_type=="grp_tax_type"?"checked='checked'":""?>><label for="_grp_tax_type">과세</label>
                                 </td>
 							</tr>
 							<tr>
                                 <th>판매일자</th>
                                 <td><input type="date" id="_order_date_from" name="_order_date_from" class="date_in" value="<?=$_order_date_from?>" style="padding:0 16px;">~<input type="date" id="_order_date_to" name="_order_date_to" value="<?=$_order_date_to?>" class="date_in" style="padding:0 16px;"></td>
-                                <th>채널</th>
-                                <td>
-                                    <select name="_imc_idx" class="select_brand">
-                						<option value="">채널 선택</option>
+                                <th>판매유형/거래처(채널)</th>
+                            	<td>
+									<select name="_order_type" class="sel_order_type">
+                                    	<option value="">판매 유형</option>
+<?php                                     	
+foreach($arrSalesType as $key => $value) {
+?>
+                                    	<option value="<?=$key?>" <?=$_order_type==$key?"selected":""?>><?=$value?></option>
+<?php
+}
+?>
+                                    </select>
+                                    <select name="_imc_idx" class="sel_channel">
+                						<option value="">거래처(채널) 선택</option>
                 						<?php
                 						foreach($arrChannel as $lt){
                 							?>
-                							<option value="<?=$lt['imc_idx']?>" <?=$_imc_idx==$lt['imc_idx']?"selected":""?>><?=$lt['name']?></option>
+                							<option value="<?=$lt['imc_idx']?>" <?=$_imc_idx==$lt['imc_idx']?"selected":""?>><?="[".$lt['sales_type_title']."] ".$lt['name']?></option>
                 							<?php
                 						}
                 						?>
                 					</select>
                                 </td>                           
-                                <th>브랜드</th>
-                                <td>
-                                    <select name="_imb_idx" class="select_brand">
-                						<option value="">브랜드 선택</option>
-                						<?php
-                						foreach($arrBrand as $lt){
-                							?>
-                							<option value="<?=$lt['imb_idx']?>" <?=$_imb_idx==$lt['imb_idx']?"selected":""?>><?=$lt['name']?></option>
-                							<?php
-                						}
-                						?>
-                					</select>
-                                </td>
 							</tr>
 							<tr>
                                 <th>카테고리</th>
@@ -400,7 +397,26 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                 						?>
                 					</select>
                                 </td>
-                                <th>과세구분</th>
+                                <th>브랜드</th>
+                                <td>
+                                    <select name="_imb_idx" class="select_brand">
+                						<option value="">브랜드 선택</option>
+                						<?php
+                						foreach($arrBrand as $lt){
+                							?>
+                							<option value="<?=$lt['imb_idx']?>" <?=$_imb_idx==$lt['imb_idx']?"selected":""?>><?=$lt['name']?></option>
+                							<?php
+                						}
+                						?>
+                					</select>
+                                </td>
+                            </tr>
+                            <tr>
+                            	<th>상품코드</th>
+                            	<td><input type="text" placeholder="상품코드로 검색" name="_goods_mst_code" style="width: 100%;" value=<?=$_goods_mst_code?>></td>
+                            	<th>상품명</th>
+                            	<td><input type="text" placeholder="상품명으로 검색" name="_goods_name" style="width: 100%;" value=<?=$_goods_name?>></td>
+                            	<th>과세구분</th>
                                 <td>
                                 	<select name="_tax_type">
                                     	<option value="">과세 구분</option>
@@ -408,25 +424,6 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                                     	<option value="면세" <?=$_tax_type=="면세"?"selected":""?>>면세</option>
                                     </select>
 								</td>
-                            </tr>
-                            <tr>
-                            	<th>상품코드</th>
-                            	<td><input type="text" placeholder="상품코드로 검색" name="_goods_mst_code" style="width: 100%;" value=<?=$_goods_mst_code?>></td>
-                            	<th>상품명</th>
-                            	<td><input type="text" placeholder="상품명으로 검색" name="_goods_name" style="width: 100%;" value=<?=$_goods_name?>></td>
-                            	<th>판매유형</th>
-                            	<td>
-									<select name="_order_type">
-                                    	<option value="">판매 유형</option>
-<?php                                     	
-foreach($arrSalesType as $key => $value) {
-?>
-                                    	<option value="<?=$key?>" <?=$_order_type==$key?"selected":""?>><?=$value?></option>
-<?php
-}
-?>
-                                    </select>
-                            	</td>
                             </tr>
                             <tr>
                             	<th>품목(옵션)코드</th>
@@ -528,7 +525,7 @@ if (in_array("grp_cate4", $arrGroupBy)) {
             <?php
 }
 
-if (in_array("grp_brand", $arrGroupBy)) {
+if (in_array("grp_order_type", $arrGroupBy)) {
     ?>
 					<col />
             <?php
@@ -540,8 +537,8 @@ if (in_array("grp_channel", $arrGroupBy)) {
             <?php
 }
 
-if (in_array("grp_order_type", $arrGroupBy)) {
-?>
+if (in_array("grp_brand", $arrGroupBy)) {
+    ?>
 					<col />
             <?php
 }
@@ -628,24 +625,24 @@ if (in_array("grp_cate4", $arrGroupBy)) {
             <?php
 }
 
-if (in_array("grp_brand", $arrGroupBy)) {
+if (in_array("grp_order_type", $arrGroupBy)) {
     $cnt_columns++;
     ?>
-						<th class="">브랜드</th>
+						<th class="">판매유형</th>
             <?php
 }
 
 if (in_array("grp_channel", $arrGroupBy)) {
     $cnt_columns++;
     ?>
-						<th class="">채널</th>
+						<th class="">거래처(채널)</th>
             <?php
 }
 
-if (in_array("grp_order_type", $arrGroupBy)) {
+if (in_array("grp_brand", $arrGroupBy)) {
     $cnt_columns++;
-?>
-						<th class="">판매유형</th>
+    ?>
+						<th class="">브랜드</th>
             <?php
 }
 
@@ -751,16 +748,16 @@ if (in_array("grp_cate4", $arrGroupBy)) {
     $order_list_link_param .= "&_cate4_idx=".$row["cate4_idx"];
 }
 
-if (in_array("grp_brand", $arrGroupBy)) {
-    $order_list_link_param .= "&_imb_idx=".$row["imb_idx"];
+if (in_array("grp_order_type", $arrGroupBy)) {
+    $order_list_link_param .= "&_order_type=".$row["order_type"];
 }
 
 if (in_array("grp_channel", $arrGroupBy)) {
     $order_list_link_param .= "&_imc_idx=".$row["imc_idx"];
 }
 
-if (in_array("grp_order_type", $arrGroupBy)) {
-    $order_list_link_param .= "&_order_type=".$row["order_type"];
+if (in_array("grp_brand", $arrGroupBy)) {
+    $order_list_link_param .= "&_imb_idx=".$row["imb_idx"];
 }
 
 if (in_array("grp_tax_type", $arrGroupBy)) {
@@ -819,9 +816,9 @@ $order_list_link_param .= "&_except_cancel=1";
             <?php
             }
             
-            if (in_array("grp_brand", $arrGroupBy)) {
+            if (in_array("grp_order_type", $arrGroupBy)) {
                 ?>
-                        <td class="txt_c"><?=$row["brand_name"]?></td>
+            <td class="txt_c"><?=$arrSalesType[$row["order_type"]]?></td>
             <?php
             }
             
@@ -831,9 +828,9 @@ $order_list_link_param .= "&_except_cancel=1";
             <?php
             }
             
-            if (in_array("grp_order_type", $arrGroupBy)) {
-            ?>
-            <td class="txt_c"><?=$arrSalesType[$row["order_type"]]?></td>
+            if (in_array("grp_brand", $arrGroupBy)) {
+                ?>
+                        <td class="txt_c"><?=$row["brand_name"]?></td>
             <?php
             }
             
@@ -935,6 +932,23 @@ $(document).on('change','.sel_category',function() {
     		$('.sel_category[depth='+i+'] option:eq(0)').prop("selected",true);
     	}
 	}
+});
+
+$(document).on('change','.sel_order_type',function() {
+	var obj_select
+
+	obj_select = $('.sel_channel');
+
+	$.ajax({
+		url: "/ism/ajax/ajax_channel.php",
+		data: {imst_idx: $("option:selected", this).val()},
+		async: true,
+		cache: false,
+		error: function(xhr){	},
+		success: function(data){
+			obj_select.html(data);
+		}
+	});
 });
 
 $(document).on('click','a[name=btnExcelDownload]', function() {

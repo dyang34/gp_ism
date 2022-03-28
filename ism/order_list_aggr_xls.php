@@ -101,20 +101,20 @@ if($_grp_category) {
     array_push($arrGroupBy, $_grp_category);
 }
 
-if($_grp_brand) {
-    array_push($arrGroupBy, $_grp_brand);
+if($_grp_order_type) {
+    array_push($arrGroupBy, $_grp_order_type);
 }
 
 if($_grp_channel) {
     array_push($arrGroupBy, $_grp_channel);
 }
 
-if($_grp_tax_type) {
-    array_push($arrGroupBy, $_grp_tax_type);
+if($_grp_brand) {
+    array_push($arrGroupBy, $_grp_brand);
 }
 
-if($_grp_order_type) {
-    array_push($arrGroupBy, $_grp_order_type);
+if($_grp_tax_type) {
+    array_push($arrGroupBy, $_grp_tax_type);
 }
 
 $rs = OrderMgr::getInstance()->getListAggr($wq, $arrGroupBy);
@@ -203,24 +203,24 @@ if (in_array("grp_cate4", $arrGroupBy)) {
             <?php
 }
 
-if (in_array("grp_brand", $arrGroupBy)) {
+if (in_array("grp_order_type", $arrGroupBy)) {
     $cnt_columns++;
     ?>
-						<th style="color:white;background-color:#000081;">브랜드</th>
+						<th style="color:white;background-color:#000081;">판매유형</th>
             <?php
 }
 
 if (in_array("grp_channel", $arrGroupBy)) {
     $cnt_columns++;
     ?>
-						<th style="color:white;background-color:#000081;">채널</th>
+						<th style="color:white;background-color:#000081;">거래처(채널)</th>
             <?php
 }
 
-if (in_array("grp_order_type", $arrGroupBy)) {
+if (in_array("grp_brand", $arrGroupBy)) {
     $cnt_columns++;
-?>
-						<th style="color:white;background-color:#000081;">판매유형</th>
+    ?>
+						<th style="color:white;background-color:#000081;">브랜드</th>
             <?php
 }
 
@@ -330,9 +330,9 @@ if ($rs->num_rows > 0) {
             <?php
             }
             
-            if (in_array("grp_brand", $arrGroupBy)) {
+            if (in_array("grp_order_type", $arrGroupBy)) {
                 ?>
-                        <td class="txt_c"><?=$row["brand_name"]?></td>
+            			<td class="txt_c"><?=$arrSalesType[$row["order_type"]]?></td>
             <?php
             }
             
@@ -342,9 +342,9 @@ if ($rs->num_rows > 0) {
             <?php
             }
             
-            if (in_array("grp_order_type", $arrGroupBy)) {
-            ?>
-            			<td class="txt_c"><?=$arrSalesType[$row["order_type"]]?></td>
+            if (in_array("grp_brand", $arrGroupBy)) {
+                ?>
+                        <td class="txt_c"><?=$row["brand_name"]?></td>
             <?php
             }
             
