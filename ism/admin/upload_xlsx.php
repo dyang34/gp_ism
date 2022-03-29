@@ -1,5 +1,6 @@
 <?php 
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/blm_default_set.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/ism_ip_check.php";
 
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/JsUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/login/LoginManager.php";

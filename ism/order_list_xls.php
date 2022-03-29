@@ -1,5 +1,7 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/blm_default_set.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/ism_ip_check.php";
+
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/RequestUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsItemMgr.php";
