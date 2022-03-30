@@ -81,7 +81,7 @@ $wq->addOrderBy("order_date", "desc");
 $rs = OrderMgr::getInstance()->getList($wq, $pg);
 
 Header("Content-type: application/vnd.ms-excel");
-Header("Content-Disposition: attachment; filename=ISM_판매 내역(".$_order_date_from."_".$_order_date_to.")_".date('Ymd').".xls");
+Header("Content-Disposition: attachment; filename=ISM_판매 내역(관리자)(".$_order_date_from."_".$_order_date_to.")_".date('Ymd').".xls");
 Header("Content-Description: PHP5 Generated Data");
 Header("Pragma: no-cache");
 Header("Expires: 0");
