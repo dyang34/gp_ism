@@ -23,6 +23,7 @@
                 <a href='#' class="btn <?=$menuCate==2?"on":""?>">판매 관리<span></span></a>
                 <div class="subMenu">
     				<a href="/ism/admin/upload_sales_data.php" class="<?=$menuNo==3?"on":""?>">- 판매 업로드</a>
+    				<a href="/ism/admin/adm_order_list.php" class="<?=$menuNo==3?"on":""?>">- 판매 내역 작업</a>
     				<a href="/ism/admin/apply_stock.php" class="<?=$menuNo==10?"on":""?>">- 재고 반영</a>
     			</div>
             </li>

@@ -454,7 +454,7 @@ class OrderDao extends A_Dao
 	
 	function delete($db, $key) {
 	    if ($key) {
-    	    $sql = "delete from ism_order where order_no = ".$this->quot($db, $key);
+    	    $sql = "update ism_order set status='삭제' where order_no = ".$this->quot($db, $key);
     	    return $db->query($sql);
 	    }
 	}	

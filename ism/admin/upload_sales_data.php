@@ -5,6 +5,11 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/ism_ip_check.php";
 $menuCate = 2;
 $menuNo = 3;
 
+if (LoginManager::getUserLoginInfo("iam_grade") < 8 || LoginManager::getUserLoginInfo("iam_grade") == 9) {
+    JsUtil::alertBack("작업 권한이 없습니다.    ");
+    exit;
+}
+
 include $_SERVER['DOCUMENT_ROOT']."/ism/include/head.php";
 include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
 ?>

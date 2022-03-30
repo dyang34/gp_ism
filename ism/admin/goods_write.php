@@ -12,6 +12,11 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/category/CategoryMgr.ph
 $menuCate = 3;
 $menuNo = 4;
 
+if (LoginManager::getUserLoginInfo("iam_grade") < 10) {
+    JsUtil::alertBack("작업 권한이 없습니다.    ");
+    exit;
+}
+
 $mode = RequestUtil::getParam("mode", "INS");
 $code = RequestUtil::getParam("code", "");
 

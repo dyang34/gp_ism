@@ -8,6 +8,11 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/brand/BrandMgr.php";
 $menuCate = 3;
 $menuNo = 5;
 
+if (LoginManager::getUserLoginInfo("iam_grade") < 10) {
+    JsUtil::alertBack("작업 권한이 없습니다.    ");
+    exit;
+}
+
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("imb_fg_del","=","0");
 $wq->addOrderBy("sort","desc");

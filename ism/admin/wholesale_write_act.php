@@ -13,6 +13,11 @@ if(!LoginManager::isUserLogined()) {
     exit;
 }
 
+if (LoginManager::getUserLoginInfo("iam_grade") < 9) {
+    JsUtil::alertBack("작업 권한이 없습니다.    ");
+    exit;
+}
+
 $mode = RequestUtil::getParam("mode", "INS");
 $order_no = RequestUtil::getParam("order_no", "");
 $item_code = RequestUtil::getParam("item_code", "");

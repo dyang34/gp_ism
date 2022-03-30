@@ -13,6 +13,11 @@ if(!LoginManager::isUserLogined()) {
     exit;
 }
 
+if (LoginManager::getUserLoginInfo("iam_grade") < 10) {
+    JsUtil::alertBack("작업 권한이 없습니다.    ");
+    exit;
+}
+
 $mode = RequestUtil::getParam("mode", "");
 $imct_idx = RequestUtil::getParam("imct_idx", "");
 $upper_imct_idx = RequestUtil::getParam("upper_imct_idx", "");

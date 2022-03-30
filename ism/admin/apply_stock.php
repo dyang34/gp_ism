@@ -7,6 +7,11 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsItemMgr.php"
 $menuCate = 2;
 $menuNo = 10;
 
+if (LoginManager::getUserLoginInfo("iam_grade") < 8 || LoginManager::getUserLoginInfo("iam_grade") == 9) {
+    JsUtil::alertBack("작업 권한이 없습니다.    ");
+    exit;
+}
+
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("img_fg_del","=","0");
 $max_idx = GoodsItemMgr::getInstance()->getMaxIdx($wq);

@@ -5,6 +5,11 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/ism_ip_check.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/brand/BrandMgr.php";
 
+if (LoginManager::getUserLoginInfo("iam_grade") < 10) {
+    echo "작업 권한이 없습니다.    ";
+    exit;
+}
+
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("imb_fg_del","=","0");
 $wq->addOrderBy("sort","desc");

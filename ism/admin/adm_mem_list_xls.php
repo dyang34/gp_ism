@@ -7,6 +7,11 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/RequestUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/admin/AdmMemberMgr.php";
 
+if (LoginManager::getUserLoginInfo("iam_grade") < 10) {
+    echo "작업 권한이 없습니다.    ";
+    exit;
+}
+
 $_iam_name = RequestUtil::getParam("_iam_name", "");
 $_iam_grade = RequestUtil::getParam("_iam_grade", "");
 $_order_by = RequestUtil::getParam("_order_by", "reg_date");

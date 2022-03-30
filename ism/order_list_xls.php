@@ -25,6 +25,8 @@ $_goods_name = RequestUtil::getParam("_goods_name", "");
 $_item_code = RequestUtil::getParam("_item_code", "");
 $_item_name = RequestUtil::getParam("_item_name", "");
 $_except_cancel = RequestUtil::getParam("_except_cancel", "");
+$_status = RequestUtil::getParam("_status", "");
+$_order_no = RequestUtil::getParam("_order_no", "");
 
 $_order_by = RequestUtil::getParam("_order_by", "order_date");
 $_order_by_asc = RequestUtil::getParam("_order_by_asc", "desc");
@@ -55,6 +57,8 @@ $wq->addAndString("tax_type", "=", $_tax_type);
 $wq->addAndString("order_type", "=", $_order_type);
 $wq->addAndString("goods_mst_code", "=", $_goods_mst_code);
 $wq->addAndString("a.item_code", "=", $_item_code);
+$wq->addAndString("status", "=", $_status);
+$wq->addAndString("order_no", "=", $_order_no);
 
 $wq->addAndLike("name",$_goods_name);
 $wq->addAndLike("item_name",$_item_name);
@@ -91,6 +95,7 @@ th{font-size:11px;text-align:center;color:white;background-color:#000081;}
 <table cellpadding=3 cellspacing=0 border=1 bordercolor='#bdbebd' style='border-collapse: collapse'>
     <tr>
         <th style="color:white;background-color:#000081;">주문일시</th>
+        <th style="color:white;background-color:#000081;">주문번호</th>
         <th style="color:white;background-color:#000081;">판매유형</th>
         <th style="color:white;background-color:#000081;">거래처(채널)</th>
         <th style="color:white;background-color:#000081;">브랜드</th>
@@ -114,6 +119,7 @@ if ($rs->num_rows > 0) {
 ?>
     <tr>
         <td><?=substr($row["order_date"],0,10)." ".$arrDayOfWeek[date('w', strtotime(substr($row["order_date"],0,10)))]?></td>
+		<td><?=$row["order_no"]?></td>
         <td><?=$arrSalesType[$row["order_type"]]?></td>
         <td><?=$row["channel"]?></td>
         <td><?=$row["brand_name"]?></td>

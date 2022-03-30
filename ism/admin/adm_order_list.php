@@ -10,12 +10,13 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/brand/BrandMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/channel/ChannelMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/category/CategoryMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/sales_type/SalesTypeMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/status/StatusMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/order/OrderMgr.php";
 
-$menuCate = 4;
-$menuNo = 8;
+$menuCate = 1;
+$menuNo = 1;
 
-if (LoginManager::getUserLoginInfo("iam_grade") < 9) {
+if (LoginManager::getUserLoginInfo("iam_grade") < 8 || LoginManager::getUserLoginInfo("iam_grade") == 9) {
     JsUtil::alertBack("작업 권한이 없습니다.    ");
     exit;
 }
@@ -32,21 +33,36 @@ $_cate2_idx = RequestUtil::getParam("_cate2_idx", "");
 $_cate3_idx = RequestUtil::getParam("_cate3_idx", "");
 $_cate4_idx = RequestUtil::getParam("_cate4_idx", "");
 $_tax_type = RequestUtil::getParam("_tax_type", "");
+$_order_type = RequestUtil::getParam("_order_type", "");
 $_goods_mst_code = RequestUtil::getParam("_goods_mst_code", "");
 $_goods_name = RequestUtil::getParam("_goods_name", "");
 $_item_code = RequestUtil::getParam("_item_code", "");
 $_item_name = RequestUtil::getParam("_item_name", "");
-$_order_type = RequestUtil::getParam("_order_type", "");
+$_except_cancel = RequestUtil::getParam("_except_cancel", "");
+$_status = RequestUtil::getParam("_status", "");
+$_order_no = RequestUtil::getParam("_order_no", "");
 
 $_order_by = RequestUtil::getParam("_order_by", "order_date");
 $_order_by_asc = RequestUtil::getParam("_order_by_asc", "desc");
 
 $pg = new Page($currentPage, $pageSize);
 
-$arrChannel = $arrBrand = $arrCategory1 = $arrCategory2 = $arrCategory3 = $arrCategory4 = $arrSalesType = array();
+$arrDayOfWeek = array("일","월","화","수","목","금","토");
+
+$arrChannel = $arrBrand = $arrCategory1 = $arrCategory2 = $arrCategory3 = $arrCategory4 = $arrSalesType = $arrStatus = array();
 
 $wq = new WhereQuery(true, true);
-$wq->addAndString("imst_idx", "<>", "1");
+$wq->addOrderBy("sort","asc");
+$rs = StatusMgr::getInstance()->getList($wq);
+if ($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row = $rs->fetch_assoc();
+        
+        array_push($arrStatus, $row);
+    }
+}
+
+$wq = new WhereQuery(true, true);
 $rs = SalesTypeMgr::getInstance()->getList($wq);
 if ($rs->num_rows > 0) {
     for($i=0;$i<$rs->num_rows;$i++) {
@@ -58,7 +74,6 @@ if ($rs->num_rows > 0) {
 
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("imc_fg_del","=","0");
-$wq->addAndString("imst_idx","<>","1");
 
 $wq->addOrderBy("imst_idx","");
 $wq->addOrderBy("sort","desc");
@@ -174,13 +189,18 @@ $wq->addAndString("cate2_idx", "=", $_cate2_idx);
 $wq->addAndString("cate3_idx", "=", $_cate3_idx);
 $wq->addAndString("cate4_idx", "=", $_cate4_idx);
 $wq->addAndString("tax_type", "=", $_tax_type);
-$wq->addAndString("order_type", "<>", "1");
 $wq->addAndString("order_type", "=", $_order_type);
 $wq->addAndString("goods_mst_code", "=", $_goods_mst_code);
 $wq->addAndString("a.item_code", "=", $_item_code);
+$wq->addAndString("status", "=", $_status);
+$wq->addAndString("order_no", "=", $_order_no);
 
 $wq->addAndLike("name",$_goods_name);
 $wq->addAndLike("item_name",$_item_name);
+
+if($_except_cancel) {
+    $wq->addAndNotIn("status", array("취소접수","취소완료","삭제"));
+}
 
 $wq->addOrderBy($_order_by, $_order_by_asc);
 
@@ -209,11 +229,14 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
     <input type="hidden" name="_cate3_idx" value="<?=$_cate3_idx?>">
     <input type="hidden" name="_cate4_idx" value="<?=$_cate4_idx?>">
     <input type="hidden" name="_tax_type" value="<?=$_tax_type?>">
+    <input type="hidden" name="_order_type" value="<?=$_order_type?>">
     <input type="hidden" name="_goods_mst_code" value="<?=$_goods_mst_code?>">
     <input type="hidden" name="_goods_name" value="<?=$_goods_name?>">
 	<input type="hidden" name="_item_code" value="<?=$_item_code?>">
 	<input type="hidden" name="_item_name" value="<?=$_item_name?>">
-	<input type="hidden" name="_order_type" value="<?=$_order_type?>">
+	<input type="hidden" name="_except_cancel" value="<?=$_except_cancel?>">
+	<input type="hidden" name="_status" value="<?=$_status?>">
+	<input type="hidden" name="_order_no" value="<?=$_order_no?>">
     <input type="hidden" name="_order_by" value="<?=$_order_by?>">
     <input type="hidden" name="_order_by_asc" value="<?=$_order_by_asc?>">
 </form>
@@ -221,13 +244,12 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
             <!-- 상품검색(s) -->
             <div>
                 <div style="padding-left:20px;">
-                    <h3 class="icon-search">도매 판매 내역 검색</h3>
+                    <h3 class="icon-search">판매 내역 검색</h3>
                     <ul class="icon_Btn">
-                    	<li><a href="./wholesale_write.php">추가</a></li>
                         <li><a href="#" name="btnExcelDownload">엑셀</a></li>
                     </ul>
                 </div>
-				<form name="searchForm" method="get" action="wholesale_list.php">
+				<form name="searchForm" method="get" action="adm_order_list.php">
 				
                     <table class="adm-table">
                         <caption>상품 검색</caption>
@@ -243,7 +265,7 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
 							<tr>
                                 <th>판매일자</th>
                                 <td><input type="date" id="_order_date_from" name="_order_date_from" class="date_in" value="<?=$_order_date_from?>" style="padding:0 16px;">~<input type="date" id="_order_date_to" name="_order_date_to" value="<?=$_order_date_to?>" class="date_in" style="padding:0 16px;"></td>
-                                <th>판매유형/거래처</th>
+                            	<th>판매유형/거래처(채널)</th>
                             	<td colspan="3">
 									<select name="_order_type" class="sel_order_type">
                                     	<option value="">판매 유형</option>
@@ -256,7 +278,7 @@ foreach($arrSalesType as $key => $value) {
 ?>
                                     </select>
                                     <select name="_imc_idx" class="sel_channel">
-                						<option value="">거래처 선택</option>
+                						<option value="">거래처(채널) 선택</option>
                 						<?php
                 						foreach($arrChannel as $lt){
                 							?>
@@ -265,7 +287,7 @@ foreach($arrSalesType as $key => $value) {
                 						}
                 						?>
                 					</select>
-                                </td>         
+                                </td>                           
 							</tr>
 							<tr>
                                 <th>카테고리</th>
@@ -311,7 +333,7 @@ foreach($arrSalesType as $key => $value) {
                 						?>
                 					</select>
                                 </td>
-								<th>브랜드</th>
+                                <th>브랜드</th>
                                 <td>
                                     <select name="_imb_idx" class="select_brand">
                 						<option value="">브랜드 선택</option>
@@ -330,7 +352,7 @@ foreach($arrSalesType as $key => $value) {
                             	<td><input type="text" placeholder="상품코드로 검색" name="_goods_mst_code" style="width: 100%;" value=<?=$_goods_mst_code?>></td>
                             	<th>상품명</th>
                             	<td><input type="text" placeholder="상품명으로 검색" name="_goods_name" style="width: 100%;" value=<?=$_goods_name?>></td>
-								<th>과세구분</th>
+                                <th>과세구분</th>
                                 <td>
                                 	<select name="_tax_type">
                                     	<option value="">과세 구분</option>
@@ -343,7 +365,27 @@ foreach($arrSalesType as $key => $value) {
                             	<th>품목(옵션)코드</th>
                             	<td><input type="text" placeholder="품목(옵션)명으로 검색" name="_item_code" style="width: 100%;" value=<?=$_item_code?>></td>
                             	<th>품목(옵션)명</th>
-                            	<td colspan="3"><input type="text" placeholder="품목(옵션)명으로 검색" name="_item_name" style="width: 100%;" value=<?=$_item_name?>></td>
+                            	<td><input type="text" placeholder="품목(옵션)명으로 검색" name="_item_name" style="width: 100%;" value=<?=$_item_name?>></td>
+                            	<th>상태</th>
+                            	<td>
+                            	<select name="_status" class="sel_status">
+                                    	<option value="">상태</option>
+<?php                                     	
+foreach($arrStatus as $lt){
+?>
+                							<option value="<?=$lt['title_status']?>" <?=$_status==$lt['title_status']?"selected":""?>><?=$lt['title_status']?></option>
+                							<?php
+}?>
+                                    </select>
+                            	<input type="checkbox" value="1" name="_except_cancel" id="_except_cancel" <?=$_except_cancel?"checked='checked'":""?>><label for="_except_cancel">취소/삭제 제외</label></td>
+                            </tr>
+                            <tr>
+                            	<th>주문번호</th>
+                            	<td><input type="text" placeholder="주문번호로 검색" name="_order_no" style="width: 100%;" value=<?=$_order_no?>></td>
+                            	<th></th>
+                            	<td></td>
+                            	<th></th>
+                            	<td></td>
                             </tr>
                         </tbody>
                     </table>
@@ -366,9 +408,11 @@ foreach($arrSalesType as $key => $value) {
 			</div>
            
             <!-- 메인TABLE(s) -->
-            <table class="display" cellpadding="0" cellspacing="0">
+            <table class="display odd_color" cellpadding="0" cellspacing="0">
             	<colgroup>
-            		<col style="width:100px;">
+            		<col style="width:110px;">
+            		<col style="width:70px;">
+            		<col>
             		<col>
             		<col>
             		<col>
@@ -378,20 +422,22 @@ foreach($arrSalesType as $key => $value) {
             		<col>
             		<col>
             		<col>
+            		<col style="width:80px;">
+            		<col style="width:70px;">
             		<col style="width:70px;">
             		<col style="width:100px;">
-            		<col style="width:80px;">
+            		<col style="width:70px;">
             	</colgroup>
-                <thead>	
-                	
+                <thead>
                     <tr>
 <?php /*                    
                         <th class="tbl_first">No</th>
                         <th>주문일시</th>
 */?>
                         <th>주문일시</th>
+                        <th>주문번호</th>
                         <th>판매유형</th>
-                        <th>거래처</th>
+                        <th>거래처(채널)</th>
                         <th>브랜드</th>
                         <th>상품코드</th>
                         <th>상품명</th>
@@ -401,6 +447,7 @@ foreach($arrSalesType as $key => $value) {
                         <th>수량</th>
                         <th>EA</th>
                         <th>판매가</th>
+                        <th>상태</th>
                         <th>과/면세</th>
                         <th>작업일</th>
                         <th>작업</th>
@@ -417,9 +464,10 @@ if ($rs->num_rows > 0) {
 <?php /*                    
                     	<td class="tbl_first" style="text-align:center;"><?=number_format($pg->getMaxNumOfPage() - $i)?></td>
 */?>
-                        <td class="tbl_first txt_c"><?=substr($row["order_date"],0,10)?></td>
-                        <td class="txt_c"><?=$arrSalesType[$row["order_type"]]?></td>
-                        <td class="txt_c"><?=$row["channel"]?></td>
+                        <td class="tbl_first txt_c"><?=substr($row["order_date"],0,10)." ".$arrDayOfWeek[date('w', strtotime(substr($row["order_date"],0,10)))]?></td>
+                        <td class="txt_c"><?=$row["order_no"]?></td>
+                        <td class="txt_c" style="<?=$row["order_type"]>"1"?"color:green;":""?> ?>"><?=$arrSalesType[$row["order_type"]]?></td>
+                        <td class="txt_c" style="<?=$row["imc_idx"]>"1"?"color:green;":""?> ?>"><?=$row["channel"]?></td>
                         <td class="txt_c"><?=$row["brand_name"]?></td>
                         <td><?=$row["code"]?></td>
                         <td><?=$row["name"]?></td>
@@ -429,20 +477,24 @@ if ($rs->num_rows > 0) {
                         <td class="txt_r"><?=number_format($row["amount"])?></td>
                         <td class="txt_r"><?=number_format($row["ea"])?></td>
                         <td class="txt_r"><?=number_format($row["price_collect"])?></td>
+                        <td class="txt_c"><?=$row["status"]?></td>
                         <td class="txt_c"><?=$row["tax_type"]?></td>
                         <td class="txt_c"><?=substr($row["reg_date"],0,10)?></td>
                         <td style="text-align:center;">
-<?php /*                        
-                            <a href="./wholesale_write.php?mode=UPD&order_no=<?=$row["order_no"]?>" style=" display: inline-block; background-color: #d16a0d; padding: 9px 14px; border-radius: 20px; color: #fff;margin-right: 3px;">메모</a>
-*/?>
-                            <a href="./wholesale_write.php?mode=UPD&order_no=<?=$row["order_no"]?>" style=" display: inline-block; background-color: #1b80c3; padding: 9px 14px; border-radius: 20px; color: #fff;">수정</a>
+<?php
+if ($row["status"] != "삭제") {
+?>                        
+                        <a href="#" name="btnDel" order_no="<?=$row["order_no"]?>" style=" display: block; background-color: #1b80c3; padding: 6px 0px; width:50px; border-radius: 20px; color: #fff;">삭제</a>
+<?php
+}
+?>
                         </td>
                     </tr>
 <?php
     }
 } else {
 ?>
-					<tr><td colspan="13" class="txt_c">No Data.</td></tr>
+					<tr><td colspan="15" class="txt_c">No Data.</td></tr>
 <?php
 }
 ?>
@@ -452,11 +504,29 @@ if ($rs->num_rows > 0) {
 			<p class="hide"><strong>Pagination</strong></p>
 			<div style="position: relative;">
     			<?=$pg->getNaviForFuncGP("goPage", "<<", "<", ">", ">>")?>
-				<div style="position: absolute; right: 17px; bottom: 3px; text-align: center; line-height: 30px; border-radius: 10px; background-color: #313A3D;" class="rig_new"><a href="./wholesale_write.php" style="display:inline-block;padding: 5px 22px;color: #fff;">등록하기</a></div>
+<?php /*    			
+    			<div style="position: absolute; right: 17px; bottom: 3px; text-align: center; line-height: 30px; border-radius: 10px; background-color: #313A3D;" class="rig_new"><a href="./goods_write.php" style="display:inline-block;padding: 5px 22px;color: #fff;">등록하기</a></div>
+*/?>
     		</div>
+    		
+		<a href="#none" onclick="javascript:goPageTop();"  style="position: fixed; right: 31px; bottom: 31px; width: 67px; height: 67px; line-height: 70px; background-color: #313A3D; border: none; border-radius: 50%; z-index: 999; box-sizing: border-box; color: #fff; letter-spacing: .3px; text-align: center;">TOP<img src="/ism/images/common/top.png" alt="" style=" margin: -2px 0 0 2px;"/></a>
+    		
 <script src="/ism/cms/js/util/ValidCheck.js"></script>
 <script type="text/javascript">
 
+function addMonth(date, month) {
+    let addMonthFirstDate = new Date(date.getFullYear(),date.getMonth() + month,1);	// month달 후의 1일
+    let addMonthLastDate = new Date(addMonthFirstDate.getFullYear(),addMonthFirstDate.getMonth() + 1, 0);	// month달 후의 말일
+    
+    let result = addMonthFirstDate;
+    if(date.getDate() > addMonthLastDate.getDate()) {
+    	result.setDate(addMonthLastDate.getDate());
+    } else {
+    	result.setDate(date.getDate());
+    }
+    
+    return result;
+}
 
 $(document).on("click","a[name=btnSearch]",function() {
 	
@@ -465,21 +535,19 @@ $(document).on("click","a[name=btnSearch]",function() {
     if ( VC_inValidDate(f._order_date_from, "판매일자 시작일") ) return false;
     if ( VC_inValidDate(f._order_date_to, "판매일자 종료일") ) return false;
 
-	var arrFromDate=f._order_date_from.value.split('-');
-	var arrToDate=f._order_date_to.value.split('-');
+	let arrFromDate=f._order_date_from.value.split('-');
+	let arrToDate=f._order_date_to.value.split('-');
 	
-	var fromDate = new Date(arrFromDate[0],arrFromDate[1]-1,arrFromDate[2]);
-	var toDate = new Date(arrToDate[0],arrToDate[1]-1,arrToDate[2]);
-
-	toDate.setMonth(toDate.getMonth()-12);
-	
-	if (fromDate < toDate) {
-		alert("최대 12개월 단위로 조회하실 수 있습니다.    ");
+	let fromDate = addMonth(new Date(arrFromDate[0],arrFromDate[1]-1,arrFromDate[2]), 12);
+	let toDate = new Date(arrToDate[0],arrToDate[1]-1,arrToDate[2]);
+		
+	if (fromDate <= toDate) {
+		alert("최대 1년 단위로 조회하실 수 있습니다.    ");
 		f._order_date_from.focus();
 	
 		return false;
 	}
-	
+
     f.submit();	
 });
 
@@ -529,7 +597,7 @@ $(document).on('change','.sel_order_type',function() {
 
 	$.ajax({
 		url: "/ism/ajax/ajax_channel.php",
-		data: {imst_idx: $("option:selected", this).val(), p_fg_not_online:1},
+		data: {imst_idx: $("option:selected", this).val()},
 		async: true,
 		cache: false,
 		error: function(xhr){	},
@@ -540,9 +608,24 @@ $(document).on('change','.sel_order_type',function() {
 });
 
 $(document).on('click','a[name=btnExcelDownload]', function() {
+
 	var f = document.pageForm;
+	
+	let arrFromDate=f._order_date_from.value.split('-');
+	let arrToDate=f._order_date_to.value.split('-');
+	
+	let fromDate = addMonth(new Date(arrFromDate[0],arrFromDate[1]-1,arrFromDate[2]), 1);
+	let toDate = new Date(arrToDate[0],arrToDate[1]-1,arrToDate[2]);
+
+	if (fromDate <= toDate) {
+		alert("엑셀 다운로드는 최대 1개월 단위로 다운로드 하실 수 있습니다.    ");
+		f._order_date_from.focus();
+	
+		return false;
+	}
+	
 	f.target = "_new";
-	f.action = "wholesale_list_xls.php";
+	f.action = "adm_order_list_xls.php";
 	
 	f.submit();
 });
@@ -550,7 +633,7 @@ $(document).on('click','a[name=btnExcelDownload]', function() {
 var goPage = function(page) {
 	var f = document.pageForm;
 	f.currentPage.value = page;
-	f.action = "wholesale_list.php";
+	f.action = "adm_order_list.php";
 	f.submit();
 }
 
@@ -558,12 +641,63 @@ $(document).on('click', 'a[name=_btn_sort]', function() {
 	goSort($(this).attr('order_by'), $(this).attr('order_by_asc'));
 });
 
+$(document).on("click","a[name=btnDel]",function() {
+	
+	var order_no = $(this).attr("order_no");
+	var obj_td = $(this).parents("td");
+	var obj = $(this).parents("td").prev().prev().prev();
+	
+	if(!confirm("정말 삭제하시겠습니까?    ")) {
+		return false;
+	}
+	
+	$.ajax({
+		url: '/ism/ajax/ajax_order_list.php',
+		type: 'POST',
+		dataType: "json",
+		async: true,
+		cache: false,
+		data: {
+			mode : 'DEL',
+			order_no : order_no
+		},
+		success: function (response) {
+			switch(response.RESULTCD){
+                case "SUCCESS" :
+					obj.html("삭제");
+					obj_td.html("");
+                    break;
+                case "not_login" :
+                    alert("로그인 후 작업하시기 바랍니다.    ");
+                    break;                    
+                case "no_item_code" :
+                    alert("옵션코드 에러입니다.    ");
+                    break;                    
+                case "no_data" :
+                    alert("해당 품목코드의 재고를 찾을 수 없습니다.    ");
+                    break;                    
+                case "error" :
+                    alert("시스템 연동시 에러가 발생하였습니다.    ");
+                    break;                    
+                default:
+                	alert("시스템 오류입니다.\r\n문의주시기 바랍니다.    ");
+                    break;
+            }
+		},
+		complete:function(){},
+		error: function(xhr){}
+	});
+	
+	return false;
+	
+});
+
 var goSort = function(p_order_by, p_order_by_asc) {
 	var f = document.pageForm;
 	f.currentPage.value = 1;
 	f._order_by.value = p_order_by;
 	f._order_by_asc.value = p_order_by_asc;
-	f.action = "wholesale_list.php";
+	f.action = "adm_order_list.php";
 	f.submit();
 }
 

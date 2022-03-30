@@ -10,6 +10,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/brand/BrandMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/channel/ChannelMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/category/CategoryMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/sales_type/SalesTypeMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/status/StatusMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/order/OrderMgr.php";
 
 $menuCate = 1;
@@ -33,15 +34,90 @@ $_goods_name = RequestUtil::getParam("_goods_name", "");
 $_item_code = RequestUtil::getParam("_item_code", "");
 $_item_name = RequestUtil::getParam("_item_name", "");
 $_except_cancel = RequestUtil::getParam("_except_cancel", "");
+$_status = RequestUtil::getParam("_status", "");
+$_order_no = RequestUtil::getParam("_order_no", "");
+
+$_imc_idx_2 = RequestUtil::getParam("_imc_idx_2", "");
+$_imb_idx_2 = RequestUtil::getParam("_imb_idx_2", "");
+$_cate1_idx_2 = RequestUtil::getParam("_cate1_idx_2", "");
+$_cate2_idx_2 = RequestUtil::getParam("_cate2_idx_2", "");
+$_cate3_idx_2 = RequestUtil::getParam("_cate3_idx_2", "");
+$_cate4_idx_2 = RequestUtil::getParam("_cate4_idx_2", "");
+$_tax_type_2 = RequestUtil::getParam("_tax_type_2", "");
+$_order_type_2 = RequestUtil::getParam("_order_type_2", "");
+$_goods_mst_code_2 = RequestUtil::getParam("_goods_mst_code_2", "");
+$_goods_name_2 = RequestUtil::getParam("_goods_name_2", "");
+$_item_code_2 = RequestUtil::getParam("_item_code_2", "");
+$_item_name_2 = RequestUtil::getParam("_item_name_2", "");
+$_status_2 = RequestUtil::getParam("_status_2", "");
 
 $_order_by = RequestUtil::getParam("_order_by", "order_date");
 $_order_by_asc = RequestUtil::getParam("_order_by_asc", "desc");
+
+if (empty($_imc_idx) && $_imc_idx_2) {
+    $_imc_idx = $_imc_idx_2;
+}
+    
+if (empty($_imb_idx) && $_imb_idx_2) {
+    $_imb_idx = $_imb_idx_2;
+}
+
+if (empty($_cate1_idx) && $_cate1_idx_2) {
+    $_cate1_idx = $_cate1_idx_2;
+}
+
+if (empty($_cate2_idx) && $_cate2_idx_2) {
+    $_cate2_idx = $_cate2_idx_2;
+}
+
+if (empty($_cate3_idx) && $_cate3_idx_2) {
+    $_cate3_idx = $_cate3_idx_2;
+}
+
+if (empty($_tax_type) && $_tax_type_2) {
+    $_tax_type = $_tax_type_2;
+}
+
+if (empty($_order_type) && $_order_type_2) {
+    $_order_type = $_order_type_2;
+}
+
+if (empty($_goods_mst_code) && $_goods_mst_code_2) {
+    $_goods_mst_code = $_goods_mst_code_2;
+}
+
+if (empty($_goods_name) && $_goods_name_2) {
+    $_goods_name = $_goods_name_2;
+}
+
+if (empty($_item_code) && $_item_code_2) {
+    $_item_code = $_item_code_2;
+}
+
+if (empty($_item_name) && $_item_name_2) {
+    $_item_name = $_item_name_2;
+}
+
+if (empty($_status) && $_status_2) {
+    $_status = $_status_2;
+}
 
 $pg = new Page($currentPage, $pageSize);
 
 $arrDayOfWeek = array("일","월","화","수","목","금","토");
 
-$arrChannel = $arrBrand = $arrCategory1 = $arrCategory2 = $arrCategory3 = $arrCategory4 = $arrSalesType = array();
+$arrChannel = $arrBrand = $arrCategory1 = $arrCategory2 = $arrCategory3 = $arrCategory4 = $arrSalesType = $arrStatus = array();
+
+$wq = new WhereQuery(true, true);
+$wq->addOrderBy("sort","asc");
+$rs = StatusMgr::getInstance()->getList($wq);
+if ($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row = $rs->fetch_assoc();
+        
+        array_push($arrStatus, $row);
+    }
+}
 
 $wq = new WhereQuery(true, true);
 $rs = SalesTypeMgr::getInstance()->getList($wq);
@@ -173,6 +249,8 @@ $wq->addAndString("tax_type", "=", $_tax_type);
 $wq->addAndString("order_type", "=", $_order_type);
 $wq->addAndString("goods_mst_code", "=", $_goods_mst_code);
 $wq->addAndString("a.item_code", "=", $_item_code);
+$wq->addAndString("status", "=", $_status);
+$wq->addAndString("order_no", "=", $_order_no);
 
 $wq->addAndLike("name",$_goods_name);
 $wq->addAndLike("item_name",$_item_name);
@@ -214,6 +292,8 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
 	<input type="hidden" name="_item_code" value="<?=$_item_code?>">
 	<input type="hidden" name="_item_name" value="<?=$_item_name?>">
 	<input type="hidden" name="_except_cancel" value="<?=$_except_cancel?>">
+	<input type="hidden" name="_status" value="<?=$_status?>">
+	<input type="hidden" name="_order_no" value="<?=$_order_no?>">
     <input type="hidden" name="_order_by" value="<?=$_order_by?>">
     <input type="hidden" name="_order_by_asc" value="<?=$_order_by_asc?>">
 </form>
@@ -344,7 +424,18 @@ foreach($arrSalesType as $key => $value) {
                             	<th>품목(옵션)명</th>
                             	<td><input type="text" placeholder="품목(옵션)명으로 검색" name="_item_name" style="width: 100%;" value=<?=$_item_name?>></td>
                             	<th>상태</th>
-                            	<td><input type="checkbox" value="1" name="_except_cancel" id="_except_cancel" <?=$_except_cancel?"checked='checked'":""?>><label for="_except_cancel">취소/삭제 주문 제외</label></td>
+                            	<td>
+<select name="_status" class="sel_status">
+                                    	<option value="">상태</option>
+<?php          
+foreach($arrStatus as $lt){
+?>
+                							<option value="<?=$lt['title_status']?>" <?=$_status==$lt['title_status']?"selected":""?>><?=$lt['title_status']?></option>
+                							<?php
+}
+?>
+                                    </select>
+                            	<input type="checkbox" value="1" name="_except_cancel" id="_except_cancel" <?=$_except_cancel?"checked='checked'":""?>><label for="_except_cancel">취소/삭제 제외</label></td>
                             </tr>
                         </tbody>
                     </table>
@@ -370,6 +461,7 @@ foreach($arrSalesType as $key => $value) {
             <table class="display odd_color" cellpadding="0" cellspacing="0">
             	<colgroup>
             		<col style="width:110px;">
+            		<col style="width:70px;">
             		<col>
             		<col>
             		<col>
@@ -392,6 +484,7 @@ foreach($arrSalesType as $key => $value) {
                         <th>주문일시</th>
 */?>
                         <th>주문일시</th>
+                        <th>주문번호</th>
                         <th>판매유형</th>
                         <th>거래처(채널)</th>
                         <th>브랜드</th>
@@ -420,6 +513,7 @@ if ($rs->num_rows > 0) {
                     	<td class="tbl_first" style="text-align:center;"><?=number_format($pg->getMaxNumOfPage() - $i)?></td>
 */?>
                         <td class="tbl_first txt_c"><?=substr($row["order_date"],0,10)." ".$arrDayOfWeek[date('w', strtotime(substr($row["order_date"],0,10)))]?></td>
+                        <td class="txt_c"><?=$row["order_no"]?></td>
                         <td class="txt_c" style="<?=$row["order_type"]>"1"?"color:green;":""?> ?>"><?=$arrSalesType[$row["order_type"]]?></td>
                         <td class="txt_c" style="<?=$row["imc_idx"]>"1"?"color:green;":""?> ?>"><?=$row["channel"]?></td>
                         <td class="txt_c"><?=$row["brand_name"]?></td>
@@ -458,6 +552,12 @@ if ($rs->num_rows > 0) {
     		
 <script src="/ism/cms/js/util/ValidCheck.js"></script>
 <script type="text/javascript">
+
+$(document).ready(function() {
+
+//	getSelChannel("");
+	
+});
 
 function addMonth(date, month) {
     let addMonthFirstDate = new Date(date.getFullYear(),date.getMonth() + month,1);	// month달 후의 1일
@@ -536,13 +636,17 @@ $(document).on('change','.sel_category',function() {
 });
 
 $(document).on('change','.sel_order_type',function() {
+	getSelChannel($("option:selected", this).val());
+});
+
+var getSelChannel = function(order_type) {
 	var obj_select
 
 	obj_select = $('.sel_channel');
 
 	$.ajax({
 		url: "/ism/ajax/ajax_channel.php",
-		data: {imst_idx: $("option:selected", this).val()},
+		data: {imst_idx: order_type},
 		async: true,
 		cache: false,
 		error: function(xhr){	},
@@ -550,7 +654,7 @@ $(document).on('change','.sel_order_type',function() {
 			obj_select.html(data);
 		}
 	});
-});
+}
 
 $(document).on('click','a[name=btnExcelDownload]', function() {
 

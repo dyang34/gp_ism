@@ -9,6 +9,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/brand/BrandMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/channel/ChannelMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/category/CategoryMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/sales_type/SalesTypeMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/status/StatusMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/order/OrderMgr.php";
 
 $menuCate = 1;
@@ -39,6 +40,8 @@ $_goods_mst_code = RequestUtil::getParam("_goods_mst_code", "");
 $_goods_name = RequestUtil::getParam("_goods_name", "");
 $_item_code = RequestUtil::getParam("_item_code", "");
 $_item_name = RequestUtil::getParam("_item_name", "");
+$_include_cancel = RequestUtil::getParam("_include_cancel", "");
+$_status = RequestUtil::getParam("_status", "");
 
 $_order_by = RequestUtil::getParam("_order_by", "order_date");
 $_order_by_asc = RequestUtil::getParam("_order_by_asc", "desc");
@@ -46,7 +49,18 @@ $_order_by_asc = RequestUtil::getParam("_order_by_asc", "desc");
 $pg = new Page($currentPage, $pageSize);
 
 $arrDayOfWeek = array("일","월","화","수","목","금","토");
-$arrChannel = $arrBrand = $arrCategory1 = $arrCategory2 = $arrCategory3 = $arrCategory4 = $arrSalesType = array();
+$arrChannel = $arrBrand = $arrCategory1 = $arrCategory2 = $arrCategory3 = $arrCategory4 = $arrSalesType = $arrStatus = array();
+
+$wq = new WhereQuery(true, true);
+$wq->addOrderBy("sort","asc");
+$rs = StatusMgr::getInstance()->getList($wq);
+if ($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row = $rs->fetch_assoc();
+        
+        array_push($arrStatus, $row);
+    }
+}
 
 $wq = new WhereQuery(true, true);
 $rs = SalesTypeMgr::getInstance()->getList($wq);
@@ -164,7 +178,7 @@ if($_cate3_idx && $_cate3_idx > 0) {
 }
 
 $wq = new WhereQuery(true, true);
-$wq->addAndNotIn("status", array("취소접수","취소완료","삭제"));
+
 $wq->addAndString("order_date", ">=", $_order_date_from);
 $wq->addAndStringBind("order_date", "<", $_order_date_to, "date_add('?', interval 1 day)");
 $wq->addAndString("imc_idx", "=", $_imc_idx);
@@ -177,9 +191,14 @@ $wq->addAndString("tax_type", "=", $_tax_type);
 $wq->addAndString("order_type", "=", $_order_type);
 $wq->addAndString("goods_mst_code", "=", $_goods_mst_code);
 $wq->addAndString("a.item_code", "=", $_item_code);
+$wq->addAndString("status", "=", $_status);
 
 $wq->addAndLike("name",$_goods_name);
 $wq->addAndLike("item_name",$_item_name);
+
+if(!$_include_cancel) {
+    $wq->addAndNotIn("status", array("취소접수","취소완료","삭제"));
+}
 
 $wq->addOrderBy($_order_by, $_order_by_asc);
 
@@ -258,6 +277,8 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
     <input type="hidden" name="_goods_name" value="<?=$_goods_name?>">
 	<input type="hidden" name="_item_code" value="<?=$_item_code?>">
 	<input type="hidden" name="_item_name" value="<?=$_item_name?>">
+	<input type="hidden" name="_include_cancel" value="<?=$_include_cancel?>">
+	<input type="hidden" name="_status" value="<?=$_status?>">
     <input type="hidden" name="_order_by" value="<?=$_order_by?>">
     <input type="hidden" name="_order_by_asc" value="<?=$_order_by_asc?>">
     
@@ -331,7 +352,7 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                                 <th>판매일자</th>
                                 <td><input type="date" id="_order_date_from" name="_order_date_from" class="date_in" value="<?=$_order_date_from?>" style="padding:0 16px;">~<input type="date" id="_order_date_to" name="_order_date_to" value="<?=$_order_date_to?>" class="date_in" style="padding:0 16px;"></td>
                                 <th>판매유형/거래처(채널)</th>
-                            	<td>
+                            	<td colspan="3">
 									<select name="_order_type" class="sel_order_type">
                                     	<option value="">판매 유형</option>
 <?php                                     	
@@ -430,7 +451,20 @@ foreach($arrSalesType as $key => $value) {
                             	<th>품목(옵션)코드</th>
                             	<td><input type="text" placeholder="품목(옵션)코드로 검색" name="_item_code" style="width: 100%;" value=<?=$_item_code?>></td>
                             	<th>품목(옵션)명</th>
-                            	<td colspan="3"><input type="text" placeholder="품목(옵션)명으로 검색" name="_item_name" style="width: 100%;" value=<?=$_item_name?>></td>
+                            	<td><input type="text" placeholder="품목(옵션)명으로 검색" name="_item_name" style="width: 100%;" value=<?=$_item_name?>></td>
+                            	<th>상태</th>
+                            	<td>
+<select name="_status" class="sel_status">
+                                    	<option value="">상태</option>
+<?php        
+foreach($arrStatus as $lt){
+?>
+                							<option value="<?=$lt['title_status']?>" <?=$_status==$lt['title_status']?"selected":""?>><?=$lt['title_status']?></option>
+                							<?php
+}
+?>
+                                    </select>
+                            	<input type="checkbox" value="1" name="_include_cancel" id="_include_cancel" <?=$_include_cancel?"checked='checked'":""?>><label for="_include_cancel">취소/삭제 포함</label></td>
                             </tr>
                         </tbody>
                     </table>
@@ -765,7 +799,62 @@ if (in_array("grp_tax_type", $arrGroupBy)) {
     $order_list_link_param .= "&_tax_type=".$row["tax_type"];
 }
 
-$order_list_link_param .= "&_except_cancel=1";
+
+if(!$_include_cancel) {
+    $order_list_link_param .= "&_except_cancel=1";
+}
+
+if ($_imc_idx) {
+    $order_list_link_param .= "&_imc_idx_2=".$_imc_idx;
+}
+
+if ($_imb_idx) {
+    $order_list_link_param .= "&_imb_idx_2=".$_imb_idx;
+}
+
+if ($_cate1_idx) {
+    $order_list_link_param .= "&_cate1_idx_2=".$_cate1_idx;
+}
+
+if ($_cate2_idx) {
+    $order_list_link_param .= "&_cate2_idx_2=".$_cate2_idx;
+}
+
+if ($_cate3_idx) {
+    $order_list_link_param .= "&_cate3_idx_2=".$_cate3_idx;
+}
+
+if ($_cate4_idx) {
+    $order_list_link_param .= "&_cate4_idx_2=".$_cate4_idx;
+}
+
+if ($_tax_type) {
+    $order_list_link_param .= "&_tax_type_2=".$_tax_type;
+}
+
+if ($_order_type) {
+    $order_list_link_param .= "&_order_type_2=".$_order_type;
+}
+
+if ($_goods_mst_code) {
+    $order_list_link_param .= "&_goods_mst_code_2=".$_goods_mst_code;
+}
+
+if ($_goods_name) {
+    $order_list_link_param .= "&_goods_name_2=".$_goods_name;
+}
+
+if ($_item_code) {
+    $order_list_link_param .= "&_item_code_2=".$_item_code;
+}
+
+if ($_item_name) {
+    $order_list_link_param .= "&_item_name_2=".$_item_name;
+}
+
+if ($_status) {
+    $order_list_link_param .= "&_status_2=".$_status;
+}
 ?>
                         <a href="./order_list.php?<?=$order_list_link_param?>" target="_blank"><?=$date_txt?></a>
                         </td>
@@ -871,6 +960,14 @@ $order_list_link_param .= "&_except_cancel=1";
 <script src="/ism/cms/js/util/ValidCheck.js"></script>
 <script type="text/javascript">
 
+var prev_include_except;
+
+$(document).ready(function() {
+
+//	getSelChannel("");
+	
+});
+
 $(document).on("click","a[name=btnSearch]",function() {
 	
 	var f = document.searchForm;
@@ -936,13 +1033,18 @@ $(document).on('change','.sel_category',function() {
 });
 
 $(document).on('change','.sel_order_type',function() {
+	getSelChannel($("option:selected", this).val());
+});
+
+var getSelChannel = function(order_type) {
+
 	var obj_select
 
 	obj_select = $('.sel_channel');
 
 	$.ajax({
 		url: "/ism/ajax/ajax_channel.php",
-		data: {imst_idx: $("option:selected", this).val()},
+		data: {imst_idx: order_type},
 		async: true,
 		cache: false,
 		error: function(xhr){	},
@@ -950,6 +1052,17 @@ $(document).on('change','.sel_order_type',function() {
 			obj_select.html(data);
 		}
 	});
+}
+
+$(document).on('change','.sel_status',function() {
+	
+	if($("option:selected", this).val()=="취소접수" || $("option:selected", this).val()=="취소완료" || $("option:selected", this).val()=="삭제") {
+		prev_include_except = $('input:checkbox[name=_include_cancel]').is(':checked');
+		
+		$('input:checkbox[name=_include_cancel]').prop("checked", true);
+	} else {
+//		$('input:checkbox[name=_include_cancel]').prop("checked", prev_include_except);
+	}
 });
 
 $(document).on('click','a[name=btnExcelDownload]', function() {

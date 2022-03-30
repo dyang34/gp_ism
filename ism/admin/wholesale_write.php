@@ -13,6 +13,11 @@ $menuNo = 8;
 $mode = RequestUtil::getParam("mode", "INS");
 $order_no = RequestUtil::getParam("order_no", "");
 
+if (LoginManager::getUserLoginInfo("iam_grade") < 9) {
+    JsUtil::alertBack("작업 권한이 없습니다.    ");
+    exit;
+}
+
 if ($mode=="UPD") {
     //    if(empty($userid)) {
     if(!$order_no) {

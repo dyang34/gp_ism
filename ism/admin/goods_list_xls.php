@@ -6,6 +6,11 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/RequestUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsMgr.php";
 
+if (LoginManager::getUserLoginInfo("iam_grade") < 10) {
+    echo "작업 권한이 없습니다.    ";
+    exit;
+}
+
 $_imb_idx = RequestUtil::getParam("_imb_idx", "");
 $_cate1_idx = RequestUtil::getParam("_cate1_idx", "");
 $_cate2_idx = RequestUtil::getParam("_cate2_idx", "");
