@@ -29,6 +29,9 @@ $_goods_name = RequestUtil::getParam("_goods_name", "");
 $_item_code = RequestUtil::getParam("_item_code", "");
 $_item_name = RequestUtil::getParam("_item_name", "");
 $_order_type = RequestUtil::getParam("_order_type", "");
+$_except_cancel = RequestUtil::getParam("_except_cancel", "");
+$_status = RequestUtil::getParam("_status", "");
+$_order_no = RequestUtil::getParam("_order_no", "");
 
 $_order_by = RequestUtil::getParam("_order_by", "order_date");
 $_order_by_asc = RequestUtil::getParam("_order_by_asc", "desc");
@@ -60,9 +63,15 @@ $wq->addAndString("order_type", "<>", "1");
 $wq->addAndString("order_type", "=", $_order_type);
 $wq->addAndString("goods_mst_code", "=", $_goods_mst_code);
 $wq->addAndString("a.item_code", "=", $_item_code);
+$wq->addAndString("status", "=", $_status);
+$wq->addAndString("order_no", "=", $_order_no);
 
 $wq->addAndLike("name",$_goods_name);
 $wq->addAndLike("item_name",$_item_name);
+
+if($_except_cancel) {
+    $wq->addAndNotIn("status", array("취소접수","취소완료","삭제"));
+}
 
 $wq->addOrderBy($_order_by, $_order_by_asc);
 
@@ -104,6 +113,7 @@ th{font-size:11px;text-align:center;color:white;background-color:#000081;}
         <th style="color:white;background-color:#000081;">EA</th>
         <th style="color:white;background-color:#000081;">판매가</th>
         <th style="color:white;background-color:#000081;">과/면세</th>
+        <th style="color:white;background-color:#000081;">상태</th>
         <th style="color:white;background-color:#000081;">작업일</th>
     </tr>
 <?php
@@ -125,6 +135,7 @@ if ($rs->num_rows > 0) {
         <td><?=number_format($row["ea"])?></td>
         <td><?=number_format($row["price_collect"])?></td>
         <td><?=$row["tax_type"]?></td>
+        <td><?=$row["status"]?></td>
         <td><?=substr($row["reg_date"],0,10)?></td>
     </tr>
 <?php

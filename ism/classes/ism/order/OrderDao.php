@@ -336,7 +336,7 @@ class OrderDao extends A_Dao
     	    ."', '".$this->checkMysql($db, $arrVal["imc_idx"])
     	    ."', '".$this->checkMysql($db, $arrVal["status"])
     	    ."',concat('W',DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'),lpad(FLOOR(RAND()*1000),3,0))"
-            ."', '".$this->checkMysql($db, $arrVal["channel"])
+            .",(select name from ism_mst_channel where imc_idx = '".$this->checkMysql($db, $arrVal["imc_idx"])."')"
     	    .",(select code from ism_mst_goods_item where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"
     	    .",(select name from ism_mst_goods_item gi inner join ism_mst_goods g on gi.code = g.code where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"
     	    .",(select item_name from ism_mst_goods_item where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"

@@ -26,6 +26,9 @@ $amount = RequestUtil::getParam("amount", "");
 $ea = RequestUtil::getParam("ea", "");
 $price_collect = RequestUtil::getParam("price_collect", "");
 $tax_type = RequestUtil::getParam("tax_type", "");
+$order_type = RequestUtil::getParam("order_type", "");
+$status = RequestUtil::getParam("status", "");
+$imc_idx = RequestUtil::getParam("imc_idx", "");
 $tmp_data3 = RequestUtil::getParam("tmp_data3", "");
 
 $auto_defense = RequestUtil::getParam("auto_defense", "");
@@ -65,6 +68,9 @@ try {
         $arrIns["ea"] = $ea;
         $arrIns["price_collect"] = $price_collect;
         $arrIns["tax_type"] = $tax_type;
+        $arrIns["order_type"] = $order_type;
+        $arrIns["imc_idx"] = $imc_idx;
+        $arrIns["status"] = $status;
         $arrIns["tmp_data3"] = $tmp_data3;
         
         OrderMgr::getInstance()->add2($arrIns);
@@ -113,6 +119,9 @@ try {
         $uq->add("ea", $ea);
         $uq->add("price_collect", $price_collect);
         $uq->add("tax_type", $tax_type);
+        $uq->add("order_type", $order_type);
+        $uq->add("imc_idx", $imc_idx);
+        $uq->add("status", $status);
         $uq->add("tmp_data3", $tmp_data3);
         
         OrderMgr::getInstance()->edit_wholesale($uq, $item_code, $order_no);

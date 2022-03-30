@@ -4,6 +4,9 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/ism_ip_check.php";
 
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/RequestUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/channel/ChannelMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/sales_type/SalesTypeMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/status/StatusMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/order/OrderMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsItemMgr.php";
 
@@ -16,6 +19,30 @@ $order_no = RequestUtil::getParam("order_no", "");
 if (LoginManager::getUserLoginInfo("iam_grade") < 9) {
     JsUtil::alertBack("작업 권한이 없습니다.    ");
     exit;
+}
+
+$arrChannel = $arrSalesType = $arrStatus = array();
+
+$wq = new WhereQuery(true, true);
+$wq->addOrderBy("sort","asc");
+$rs = StatusMgr::getInstance()->getList($wq);
+if ($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row = $rs->fetch_assoc();
+        
+        array_push($arrStatus, $row);
+    }
+}
+
+$wq = new WhereQuery(true, true);
+$wq->addAndString("imst_idx","<>","1");
+$rs = SalesTypeMgr::getInstance()->getList($wq);
+if ($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row = $rs->fetch_assoc();
+        
+        $arrSalesType[$row["imst_idx"]] = $row["title"];
+    }
 }
 
 if ($mode=="UPD") {
@@ -39,6 +66,28 @@ if ($mode=="UPD") {
         exit;
     }
 }
+
+$wq = new WhereQuery(true, true);
+$wq->addAndString2("imc_fg_del","=","0");
+if ($mode=="UPD") {
+    $wq->addAndString("imst_idx","=",$row["order_type"]);
+} else {
+    $wq->addAndString("imst_idx","=","2");
+}
+$wq->addOrderBy("imst_idx","");
+$wq->addOrderBy("sort","desc");
+$wq->addOrderBy("name","asc");
+
+$rs = ChannelMgr::getInstance()->getList($wq);
+
+if($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row_channel = $rs->fetch_assoc();
+        
+        array_push($arrChannel, $row_channel);
+    }
+}
+
 
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("img_fg_del","=","0");
@@ -151,6 +200,29 @@ if ($mode=="UPD") {
                                     <input type="date" id="order_date" name="order_date" class="date_in" value="<?=substr($row["order_date"],0,10)?>" placeholder="주문일자를 입력하세요." style="padding:0 16px;">
                                 </td>
                             </tr>
+							<tr>
+                            	<th>판매유형/거래처(채널)</th>
+                            	<td colspan="3">
+									<select name="order_type" class="sel_order_type">
+<?php                                     	
+foreach($arrSalesType as $key => $value) {
+?>
+                                    	<option value="<?=$key?>" <?=$row["order_type"]==$key?"selected":""?>><?=$value?></option>
+<?php
+}
+?>
+                                    </select>
+                                    <select name="imc_idx" class="sel_channel">
+                						<?php
+                						foreach($arrChannel as $lt){
+                							?>
+                							<option value="<?=$lt['imc_idx']?>" <?=$row["imc_idx"]==$lt['imc_idx']?"selected":""?>><?="[".$lt['sales_type_title']."] ".$lt['name']?></option>
+                							<?php
+                						}
+                						?>
+                					</select>
+                                </td>                           
+							</tr>                            
                             <tr>
                                 <th>수량</th>
                                 <td>
@@ -184,6 +256,21 @@ if ($mode=="UPD") {
                 						<option value="과세" <?=$row["tax_type"]=="과세"?"selected='selected'":""?>>과세</option>
                 						<option value="면세" <?=$row["tax_type"]=="면세"?"selected='selected'":""?>>면세</option>
 									</select>
+                                </td>
+                            </tr>
+							<tr>
+                                <th>상태</th>
+                                <td>
+									<select name="status" class="sel_status">
+<?php          
+foreach($arrStatus as $lt){
+?>
+                							<option value="<?=$lt['title_status']?>" <?=$row["status"]==$lt['title_status']?"selected":""?>><?=$lt['title_status']?></option>
+<?php
+}
+?>
+                                    </select>
+
                                 </td>
                             </tr>
                         </tbody>
@@ -284,6 +371,28 @@ var changeItemCode = function() {
 		$('span[name=spanName]').html("");
 	}
 }
+
+$(document).on('change','.sel_order_type',function() {
+	getSelChannel($("option:selected", this).val());
+});
+
+var getSelChannel = function(order_type) {
+	var obj_select
+
+	obj_select = $('.sel_channel');
+
+	$.ajax({
+		url: "/ism/ajax/ajax_channel.php",
+		data: {imst_idx: order_type, p_fg_not_all:1},
+		async: true,
+		cache: false,
+		error: function(xhr){	},
+		success: function(data){
+			obj_select.html(data);
+		}
+	});
+}
+
 </script>	
 
 <?php

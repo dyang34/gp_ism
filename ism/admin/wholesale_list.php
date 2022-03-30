@@ -10,6 +10,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/brand/BrandMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/channel/ChannelMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/category/CategoryMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/sales_type/SalesTypeMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/status/StatusMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/order/OrderMgr.php";
 
 $menuCate = 4;
@@ -37,13 +38,27 @@ $_goods_name = RequestUtil::getParam("_goods_name", "");
 $_item_code = RequestUtil::getParam("_item_code", "");
 $_item_name = RequestUtil::getParam("_item_name", "");
 $_order_type = RequestUtil::getParam("_order_type", "");
+$_except_cancel = RequestUtil::getParam("_except_cancel", "");
+$_status = RequestUtil::getParam("_status", "");
+$_order_no = RequestUtil::getParam("_order_no", "");
 
 $_order_by = RequestUtil::getParam("_order_by", "order_date");
 $_order_by_asc = RequestUtil::getParam("_order_by_asc", "desc");
 
 $pg = new Page($currentPage, $pageSize);
 
-$arrChannel = $arrBrand = $arrCategory1 = $arrCategory2 = $arrCategory3 = $arrCategory4 = $arrSalesType = array();
+$arrChannel = $arrBrand = $arrCategory1 = $arrCategory2 = $arrCategory3 = $arrCategory4 = $arrSalesType = $arrStatus = array();
+
+$wq = new WhereQuery(true, true);
+$wq->addOrderBy("sort","asc");
+$rs = StatusMgr::getInstance()->getList($wq);
+if ($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row = $rs->fetch_assoc();
+        
+        array_push($arrStatus, $row);
+    }
+}
 
 $wq = new WhereQuery(true, true);
 $wq->addAndString("imst_idx", "<>", "1");
@@ -178,9 +193,15 @@ $wq->addAndString("order_type", "<>", "1");
 $wq->addAndString("order_type", "=", $_order_type);
 $wq->addAndString("goods_mst_code", "=", $_goods_mst_code);
 $wq->addAndString("a.item_code", "=", $_item_code);
+$wq->addAndString("status", "=", $_status);
+$wq->addAndString("order_no", "=", $_order_no);
 
 $wq->addAndLike("name",$_goods_name);
 $wq->addAndLike("item_name",$_item_name);
+
+if($_except_cancel) {
+    $wq->addAndNotIn("status", array("취소접수","취소완료","삭제"));
+}
 
 $wq->addOrderBy($_order_by, $_order_by_asc);
 
@@ -214,6 +235,9 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
 	<input type="hidden" name="_item_code" value="<?=$_item_code?>">
 	<input type="hidden" name="_item_name" value="<?=$_item_name?>">
 	<input type="hidden" name="_order_type" value="<?=$_order_type?>">
+	<input type="hidden" name="_except_cancel" value="<?=$_except_cancel?>">
+	<input type="hidden" name="_status" value="<?=$_status?>">
+	<input type="hidden" name="_order_no" value="<?=$_order_no?>">
     <input type="hidden" name="_order_by" value="<?=$_order_by?>">
     <input type="hidden" name="_order_by_asc" value="<?=$_order_by_asc?>">
 </form>
@@ -343,7 +367,22 @@ foreach($arrSalesType as $key => $value) {
                             	<th>품목(옵션)코드</th>
                             	<td><input type="text" placeholder="품목(옵션)명으로 검색" name="_item_code" style="width: 100%;" value=<?=$_item_code?>></td>
                             	<th>품목(옵션)명</th>
-                            	<td colspan="3"><input type="text" placeholder="품목(옵션)명으로 검색" name="_item_name" style="width: 100%;" value=<?=$_item_name?>></td>
+                            	<td><input type="text" placeholder="품목(옵션)명으로 검색" name="_item_name" style="width: 100%;" value=<?=$_item_name?>></td>
+								<th>상태</th>
+                            	<td>
+<select name="_status" class="sel_status">
+                                    	<option value="">상태</option>
+<?php          
+foreach($arrStatus as $lt){
+?>
+                							<option value="<?=$lt['title_status']?>" <?=$_status==$lt['title_status']?"selected":""?>><?=$lt['title_status']?></option>
+                							<?php
+}
+?>
+                                    </select>
+                            	<input type="checkbox" value="1" name="_except_cancel" id="_except_cancel" <?=$_except_cancel?"checked='checked'":""?>><label for="_except_cancel">취소/삭제 제외</label></td>
+                            </tr>
+                            	
                             </tr>
                         </tbody>
                     </table>
@@ -378,7 +417,10 @@ foreach($arrSalesType as $key => $value) {
             		<col>
             		<col>
             		<col>
+            		<col>
+            		<col>
             		<col style="width:70px;">
+            		<col style="width:80px;">
             		<col style="width:100px;">
             		<col style="width:80px;">
             	</colgroup>
@@ -402,6 +444,7 @@ foreach($arrSalesType as $key => $value) {
                         <th>EA</th>
                         <th>판매가</th>
                         <th>과/면세</th>
+                        <th>상태</th>
                         <th>작업일</th>
                         <th>작업</th>
                     </tr>
@@ -430,6 +473,7 @@ if ($rs->num_rows > 0) {
                         <td class="txt_r"><?=number_format($row["ea"])?></td>
                         <td class="txt_r"><?=number_format($row["price_collect"])?></td>
                         <td class="txt_c"><?=$row["tax_type"]?></td>
+                        <td class="txt_c"><?=$row["status"]?></td>
                         <td class="txt_c"><?=substr($row["reg_date"],0,10)?></td>
                         <td style="text-align:center;">
 <?php /*                        
@@ -523,13 +567,17 @@ $(document).on('change','.sel_category',function() {
 });
 
 $(document).on('change','.sel_order_type',function() {
+	getSelChannel($("option:selected", this).val());
+});
+
+var getSelChannel = function(order_type) {
 	var obj_select
 
 	obj_select = $('.sel_channel');
 
 	$.ajax({
 		url: "/ism/ajax/ajax_channel.php",
-		data: {imst_idx: $("option:selected", this).val(), p_fg_not_online:1},
+		data: {imst_idx: order_type},
 		async: true,
 		cache: false,
 		error: function(xhr){	},
@@ -537,7 +585,7 @@ $(document).on('change','.sel_order_type',function() {
 			obj_select.html(data);
 		}
 	});
-});
+}
 
 $(document).on('click','a[name=btnExcelDownload]', function() {
 	var f = document.pageForm;

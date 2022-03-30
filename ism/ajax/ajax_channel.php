@@ -7,6 +7,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/channel/ChannelMgr.php"
 
 $imst_idx = RequestUtil::getParam("imst_idx", "");
 $p_fg_not_online = RequestUtil::getParam("p_fg_not_online", "");
+$p_fg_not_all = RequestUtil::getParam("p_fg_not_all", "");
 
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("imc_fg_del","=","0");
@@ -20,7 +21,9 @@ if ($p_fg_not_online) {
 
 $rs = ChannelMgr::getInstance()->getList($wq);
 
-echo "<option value=''>거래처(채널) 선택</option>";
+if (!$p_fg_not_all) {
+    echo "<option value=''>거래처(채널) 선택</option>";
+}
 
 if($rs->num_rows > 0) {
     for($i=0;$i<$rs->num_rows;$i++) {
