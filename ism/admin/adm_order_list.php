@@ -13,8 +13,8 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/sales_type/SalesTypeMgr
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/status/StatusMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/order/OrderMgr.php";
 
-$menuCate = 1;
-$menuNo = 1;
+$menuCate = 2;
+$menuNo = 25;
 
 if (LoginManager::getUserLoginInfo("iam_grade") < 8 || LoginManager::getUserLoginInfo("iam_grade") == 9) {
     JsUtil::alertBack("작업 권한이 없습니다.    ");
