@@ -36,6 +36,7 @@
                 <a href='#' class="btn <?=$menuCate==4?"on":""?>">도매 관리<span></span></a>
                 <div class="subMenu">
     				<a href="/ism/admin/wholesale_list.php" class="<?=$menuNo==8?"on":""?>">- 도매 판매 내역</a>
+    				<a href="/ism/admin/upload_whole_sales_data.php" class="<?=$menuNo==26?"on":""?>">- 도매 판매 업로드</a>
     			</div>
             </li>
     <?php
