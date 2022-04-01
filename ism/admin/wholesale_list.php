@@ -486,7 +486,7 @@ if ($rs->num_rows > 0) {
     }
 } else {
 ?>
-					<tr><td colspan="13" class="txt_c">No Data.</td></tr>
+					<tr><td colspan="16" class="txt_c">No Data.</td></tr>
 <?php
 }
 ?>
