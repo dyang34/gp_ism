@@ -36,7 +36,7 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
     <form name="pageForm" method="get">
     </form>
 
-			<div style="padding-left:20px;">
+			<div style="padding-left:20px;height: 59px;">
                 <h3 class="icon-list wrt_icon_search">거래처(채널) <strong><?=number_format($rs->num_rows)?>건</strong></h3>
                 <ul class="icon_Btn">
                     <li><a href="#" name="btnExcelDownload">엑셀</a></li>
@@ -55,8 +55,8 @@ for($i=0;$i<count($arrChannel);$i++) {
 <?php             
         } 
 ?>
-			<div><?=$arrChannel[$i]["sales_type_title"]?></div>
-            <table class="display" cellpadding="0" cellspacing="0">
+			<div class="channel_title">- <?=$arrChannel[$i]["sales_type_title"]?></div>
+            <table class="display" cellpadding="0" cellspacing="0" style="margin-bottom:17px;">
             	<colgroup>
             		<col width="12%">
             		<col width="13%">

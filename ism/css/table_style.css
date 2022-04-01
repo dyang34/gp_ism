@@ -36,7 +36,7 @@ body { overflow-x:hidden; }
 #formFooter { background-color: #f6f6f6; border-top: 1px solid #dce8f1; padding: 25px; text-align: center; -webkit-border-radius: 0 0 10px 10px; border-radius: 0 0 10px 10px; }
 .login_wrap input[type=button] { background-color: #fb8113; border: none; color: #fff; padding: 15px 80px; text-align: center; text-decoration: none; display: inline-block; text-transform: uppercase; font-size: 13px; -webkit-box-shadow: 0 10px 14px 0 #b55e103d; box-shadow: 0 10px 14px 0 #b55e103d; -webkit-border-radius: 5px 5px 5px 5px; border-radius: 5px 5px 5px 5px; margin: 10px 20px 40px 20px; -webkit-transition: all 0.3s ease-in-out; -moz-transition: all 0.3s ease-in-out; -ms-transition: all 0.3s ease-in-out; -o-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; cursor:pointer;height: auto !important; }
 .login_wrap input[type=button]:hover { background-color: #313A3D; color: #FD9638; }
-input[type=text], input[type=password] { background-color: #f6f6f6; border: none; color: #0d0d0d; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 6px; width: 85%; border: 2px solid #f6f6f6; -webkit-transition: all 0.5s ease-in-out; -moz-transition: all 0.5s ease-in-out; -ms-transition: all 0.5s ease-in-out; -o-transition: all 0.5s ease-in-out; transition: all 0.5s ease-in-out; -webkit-border-radius: 5px 5px 5px 5px; border-radius: 5px 5px 5px 5px; }
+input[type=text], input[type=password] { background-color: #f6f6f6; border: none; color: #0d0d0d; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; width: 85%; border: 2px solid #f6f6f6; -webkit-transition: all 0.5s ease-in-out; -moz-transition: all 0.5s ease-in-out; -ms-transition: all 0.5s ease-in-out; -o-transition: all 0.5s ease-in-out; transition: all 0.5s ease-in-out; -webkit-border-radius: 5px 5px 5px 5px; border-radius: 5px 5px 5px 5px; }
 input[type=text]:focus, input[type=password]:focus { border-bottom: 2px solid #bb5f0c; outline: none; }
 input[type=text]:placeholder, input[type=password]:placeholder { color: #cccccc; font-family: "Poppins", sans-serif !important; }
 .fadeInDown { -webkit-animation-name: fadeInDown; animation-name: fadeInDown; -webkit-animation-duration: 1s; animation-duration: 1s; -webkit-animation-fill-mode: both; animation-fill-mode: both; }
@@ -125,11 +125,11 @@ input:-webkit-autofill:active {
 .icon_Btn li a:hover {background-color:#7b868d; color:#fff; transition:all .1s; }
 .adm-table { border-top:2px solid #395467; width:100%; }
 .adm-table th {background: #ededed; padding: 8px 0; border-top: 1px solid #ddd; border-bottom: 1px solid #ccc; color: #333; width:10%; font-weight:500; }
-.adm-table td { padding: 8px 10px; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; }
+.adm-table td { padding: 5px 10px; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; }
 .adm-table select,
 .adm-table .date_in {height: 30px; line-height: 30px; padding:0 34px; border: 1px solid #ccc; border-radius: 4px;}
 .adm-table input[type="checkbox"] + label, .adm-table input[type="radio"] + label, .adm-table input[type="date"] + label { margin-left: 4px; font-size: 13px; margin-right: 15px; }
-.adm-table input[type="text"] { height: 30px; line-height: 29px; width: 58%; padding: 0 10px; border: 1px solid #ccc; border-radius:4px; text-align:left; font-size:13px; margin: 3px 0; background-color: #fff; }
+.adm-table input[type="text"] { height: 30px; line-height: 29px; width: 58%; padding: 0 10px; border: 1px solid #ccc; border-radius:4px; text-align:left; font-size:13px; background-color: #fff; }
 
 /*checkbox*/
 .adm-table { position:relative; }
@@ -268,3 +268,4 @@ input:-webkit-autofill:active {
 .ism_total > span::after { content: '|'; clear: both; margin: 5px; display: inline-block; color: #858585; }
 .ism_total > span:last-of-type::after { content: none; }
 
+.channel_title { font-size: 16px; padding: 10px 0 10px 30px; font-weight: bold; }

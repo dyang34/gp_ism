@@ -82,7 +82,7 @@
 .wrt_table .wrt_radio_box .sameR:before { left:0; box-sizing: border-box; }
 .wrt_table .wrt_radio_box .newR:before { box-sizing: border-box; }
 
-.wrt_searchBtn { padding: 16px 0 20px; display: inline-block; }
+.wrt_searchBtn { padding: 16px 0 20px; display: inline-block; margin-right:4px; }
 .wrt_searchBtn>a { display: block; margin: 0 auto; color: #4b4b4b; text-align: center; line-height: 32px; border-radius: 12px; background-color: #7b868d; color: #fff; font-size: 16px; border: none; cursor: pointer; float: left; padding: 5px 17px; }
 .wrt_searchBtn>a:hover { background-color: #333 !important; color: #fff; transition: all .25s; }
 /* 20211210 write추가(e) */

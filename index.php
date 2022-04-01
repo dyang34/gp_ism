@@ -48,8 +48,8 @@ if(window.location.protocol == "http:"){
                 	<input type="hidden" name="auto_defense" />
                 	<input type="hidden" name="mode" value="login" />
                 
-                	<input type="text" name="userid" id="userid" class="fadeIn second" placeholder="login" />
-					<input type="password" name="passwd"  id="passwd" class="fadeIn third" />
+                	<input type="text" name="userid" id="userid" class="fadeIn second" placeholder="login" style="margin:6px;" />
+					<input type="password" name="passwd"  id="passwd" class="fadeIn third" style="margin: 3px 0;" />
 					<div class="bit_checks fadeIn third">
                         <input type="checkbox" id="nologin" name="ck_auto" value="1"><label for="nologin">자동 로그인</label>
                     </div>
