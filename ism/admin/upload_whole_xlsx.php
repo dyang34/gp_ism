@@ -6,6 +6,10 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/JsUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/login/LoginManager.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/UploadUtil.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/channel/ChannelMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/sales_type/SalesTypeMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/status/StatusMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsItemMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/order/OrderMgr.php";
 
 require_once $_SERVER['DOCUMENT_ROOT'].'/tools/Spout/Autoloader/autoload.php';
@@ -21,6 +25,62 @@ if ( !$_FILES["up_file"]["name"] ) {
     JsUtil::alertBack("업로드할 파일을 지정해 주십시오.   ");
     exit;
 }
+
+$arrChannel = $arrSalesType = $arrStatus = $arrGoodsItem = array();
+
+$wq = new WhereQuery(true, true);
+$wq->addOrderBy("sort","asc");
+$rs = StatusMgr::getInstance()->getList($wq);
+if ($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row = $rs->fetch_assoc();
+        
+        array_push($arrStatus, $row["title_status"]);
+    }
+}
+
+$wq = new WhereQuery(true, true);
+$rs = SalesTypeMgr::getInstance()->getList($wq);
+if ($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row = $rs->fetch_assoc();
+        
+        array_push($arrSalesType, $row["title"]);
+    }
+}
+
+$wq = new WhereQuery(true, true);
+$wq->addAndString2("imc_fg_del","=","0");
+$wq->addAndString2("imst_idx","<>","1");
+
+$wq->addOrderBy("imst_idx","");
+$wq->addOrderBy("sort","desc");
+$wq->addOrderBy("name","asc");
+
+$rs = ChannelMgr::getInstance()->getList($wq);
+
+if($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row = $rs->fetch_assoc();
+        
+        array_push($arrChannel, $row["sales_type_title"]."|".$row["name"]);
+    }
+}
+
+$wq = new WhereQuery(true, true);
+$wq->addAndString2("img_fg_del","=","0");
+$wq->addAndString2("imgi_fg_del","=","0");
+
+$rs = GoodsItemMgr::getInstance()->getList($wq);
+
+if($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row = $rs->fetch_assoc();
+        
+        array_push($arrGoodsItem, $row["item_code"]);
+    }
+}
+
 /*
 $last_order_date = "";
 $wq = new WhereQuery(true, true);
@@ -60,7 +120,7 @@ $no_sheet = 1;
 $cnt_total = 1;
 $arr_data = array();
 
-// No.	주문일시	쇼핑몰명	쇼핑몰 id	상품명(수집)	옵션(수집)	     상품명(확정)	옵션(확정)	      수량	     EA	     상품코드(옵션코드)	쇼핑몰 상품코드	    품목코드	주문번호(사방넷)	판매번호(쇼핑몰)	부주문번호      주문순번	정산대조여부	세트분리여부	판매가 수집	   판매가 상품	결제금액	상태	    과면세 구분
+// 판매유형     거래처     주문일자    품목코드    수량      EA      금액      과세구분        상태
 
 foreach ($reader->getSheetIterator() as $sheet) {
     
@@ -74,7 +134,7 @@ foreach ($reader->getSheetIterator() as $sheet) {
     foreach ($sheet->getRowIterator() as $row) {
         
         if ($fg_first) {
-            if ($row[0] != "No." || $row[1] != "주문일시" || $row[2] != "쇼핑몰명" || $row[8] != "수량" || $row[9] != "EA" || $row[22] != "상태" || $row[23] != "과면세 구분") {
+            if ($row[0] != "판매유형" || $row[1] != "거래처" || $row[2] != "주문일자" || $row[8] != "상태") {
                 JsUtil::alertBack("[".$no_sheet."번째 sheet] "."엑셀 양식이 일치하지 않습니다.    ");
                 exit;
             }
@@ -82,63 +142,53 @@ foreach ($reader->getSheetIterator() as $sheet) {
             $fg_first = false;
         } else {
             
-            if ($row[0] && $row[1]) {
-                if (!is_numeric($row[0])) {
-                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [No.] 항목은 숫자 타입만 가능합니다.    "."|".$row[0]."|".$row[1]."|");
+            if ($row[0] && $row[1] && $row[2] && $row[3]) {
+
+                if (!in_array($row[0], $arrSalesType)) {
+                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [판매유형]은 존재하지 않는 판매유형입니다.    "."|".$row[0]);
                     exit;
                 }
                 
-                if (!preg_match("/^([2][0][0-9]{2})-([0-9]{2})-([0-9]{2}) ([0-9]{2})\:([0-9]{2})$/", $row[1])) {
-                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [주문일시] 항목은 날짜 타입만 가능합니다.    ");
+                if (!in_array($row[0]."|".$row[1], $arrChannel)) {
+                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [거래처]는 존재하지 않는 거래처입니다.    "."\\r\\n\\r\\n".$row[0]."|".$row[1]."|");
                     exit;
                 }
                 
-                if (!is_numeric($row[8])) {
-                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [수량] 항목은 숫자 타입만 가능합니다.    ");
+                if (!preg_match("/^([2][0][0-9]{2})-([0-9]{2})-([0-9]{2})$/", date_format($row[2], 'Y-m-d'))) {
+                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [주문일자] 항목은 날짜 타입만 가능합니다.    ".date_format($row[2], 'Y-m-d'));
                     exit;
                 }
                 
-                if (!is_numeric($row[9])) {
-                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [EA] 항목은 숫자 타입만 가능합니다.    ");
+                if (!in_array($row[3], $arrGoodsItem)) {
+                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [품목코드]는 존재하지 않는 품목코드입니다.    "."|".$row[3]);
                     exit;
                 }
                 
-                if (!is_numeric($row[19])) {
-                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [판매가 수집] 항목은 숫자 타입만 가능합니다.    ");
-                    exit;
-                }
-                
-                if (!is_numeric($row[20])) {
-                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [판매가 상품] 항목은 숫자 타입만 가능합니다.    ");
-                    exit;
-                }
-                
-                if (!is_numeric($row[21])) {
-                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [결제금액] 항목은 숫자 타입만 가능합니다.    ");
+                if (!is_numeric($row[4])) {
+                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [수량] 항목은 숫자 타입만 가능합니다.    "."|".$row[4]);
                     exit;
                 }
 
-                if (!$row[2]) {
-                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [쇼핑몰명] 항목은 필수값 입니다.    ");
+                if (!is_numeric($row[5])) {
+                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [EA] 항목은 숫자 타입만 가능합니다.    "."|".$row[5]);
                     exit;
                 }
                 
-                if (!$row[12]) {
-                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [품목코드] 항목은 필수값 입니다.    ");
-                    exit;
-                }
-    
-                if (!$row[13]) {
-                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [주문번호(사방넷)] 항목은 필수값 입니다.    ");
+                if (!is_numeric($row[6])) {
+                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [금액] 항목은 숫자 타입만 가능합니다.    "."|".$row[6]);
                     exit;
                 }
                 
-    /*            
-                if($last_order_date > $row[1]) {
-                    JsUtil::alertBack($no."번째 행의 [수집일시]가 기 등록된 최근 판매일보다 과거 판매일입니다.(최근 판매일 : ".$last_order_date.")    ");
+                if ($row[7]!="과세" && $row[7]!="면세") {
+                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [과세구분]은 과세 혹은 면세이어야만 합니다.    "."|".$row[7]);
                     exit;
                 }
-    */
+                
+                if (!in_array($row[8], $arrStatus)) {
+                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [상태]는 존재하지 않는 상태입니다.    "."|".$row[8]);
+                    exit;
+                }
+                
                 array_push($arr_data, $row);
             }
         }
@@ -163,39 +213,23 @@ $arr_insert = array();
 if (count($arr_data) > 0) {
     for($i=0;$i<count($arr_data);$i++) {
         
-        $arr_insert['no'] = $arr_data[$i][0];
-        $arr_insert['order_date'] = $arr_data[$i][1];
-        $arr_insert['channel'] = $arr_data[$i][2];
-        $arr_insert['channel_id'] = $arr_data[$i][3];
-        $arr_insert['name_collect'] = $arr_data[$i][4];
-        $arr_insert['opt_name_collect'] = $arr_data[$i][5];
-        $arr_insert['name_confirm'] = $arr_data[$i][6];
-        $arr_insert['opt_name_confirm'] = $arr_data[$i][7];
-        $arr_insert['amount'] = $arr_data[$i][8];
-        $arr_insert['ea'] = $arr_data[$i][9];
-        $arr_insert['goods_code'] = $arr_data[$i][10];
-        $arr_insert['goods_code_mall'] = $arr_data[$i][11];
-        $arr_insert['item_code'] = $arr_data[$i][12];
-        $arr_insert['order_no'] = $arr_data[$i][13];
-        $arr_insert['order_no_mall'] = $arr_data[$i][14];
-        $arr_insert['order_no_sub'] = $arr_data[$i][15];
-        $arr_insert['order_no_seq'] = $arr_data[$i][16];
-        $arr_insert['fg_calculate'] = $arr_data[$i][17];
-        $arr_insert['fg_separate'] = $arr_data[$i][18];
-        $arr_insert['price_collect'] = $arr_data[$i][19];
-        $arr_insert['price_goods'] = $arr_data[$i][20];
-        $arr_insert['price_pay'] = $arr_data[$i][21];
-        $arr_insert['status'] = $arr_data[$i][22];
-        $arr_insert['tax_type'] = $arr_data[$i][23];
+        $arr_insert['order_type'] = $arr_data[$i][0];
+        $arr_insert['channel'] = $arr_data[$i][1];
+        $arr_insert['order_date'] = date_format($arr_data[$i][2], 'Y-m-d');
+        $arr_insert['item_code'] = $arr_data[$i][3];
+        $arr_insert['amount'] = $arr_data[$i][4];
+        $arr_insert['ea'] = $arr_data[$i][5];
+        $arr_insert['price_collect'] = $arr_data[$i][6];
+        $arr_insert['tax_type'] = $arr_data[$i][7];
+        $arr_insert['status'] = $arr_data[$i][8];
+        $arr_insert['i'] = $i;
         $arr_insert['grp_code'] = $grp_code;
         
-        OrderMgr::getInstance()->add($arr_insert);
+        OrderMgr::getInstance()->add_wholesale_upload($arr_insert);
 
     }
     
-    OrderMgr::getInstance()->add_check(array("grp_code"=>$grp_code));
-    
-    JsUtil::alertReplace("총 ".($cnt_total-$no_sheet)."개의 Row가 등록되었습니다.    ", "./upload_sales_data.php");
+    JsUtil::alertReplace("총 ".($cnt_total-$no_sheet)."개의 Row가 등록되었습니다.    ", "./upload_wholesales_data.php");
     
 }
 ?>

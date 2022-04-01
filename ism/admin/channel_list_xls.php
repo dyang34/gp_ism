@@ -12,6 +12,7 @@ if (LoginManager::getUserLoginInfo("iam_grade") < 10) {
 
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("imc_fg_del","=","0");
+$wq->addOrderBy("imst_idx","asc");
 $wq->addOrderBy("sort","desc");
 $wq->addOrderBy("name","asc");
 
@@ -33,6 +34,7 @@ th{font-size:11px;text-align:center;color:white;background-color:#000081;}
 
 <table cellpadding=3 cellspacing=0 border=1 bordercolor='#bdbebd' style='border-collapse: collapse'>
 	<tr style="height:30px;">
+		<th style="color:white;background-color:#000081;">판매 유형</th>
 		<th style="color:white;background-color:#000081;">명칭</th>
 		<th style="color:white;background-color:#000081;">등록일</th>
 	</tr>
@@ -42,6 +44,7 @@ if($rs->num_rows > 0) {
         $row = $rs->fetch_assoc();
 ?>
 		<tr>
+            <td><?=$row["sales_type_title"]?></td>
             <td><?=$row["name"]?></td>
             <td><?=$row["reg_date"]?></td>
 		</tr>

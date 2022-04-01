@@ -15,10 +15,20 @@ if (LoginManager::getUserLoginInfo("iam_grade") < 10) {
 
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("imc_fg_del","=","0");
+$wq->addOrderBy("imst_idx","asc");
 $wq->addOrderBy("sort","desc");
 $wq->addOrderBy("name","asc");
 
 $rs = ChannelMgr::getInstance()->getList($wq);
+
+$arrChannel = array();
+if($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row_channel = $rs->fetch_assoc();
+        
+        array_push($arrChannel, $row_channel);
+    }
+}
 
 include $_SERVER['DOCUMENT_ROOT']."/ism/include/head.php";
 include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
@@ -33,7 +43,19 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                 </ul>
             </div>
 
-            <!-- 메인TABLE(s) -->
+<?php
+$prev_imst_idx = 0;
+$j=0;
+for($i=0;$i<count($arrChannel);$i++) {
+    if($prev_imst_idx != $arrChannel[$i]["imst_idx"]) {
+        if ($prev_imst_idx > 0) {
+?>
+                </tbody>
+            </table>
+<?php             
+        } 
+?>
+			<div><?=$arrChannel[$i]["sales_type_title"]?></div>
             <table class="display" cellpadding="0" cellspacing="0">
             	<colgroup>
             		<col width="12%">
@@ -58,36 +80,26 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                     </tr>
                 </thead>
                 <tbody style="border-bottom: 2px solid #395467">
-<?php
-if($rs->num_rows > 0) {
-    for($i=0;$i<$rs->num_rows;$i++) {
-        $row = $rs->fetch_assoc();
-        
-        if ( $i == 0) {
-            echo "<tr>";
-        } else if ( ($i % 4) == 0 ) {
-            echo "</tr><tr>";
-        }
-?>
-                        <td class="<?=($i % 4)==0?"tbl_first":""?>" style="text-align:center;<?=($i % 4)>0?"border-left:12px solid #fff;":""?>"><?=$row["name"]?></td>
-                        <td style="text-align:center;"><?=$row["reg_date"]?></td>
 <?php        
-    }
-
-    if ($rs->num_rows % 4 > 0) {
-        for($j=0;$j<(4-($rs->num_rows % 4));$j++) {
-            echo "<td style='border-left:12px solid #fff;'></td><td></td>";
-        }
+        $j = 0;
     }
     
-    echo "</tr>";
-    
-} else {
+    if ( $j == 0) {
+        echo "<tr>";
+    } else if ( ($j % 4) == 0 ) {
+        echo "</tr><tr>";
+    }
 ?>
-					<tr><td colspan="8" style="text-align:center;">No Data.</td></tr>
+                        <td class="<?=($i % 4)==0?"tbl_first":""?>" style="text-align:center;<?=($i % 4)>0?"border-left:12px solid #fff;":""?>"><?=$arrChannel[$i]["name"]?></td>
+                        <td style="text-align:center;"><?=$arrChannel[$i]["reg_date"]?></td>
+                
 <?php
+$j++;
+$prev_imst_idx = $arrChannel[$i]["imst_idx"];
 }
-?>                
+?>
+                
+                
                 </tbody>
             </table>
             

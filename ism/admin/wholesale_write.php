@@ -91,6 +91,7 @@ if($rs->num_rows > 0) {
 
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("img_fg_del","=","0");
+$wq->addAndString2("imgi_fg_del","=","0");
 //$wq->addAndLike("item_code","DG");
 
 $wq->addOrderBy("item_name","asc");

@@ -493,6 +493,29 @@ class OrderMgr extends A_Mgr
         return $isOk;
     }
     
+    function add_wholesale_upload($arrVal) {
+        
+        $isOk = null;
+        $db = null;
+        
+        try {
+            $db = DbUtil::getConnection();
+            
+            //            $this->startTran($db);
+            
+            $isOk = OrderDao::getInstance()->insert_wholesale_upload($db, $arrVal);
+            
+            //            $this->commit($db);
+            
+        } catch(Exception $e) {
+            //            $this->rollback($db);
+            echo $e->getMessage();
+        }
+        
+        @ $db->close();
+        return $isOk;
+    }
+    
     function add_check($arrVal) {
         
         $isOk = null;

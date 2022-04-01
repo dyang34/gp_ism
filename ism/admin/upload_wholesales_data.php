@@ -94,22 +94,24 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
 	<!-- 취소/등록 버튼 START -->
 	<div style="overflow: hidden; display: flex; display: -webkit-flex; -webkit-align-items: center; align-items: center; flex-direction: inherit; justify-content: center; margin-top: 9px;">
 		<div class="wrt_searchBtn">
-			<a href="#" name="btnSave">업로드</a>
+			<a href="#" name="btnSave" style=" margin-right: 4px;">업로드</a>
+			<a href="/ism/data/upload_wholesale_data.xlsx" name="btnDownload" style=" background-color: #c75f3bf2;">양식 다운로드</a>
 		</div>
 	</div>
 
-    <div style="display:inline-block;float:left;">
-    	<span>상태</span>
-    	<ul>
+	<div class="wholesale_total">
+        <div class="wholesale_wrap">
+            <span class="wholesale_title">상태</span>
+            <ul>
 <?php
 for($i=0;$i<count($arrStatus);$i++) {
 ?>
-    		<li><?=$arrStatus[$i]["title_status"]?></li>
+    			<li><?=$arrStatus[$i]["title_status"]?></li>
 <?php
 }
 ?>
-    	</ul>
-    </div>
+        	</ul>
+        </div>
 
 <?php
 $prev_imst_idx = 0;
@@ -117,23 +119,25 @@ for($i=0;$i<count($arrChannel);$i++) {
     if($prev_imst_idx != $arrChannel[$i]["imst_idx"]) {
         if ($prev_imst_idx > 0) {
 ?>
-    	</ul>
-    </div>
+        	</ul>
+        </div>
 <?php             
         } 
 ?>
-	<div style="display:inline-block;float:left;">
-    	<span><?=$arrChannel[$i]["sales_type_title"]?></span>
-    	<ul>
+		<div class="wholesale_wrap">
+        	<span class="wholesale_title"><?=$arrChannel[$i]["sales_type_title"]?></span>
+        	<ul>
 <?php        
     }
 ?>
-    		<li><?=$arrChannel[$i]["name"]?></li>
+    			<li><?=$arrChannel[$i]["name"]?></li>
 <?php
+$prev_imst_idx = $arrChannel[$i]["imst_idx"];
 }
 ?>
-    	</ul>
-    </div>
+        	</ul>
+        </div>
+	</div>
 </div>
 
 <script src="/ism/cms/js/util/ValidCheck.js"></script>
@@ -159,6 +163,7 @@ $(document).on("click","a[name=btnSave]",function() {
 
     return false;
 });
+
 </script>
 
 <?php

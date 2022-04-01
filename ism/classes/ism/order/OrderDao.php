@@ -349,6 +349,32 @@ class OrderDao extends A_Dao
         return $db->query($sql);
 	}
 	
+	function insert_wholesale_upload($db, $arrVal) {
+	    $sql =" insert into ism_order(no, order_date, item_code, amount, ea, price_collect, tax_type, order_type, imc_idx, status, grp_code, order_no, channel, goods_mst_code, name_collect, opt_name_collect, name_confirm, opt_name_confirm, reg_date)"
+	        ." values ('1"
+	            ."', '".$this->checkMysql($db, $arrVal["order_date"])
+	            ."', '".$this->checkMysql($db, $arrVal["item_code"])
+	            ."', '".$this->checkMysql($db, $arrVal["amount"])
+	            ."', '".$this->checkMysql($db, $arrVal["ea"])
+	            ."', '".$this->checkMysql($db, $arrVal["price_collect"])
+	            ."', '".$this->checkMysql($db, $arrVal["tax_type"])
+	            ."',(select imst_idx from ism_mst_sales_type where title = '".$this->checkMysql($db, $arrVal["order_type"])."')"
+	            .",(select imc_idx from ism_mst_channel a inner join ism_mst_sales_type b on a.imst_idx = b.imst_idx where name = '".$this->checkMysql($db, $arrVal["channel"])."' and title = '".$this->checkMysql($db, $arrVal["order_type"])."') "
+	            .", '".$this->checkMysql($db, $arrVal["status"])
+	            ."', '".$this->checkMysql($db, $arrVal["grp_code"])
+	            ."',concat('W',DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'),lpad(FLOOR(RAND()*1000),3,0),".$this->checkMysql($db, $arrVal["i"]).")"
+	                .", '".$this->checkMysql($db, $arrVal["channel"])
+	                    ."',(select code from ism_mst_goods_item where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"
+	                        .",(select name from ism_mst_goods_item gi inner join ism_mst_goods g on gi.code = g.code where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"
+	                            .",(select item_name from ism_mst_goods_item where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"
+	                                .",(select name from ism_mst_goods_item gi inner join ism_mst_goods g on gi.code = g.code where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"
+	                                    .",(select item_name from ism_mst_goods_item where item_code = '".$this->checkMysql($db, $arrVal["item_code"])."')"
+	                                        .",now())"
+	                                            ;
+	                                            
+	                                            return $db->query($sql);
+	}
+	
 	function insert($db, $arrVal) {
 /*	    
 	    $sql =" insert into ism_order(no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, item_code, order_no, order_no_mall, order_no_sub, order_no_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, reg_date)"
