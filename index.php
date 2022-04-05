@@ -8,10 +8,10 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/login/LoginManager.php"
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/admin/AdmMemberMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/SystemUtil.php";
 
-if ( $_SERVER[SERVER_ADDR] != "127.0.0.1" && $_SERVER['HTTP_HOST'] == "gp-ism.com" ) {
-    JsUtil::Replace("http://www.gp-ism.com");
+if ( $_SERVER['HTTP_HOST'] == "ganglife2018.cafe24.com" ) {
+    JsUtil::Replace("http://gp-ism.com");
 }
-        
+      
 $rtnUrl = RequestUtil::getParam("rtnUrl", "");
 
 $ism_adm_ck_auto = CookieUtil::getCookieMd5("ism_adm_ck_auto");
