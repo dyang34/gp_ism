@@ -8,8 +8,8 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/login/LoginManager.php"
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/admin/AdmMemberMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/SystemUtil.php";
 
-if ( $_SERVER['HTTP_HOST'] == "ganglife2018.cafe24.com" ) {
-    JsUtil::Replace("http://gp-ism.com");
+if ( $_SERVER['HTTP_HOST'] != "gp-ism.com" ) {
+    header("Location: http://gp-ism.com");
 }
       
 $rtnUrl = RequestUtil::getParam("rtnUrl", "");
