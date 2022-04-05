@@ -126,6 +126,7 @@ if($_cate3_idx && $_cate3_idx > 0) {
 
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("img_fg_del","=","0");
+$wq->addAndString2("imgi_fg_del","=","0");
 
 $wq->addAndString("imb_idx","=",$_imb_idx);
 $wq->addAndString("cate1_idx","=",$_cate1_idx);

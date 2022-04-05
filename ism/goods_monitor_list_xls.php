@@ -21,6 +21,7 @@ $_order_by_asc = RequestUtil::getParam("_order_by_asc", "desc");
 
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("img_fg_del","=","0");
+$wq->addAndString2("imgi_fg_del","=","0");
 
 $wq->addAndString("imb_idx","=",$_imb_idx);
 $wq->addAndString("cate1_idx","=",$_cate1_idx);
