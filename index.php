@@ -2,7 +2,10 @@
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/blm_default_set.php";
 
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/JsUtil.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/UpdateQuery.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/login/LoginManager.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/admin/AdmMemberMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/SystemUtil.php";
 
 $rtnUrl = RequestUtil::getParam("rtnUrl", "");
@@ -13,6 +16,25 @@ $ism_adm_ck_userid = CookieUtil::getCookieMd5("ism_adm_ck_userid");
 if(!$ism_adm_ck_auto) $ism_adm_ck_auto = "";
 
 if (LoginManager::isUserLogined() && !empty(LoginManager::getUserLoginInfo("iam_grade"))) {
+    
+    $wq = new WhereQuery(true, true);
+    $wq->addAndString("userid", "=", LoginManager::getUserLoginInfo("userid"));
+    $wq->addAndString("iam_fg_del", "=", "0");
+    
+    $row = AdmMemberMgr::getInstance()->getFirst($wq);
+    
+    if ( empty($row) ) {
+        JsUtil::replace("./admin_logout.php");
+        exit;
+    } else {
+        
+        if (empty($row["iam_last_login"]) || $row["iam_last_login"] < date("Y-m-d h:i:s",strtotime ("-30 minutes"))) {
+            $uq = new UpdateQuery();
+            $uq->addNotQuot("iam_last_login", "now()");
+            AdmMemberMgr::getInstance()->edit($uq, LoginManager::getUserLoginInfo("userid"));
+        }
+    }
+    
     if (!empty($rtnUrl)) {
         JsUtil::replace($rtnUrl);
         exit;
