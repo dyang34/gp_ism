@@ -8,6 +8,10 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/login/LoginManager.php"
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/admin/AdmMemberMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/SystemUtil.php";
 
+if ( $_SERVER[SERVER_ADDR] != "127.0.0.1" && $_SERVER['HTTP_HOST'] == "gp-ism.com" ) {
+    JsUtil::Replace("http://www.gp-ism.com");
+}
+        
 $rtnUrl = RequestUtil::getParam("rtnUrl", "");
 
 $ism_adm_ck_auto = CookieUtil::getCookieMd5("ism_adm_ck_auto");
@@ -51,7 +55,7 @@ if(!empty($rtnUrl)) {
 
 include $_SERVER['DOCUMENT_ROOT']."/ism/include/head.php";
 
-if (!SystemUtil::isLocalhost()) {
+if (!SystemUtil::isLocalhost() && 1==2) {
 ?>
 <script>
 if(window.location.protocol == "http:"){

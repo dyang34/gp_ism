@@ -73,7 +73,7 @@ if($mode=="login"){
                 $rtnUrl = "http://".$_SERVER[SERVER_NAME].$rtnUrl;
                 
         } else {
-            $rtnUrl = "/branch.php";
+            $rtnUrl = "./branch.php";
         }
 
         JsUtil::replace($rtnUrl);
