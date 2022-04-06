@@ -25,9 +25,9 @@ $wq->addAndString("imst_idx","<>","1");
 $rs = SalesTypeMgr::getInstance()->getList($wq);
 if ($rs->num_rows > 0) {
     for($i=0;$i<$rs->num_rows;$i++) {
-        $row = $rs->fetch_assoc();
+        $row_sales_type = $rs->fetch_assoc();
         
-        $arrSalesType[$row["imst_idx"]] = $row["title"];
+        $arrSalesType[$row_sales_type["imst_idx"]] = $row_sales_type["title"];
     }
 }
 
@@ -184,4 +184,6 @@ $(document).on("click","a[name=btnCancel]",function() {
 
 <?php
 include $_SERVER['DOCUMENT_ROOT']."/ism/include/footer.php";
+
+@ $rs->free();
 ?>

@@ -186,6 +186,55 @@ class OrderDao extends A_Dao
         return $db->query($sql);
 	}
 	
+	function selectAggrWidthPerPage($db, $wq, $pg, $group_by, $add_select1, $add_select2) {
+	    $sql =" SELECT
+    	item_code, imc_idx
+    	,group_concat(case DATE when '2022-03-27' then ea end) ea
+    	,group_concat(case DATE when '2022-03-28' then ea end) ea
+    	,group_concat(case DATE when '2022-03-29' then ea end) ea
+    	,group_concat(case DATE when '2022-03-30' then ea end) ea
+    	,group_concat(case DATE when '2022-03-31' then ea end) ea
+    	
+    	,group_concat(case DATE when '2022-03-27' then amount end) amount
+    	,group_concat(case DATE when '2022-03-28' then amount end) amount
+    	,group_concat(case DATE when '2022-03-29' then amount end) amount
+    	,group_concat(case DATE when '2022-03-30' then amount end) amount
+    	,group_concat(case DATE when '2022-03-31' then amount end) amount
+    	
+    	,group_concat(case DATE when '2022-03-27' then price_collect end) price_collect
+    	,group_concat(case DATE when '2022-03-28' then price_collect end) price_collect
+    	,group_concat(case DATE when '2022-03-29' then price_collect end) price_collect
+    	,group_concat(case DATE when '2022-03-30' then price_collect end) price_collect
+    	,group_concat(case DATE when '2022-03-31' then price_collect end) price_collect
+    	
+    	FROM (
+    	    SELECT a.item_code
+    	    ,a.imc_idx
+    	    ,DATE_FORMAT(order_date, '%Y-%m-%d') date
+    	    ,SUM(ea) ea
+    	    ,SUM(amount) amount
+    	    ,SUM(price_collect) price_collect
+    	    ,COUNT(*) cnt
+    	    FROM ism_order a
+    	    inner join ism_mst_goods_item gi
+    	    on a.item_code = gi.item_code
+    	    and gi.imgi_fg_del = 0
+    	    inner join ism_mst_goods g
+    	    on gi.code = g.code
+    	    and g.img_fg_del = 0
+    	    WHERE order_date BETWEEN '2022-03-27' AND '2022-03-31'
+    	    AND a.item_code IN ('GBFD-O551011','GBFD-O551012','GBGM-P320027')
+    	    GROUP BY a.imc_idx, a.item_code, DATE_FORMAT(order_date, '%Y-%m-%d')
+    	    ORDER BY a.imc_idx, a.item_code, DATE_FORMAT(order_date, '%Y-%m-%d')
+    	    ) AS t
+    	    GROUP BY imc_idx, item_code
+        "
+	        ;
+	    
+	        return $db->query($sql);
+	}
+	
+	
 	function selectAggrSum($db, $wq) {
 	    
 	    $sql =" select sum(amount) amount, sum(ea) ea, sum(price_collect) price_collect, count(*) as cnt "
