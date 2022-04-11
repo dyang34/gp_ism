@@ -11,7 +11,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/SystemUtil.php";
 if ( $_SERVER['HTTP_HOST'] != "gp-ism.com" ) {
     header("Location: http://gp-ism.com");
 }
-      
+
 $rtnUrl = RequestUtil::getParam("rtnUrl", "");
 
 $ism_adm_ck_auto = CookieUtil::getCookieMd5("ism_adm_ck_auto");
