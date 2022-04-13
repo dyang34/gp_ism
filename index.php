@@ -8,7 +8,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/login/LoginManager.php"
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/admin/AdmMemberMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/SystemUtil.php";
 
-if ( $_SERVER['HTTP_HOST'] != "gp-ism.com" ) {
+if ( $_SERVER['HTTP_HOST'] != "gp-ism.com" && !SystemUtil::isLocalhost()) {
     header("Location: http://gp-ism.com");
 }
 
