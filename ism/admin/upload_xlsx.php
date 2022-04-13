@@ -6,6 +6,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/JsUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/login/LoginManager.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/UploadUtil.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/channel/ChannelMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/order/OrderMgr.php";
 
 require_once $_SERVER['DOCUMENT_ROOT'].'/tools/Spout/Autoloader/autoload.php';
@@ -21,6 +22,25 @@ if ( !$_FILES["up_file"]["name"] ) {
     JsUtil::alertBack("업로드할 파일을 지정해 주십시오.   ");
     exit;
 }
+
+$wq = new WhereQuery(true, true);
+$wq->addAndString2("imc_fg_del","=","0");
+$wq->addAndString2("imst_idx","=","1");
+
+$rs = ChannelMgr::getInstance()->getList($wq);
+
+$arrChannel = array();
+array_push($arrChannel, '네이버 페이');
+array_push($arrChannel, '롯데닷컴');
+
+if($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row_channel = $rs->fetch_assoc();
+        
+        array_push($arrChannel, $row_channel["name"]);
+    }
+}
+
 /*
 $last_order_date = "";
 $wq = new WhereQuery(true, true);
@@ -60,7 +80,7 @@ $no_sheet = 1;
 $cnt_total = 1;
 $arr_data = array();
 
-// No.	주문일시	쇼핑몰명	쇼핑몰 id	상품명(수집)	옵션(수집)	     상품명(확정)	옵션(확정)	      수량	     EA	     상품코드(옵션코드)	쇼핑몰 상품코드	    품목코드	주문번호(사방넷)	판매번호(쇼핑몰)	부주문번호      주문순번	정산대조여부	세트분리여부	판매가 수집	   판매가 상품	결제금액	상태	    과면세 구분
+// No.	주문일시	쇼핑몰명	쇼핑몰 id	상품명(수집)	옵션(수집)	     상품명(확정)	옵션(확정)	      수량	     EA	     상품코드(옵션코드)	쇼핑몰 상품코드	    품목코드	주문번호(사방넷)	판매번호(쇼핑몰)	부주문번호      주문순번	정산대조여부	세트분리여부	판매가 수집	   판매가 상품	결제금액	상태	    과면세 구분     공급합계
 
 foreach ($reader->getSheetIterator() as $sheet) {
     
@@ -74,7 +94,7 @@ foreach ($reader->getSheetIterator() as $sheet) {
     foreach ($sheet->getRowIterator() as $row) {
         
         if ($fg_first) {
-            if ($row[0] != "No." || $row[1] != "주문일시" || $row[2] != "쇼핑몰명" || $row[8] != "수량" || $row[9] != "EA" || $row[22] != "상태" || $row[23] != "과면세 구분") {
+            if ($row[0] != "No." || $row[1] != "주문일시" || $row[2] != "쇼핑몰명" || $row[8] != "수량" || $row[9] != "EA" || $row[22] != "상태" || $row[23] != "과면세 구분"|| $row[24] != "공급합계") {
                 JsUtil::alertBack("[".$no_sheet."번째 sheet] "."엑셀 양식이 일치하지 않습니다.    ");
                 exit;
             }
@@ -118,6 +138,11 @@ foreach ($reader->getSheetIterator() as $sheet) {
                     exit;
                 }
 
+                if (!is_numeric($row[24])) {
+                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [공급합계] 항목은 숫자 타입만 가능합니다.    ");
+                    exit;
+                }
+                
                 if (!$row[2]) {
                     JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [쇼핑몰명] 항목은 필수값 입니다.    ");
                     exit;
@@ -130,6 +155,11 @@ foreach ($reader->getSheetIterator() as $sheet) {
     
                 if (!$row[13]) {
                     JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [주문번호(사방넷)] 항목은 필수값 입니다.    ");
+                    exit;
+                }
+                
+                if (!in_array($row[2], $arrChannel)) {
+                    JsUtil::alertBack("[".$no_sheet."번째 sheet] ".$no."번째 행의 [쇼핑몰명]는 존재하지 않는 쇼핑몰입니다. 거래처를 먼저 등록해 주세요.   "."\\r\\n\\r\\n[".$row[2]."]");
                     exit;
                 }
                 
@@ -188,6 +218,7 @@ if (count($arr_data) > 0) {
         $arr_insert['status'] = $arr_data[$i][22];
         $arr_insert['tax_type'] = $arr_data[$i][23];
         $arr_insert['grp_code'] = $grp_code;
+        $arr_insert['price_supply'] = $arr_data[$i][24];
         
         OrderMgr::getInstance()->add($arr_insert);
 
@@ -198,4 +229,6 @@ if (count($arr_data) > 0) {
     JsUtil::alertReplace("총 ".($cnt_total-$no_sheet)."개의 Row가 등록되었습니다.    ", "./upload_sales_data.php");
     
 }
+
+@ $rs->free();
 ?>

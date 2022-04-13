@@ -36,6 +36,7 @@ th{font-size:11px;text-align:center;color:white;background-color:#000081;}
 	<tr style="height:30px;">
 		<th style="color:white;background-color:#000081;">판매 유형</th>
 		<th style="color:white;background-color:#000081;">명칭</th>
+		<th style="color:white;background-color:#000081;">반영금액</th>
 		<th style="color:white;background-color:#000081;">등록일</th>
 	</tr>
 <?php
@@ -46,6 +47,7 @@ if($rs->num_rows > 0) {
 		<tr>
             <td><?=$row["sales_type_title"]?></td>
             <td><?=$row["name"]?></td>
+            <td><?=$row["imc_fg_supply"]=="1"?"공급합계":"<font color='blue'>결제금액</font>"?></td>
             <td><?=$row["reg_date"]?></td>
 		</tr>
 <?php        

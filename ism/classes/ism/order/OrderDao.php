@@ -481,6 +481,7 @@ class OrderDao extends A_Dao
             ."', '".$this->checkMysql($db, $arrVal["status"])
             ."', '".$this->checkMysql($db, $arrVal["tax_type"])
             ."', '".$this->checkMysql($db, $arrVal["grp_code"])
+            ."', '".$this->checkMysql($db, $arrVal["price_supply"])
             ."')"
         ;
 	                
