@@ -65,6 +65,21 @@ class GoodsItemDao extends A_Dao
         return $db->query($sql);
 	}
 	
+	function selectMissing($db) {
+	    
+	    $sql = "select item_code, (select name_confirm from ism_order a where t.item_code = a.item_code order by order_date limit 1) as name_confirm "
+	    ." from ( "
+	       ." select DISTINCT item_code "
+	        ." from ism_order "
+	            ." WHERE item_code NOT IN (SELECT item_code FROM ism_mst_goods_item) "
+	                ." ) t "
+	                    
+	                ." ORDER BY item_code asc "
+	                    ;
+	                    
+	                    return $db->query($sql);
+	}
+	
 	function select2($db, $wq) {
 	    
 	    $sql =" select imgi_idx, a.code, name, item_code, item_name, imb_idx, cate1_idx, cate2_idx, cate3_idx, cate4_idx, img_fg_del, a.reg_date, stock_qty, stock_apply_date "
