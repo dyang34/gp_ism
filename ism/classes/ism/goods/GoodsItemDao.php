@@ -67,8 +67,10 @@ class GoodsItemDao extends A_Dao
 	
 	function selectMissing($db) {
 	    
-	    $sql = "select item_code, (select name_confirm from ism_order a where t.item_code = a.item_code order by order_date limit 1) as name_confirm "
-	    ." from ( "
+	    $sql = "select item_code "
+	        ." , (select name_confirm from ism_order a where t.item_code = a.item_code order by order_date limit 1) as name_confirm "
+	            ." , (select order_date from ism_order a where t.item_code = a.item_code order by order_date limit 1) as order_date "
+	                ." from ( "
 	       ." select DISTINCT item_code "
 	        ." from ism_order "
 	            ." WHERE item_code NOT IN (SELECT item_code FROM ism_mst_goods_item) "
