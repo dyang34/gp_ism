@@ -126,6 +126,13 @@ if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
         <th style="color:white;background-color:#000081;">판매가</th>
         <th style="color:white;background-color:#000081;">상태</th>
         <th style="color:white;background-color:#000081;">과/면세</th>
+<?php 
+if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
+?>
+        <th style="color:white;background-color:#000081;">세트분리여부</th>
+<?php     
+}
+?>
         <th style="color:white;background-color:#000081;">작업일</th>
     </tr>
 <?php
@@ -141,7 +148,7 @@ if ($rs->num_rows > 0) {
 <?php 
 if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
 ?>
-        <td><?=$row["channel_org"]?></td>
+        <td><?=$row["order_type"]>"1"?$row["channel"]:$row["channel_org"]?></td>
 <?php
 }
 ?>
@@ -166,6 +173,13 @@ if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
         <td><?=number_format($row["price"])?></td>
         <td><?=$row["status"]?></td>
         <td><?=$row["tax_type"]?></td>
+<?php 
+if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
+?>
+        <td><?=$row["fg_separate"]?></td>
+<?php     
+}
+?>
         <td><?=substr($row["reg_date"],0,10)?></td>
     </tr>
 <?php

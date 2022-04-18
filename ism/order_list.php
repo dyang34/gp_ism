@@ -546,12 +546,12 @@ if ($rs->num_rows > 0) {
 */?>
                         <td class="tbl_first txt_c"><?=substr($row["order_date"],0,10)." ".$arrDayOfWeek[date('w', strtotime(substr($row["order_date"],0,10)))]?></td>
                         <td class="txt_c"><?=$row["order_no"]?></td>
-                        <td class="txt_c" style="<?=$row["order_type"]>"1"?"color:green;":""?> ?>"><?=$arrSalesType[$row["order_type"]]?></td>
+                        <td class="txt_c" style="<?=$row["order_type"]>"1"?"color:blue;":""?> ?>"><?=$arrSalesType[$row["order_type"]]?></td>
                         <td class="txt_c" style="<?=$row["channel"] != $row["channel_org"]?"color:green;":""?>"><?=$row["channel"]?></td>
 <?php 
 if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
 ?>
-                        <td class="txt_c"><?=$row["channel_org"]?></td>
+                        <td class="txt_c"><?=$row["order_type"]>"1"?$row["channel"]:$row["channel_org"]?></td>
 <?php
 }
 ?>            		
