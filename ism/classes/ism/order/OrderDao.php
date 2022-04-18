@@ -19,7 +19,7 @@ class OrderDao extends A_Dao
 	function selectByKey($db, $key) {
 		 
 //	    $sql =" select no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, item_code, order_no, order_no_mall, order_no_sub, order_no_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, reg_date, order_type, imc_idx, goods_mst_code, tmp_data3  "
-	    $sql =" select order_date, channel, amount, ea, item_code, order_no, price_collect, status, tax_type, grp_code, reg_date, order_type, goods_mst_code, tmp_data3, imc_idx, price_supply, price, fg_supply, fg_revise  "
+	    $sql =" select order_date, channel, amount, ea, item_code, order_no, price_collect, status, tax_type, grp_code, reg_date, order_type, goods_mst_code, tmp_data3, imc_idx, price_pay, price_supply, price, fg_supply, fg_revise  "
 	        ." from ism_order "
 	            ." where order_no = ".$this->quot($db, $key)
 //		            ." where io_idx = ".$this->quot($db, $key)
@@ -38,7 +38,7 @@ class OrderDao extends A_Dao
 
 	function selectFirst($db, $wq) {
 
-		    $sql =" select no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, item_code, order_no, order_no_mall, order_no_sub, order_no_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, reg_date, order_type, imc_idx, goods_mst_code, tmp_data3, price_supply, price, fg_supply, fg_revise "
+		    $sql =" select no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, item_code, order_no, order_no_mall, order_no_sub, order_no_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, reg_date, order_type, imc_idx, goods_mst_code, tmp_data3, price_pay, price_supply, price, fg_supply, fg_revise "
 	        ." from ism_order"
 			 .$wq->getWhereQuery()
 			 .$wq->getOrderByQuery()
@@ -59,7 +59,7 @@ class OrderDao extends A_Dao
 	function select($db, $wq) {
 	    
 	        //$sql =" select no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, a.item_code, order_no, order_no_mall, order_no_sub, order_no_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, a.reg_date, g.code, g.name, g.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3 "
-	            $sql =" select order_date, amount, ea, a.item_code, order_no, price_collect, status, tax_type, grp_code, a.reg_date, g.code, g.name, gi.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3, imc_idx, order_no_mall, price_supply, price, fg_supply, fg_revise "
+	            $sql =" select order_date, amount, ea, a.item_code, order_no, price_collect, status, tax_type, grp_code, a.reg_date, g.code, g.name, gi.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3, imc_idx, order_no_mall, price_pay, price_supply, price, fg_supply, fg_revise "
 	            ." ,(select name from ism_mst_brand b where b.imb_idx = g.imb_idx) as brand_name "
 	                ."		,(select title from ism_mst_category c1 where c1.imct_idx = g.cate1_idx) as cate1_name "
 	                    ."		,(select title from ism_mst_category c2 where c2.imct_idx = g.cate2_idx) as cate2_name "
@@ -106,7 +106,7 @@ class OrderDao extends A_Dao
 		
 		$sql =" select @rnum:=@rnum+1 as rnum, r.* from ("
 //			     ."		select @rnum:=0, no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, a.item_code, order_no, order_no_mall, order_no_sub, order_no_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, a.reg_date, g.code, g.name, g.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3 "
-			     ."		select @rnum:=0, order_date, amount, ea, a.item_code, order_no, price_collect, status, tax_type, grp_code, a.reg_date, g.code, g.name, gi.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3, imc_idx, price_supply, price, fg_supply, fg_revise "
+			     ."		select @rnum:=0, order_date, amount, ea, a.item_code, order_no, price_collect, status, tax_type, grp_code, a.reg_date, g.code, g.name, gi.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3, imc_idx, price_supply, price_pay, price, fg_supply, fg_revise "
 			         ." ,(select name from ism_mst_brand b where b.imb_idx = g.imb_idx) as brand_name "
 			             ."		,(select name from ism_mst_channel cn where cn.imc_idx = a.imc_idx) as channel "
 /*			             
