@@ -98,6 +98,13 @@ th{font-size:11px;text-align:center;color:white;background-color:#000081;}
         <th style="color:white;background-color:#000081;">주문번호</th>
         <th style="color:white;background-color:#000081;">판매유형</th>
         <th style="color:white;background-color:#000081;">거래처(채널)</th>
+<?php 
+if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
+?>
+        <th style="color:white;background-color:#000081;">원 거래처(채널)</th>
+<?php
+}
+?>
         <th style="color:white;background-color:#000081;">브랜드</th>
         <th style="color:white;background-color:#000081;">상품코드</th>
         <th style="color:white;background-color:#000081;">상품명</th>
@@ -107,6 +114,15 @@ th{font-size:11px;text-align:center;color:white;background-color:#000081;}
         <th style="color:white;background-color:#000081;">주문번호(쇼핑몰)</th>
         <th style="color:white;background-color:#000081;">수량</th>
         <th style="color:white;background-color:#000081;">EA</th>
+<?php 
+if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
+?>
+		<th style="color:white;background-color:#000081;">반영금액</th>
+		<th style="color:white;background-color:#000081;">공급합계</th>
+		<th style="color:white;background-color:#000081;">결제금액</th>
+<?php     
+}
+?>
         <th style="color:white;background-color:#000081;">판매가</th>
         <th style="color:white;background-color:#000081;">상태</th>
         <th style="color:white;background-color:#000081;">과/면세</th>
@@ -121,7 +137,14 @@ if ($rs->num_rows > 0) {
         <td><?=substr($row["order_date"],0,10)." ".$arrDayOfWeek[date('w', strtotime(substr($row["order_date"],0,10)))]?></td>
 		<td><?=$row["order_no"]?></td>
         <td><?=$arrSalesType[$row["order_type"]]?></td>
-        <td><?=$row["channel"]?></td>
+        <td style="<?=$row["channel"] != $row["channel_org"]?"color:green;":""?>"><?=$row["channel"]?></td>
+<?php 
+if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
+?>
+        <td><?=$row["channel_org"]?></td>
+<?php
+}
+?>
         <td><?=$row["brand_name"]?></td>
         <td><?=$row["code"]?></td>
         <td><?=$row["name"]?></td>
@@ -131,6 +154,15 @@ if ($rs->num_rows > 0) {
         <td style="mso-number-format:'\@';"><?=$row["order_no_mall"]?></td>
         <td><?=number_format($row["amount"])?></td>
         <td><?=number_format($row["ea"])?></td>
+<?php 
+if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
+?>
+        <td><?=$row["fg_supply"]=="1"?"공급합계":"결제금액"?></td>
+        <td><font color="<?=$row["fg_supply"]=="1"?"":"#BDBDBD"?>"><?=number_format($row["price_supply"])?></font></td>
+        <td><font color="<?=$row["fg_supply"]=="1"?"#BDBDBD":""?>"><?=number_format($row["price_pay"])?></font></td>
+<?php     
+}
+?>
         <td><?=number_format($row["price"])?></td>
         <td><?=$row["status"]?></td>
         <td><?=$row["tax_type"]?></td>

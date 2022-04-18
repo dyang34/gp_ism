@@ -464,16 +464,32 @@ foreach($arrStatus as $lt){
             		<col style="width:70px;">
             		<col>
             		<col>
+<?php 
+if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
+?>
+            		<col>
+<?php
+}
+?>            		
+            		<col>
+            		<col>
+            		<col>
+            		<col style="width:120px;">
             		<col>
             		<col>
             		<col>
             		<col>
-            		<col style="width:150px;">
-            		<col>
-            		<col>
-            		<col>
+<?php 
+if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
+?>
+            		<col style="width:50px;">
             		<col style="width:80px;">
-            		<col style="width:70px;">
+            		<col style="width:80px;">
+<?php     
+}
+?>
+            		<col style="width:80px;">
+            		<col style="width:80px;">
             		<col style="width:70px;">
             		<col style="width:100px;">
             	</colgroup>
@@ -487,6 +503,13 @@ foreach($arrStatus as $lt){
                         <th>주문번호</th>
                         <th>판매유형</th>
                         <th>거래처(채널)</th>
+<?php 
+if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
+?>
+                        <th>원 거래처(채널)</th>
+<?php
+}
+?>            		
                         <th>브랜드</th>
                         <th>상품코드</th>
                         <th>상품명</th>
@@ -495,6 +518,15 @@ foreach($arrStatus as $lt){
                         <th>주문번호</th>
                         <th>수량</th>
                         <th>EA</th>
+<?php 
+if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
+?>
+                        <th>반영금액</th>
+                        <th>공급합계</th>
+                        <th>결제금액</th>
+<?php     
+}
+?>
                         <th>판매가</th>
                         <th>상태</th>
                         <th>과/면세</th>
@@ -515,7 +547,14 @@ if ($rs->num_rows > 0) {
                         <td class="tbl_first txt_c"><?=substr($row["order_date"],0,10)." ".$arrDayOfWeek[date('w', strtotime(substr($row["order_date"],0,10)))]?></td>
                         <td class="txt_c"><?=$row["order_no"]?></td>
                         <td class="txt_c" style="<?=$row["order_type"]>"1"?"color:green;":""?> ?>"><?=$arrSalesType[$row["order_type"]]?></td>
-                        <td class="txt_c" style="<?=$row["imc_idx"]>"1"?"color:green;":""?> ?>"><?=$row["channel"]?></td>
+                        <td class="txt_c" style="<?=$row["channel"] != $row["channel_org"]?"color:green;":""?>"><?=$row["channel"]?></td>
+<?php 
+if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
+?>
+                        <td class="txt_c"><?=$row["channel_org"]?></td>
+<?php
+}
+?>            		
                         <td class="txt_c"><?=$row["brand_name"]?></td>
                         <td><?=$row["code"]?></td>
                         <td><?=$row["name"]?></td>
@@ -524,6 +563,15 @@ if ($rs->num_rows > 0) {
                         <td class="txt_c"><?=$row["order_no"]?></td>
                         <td class="txt_r"><?=number_format($row["amount"])?></td>
                         <td class="txt_r"><?=number_format($row["ea"])?></td>
+<?php 
+if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
+?>
+                        <td class="txt_c"><?=$row["fg_supply"]=="1"?"공급합계":"결제금액"?></td>
+                        <td class="txt_r"><font color="<?=$row["fg_supply"]=="1"?"":"#BDBDBD"?>"><?=number_format($row["price_supply"])?></font></td>
+                        <td class="txt_r"><font color="<?=$row["fg_supply"]=="1"?"#BDBDBD":""?>"><?=number_format($row["price_pay"])?></font></td>
+<?php     
+}
+?>
                         <td class="txt_r"><?=number_format($row["price"])?></td>
                         <td class="txt_c"><?=$row["status"]?></td>
                         <td class="txt_c"><?=$row["tax_type"]?></td>
