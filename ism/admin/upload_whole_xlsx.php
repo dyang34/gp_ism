@@ -219,7 +219,7 @@ if (count($arr_data) > 0) {
         $arr_insert['item_code'] = $arr_data[$i][3];
         $arr_insert['amount'] = $arr_data[$i][4];
         $arr_insert['ea'] = $arr_data[$i][5];
-        $arr_insert['price_collect'] = $arr_data[$i][6];
+        $arr_insert['price'] = $arr_data[$i][6];
         $arr_insert['tax_type'] = $arr_data[$i][7];
         $arr_insert['status'] = $arr_data[$i][8];
         $arr_insert['i'] = $i;

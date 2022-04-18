@@ -524,7 +524,7 @@ if ($rs->num_rows > 0) {
                         <td class="txt_c"><?=$row["order_no"]?></td>
                         <td class="txt_r"><?=number_format($row["amount"])?></td>
                         <td class="txt_r"><?=number_format($row["ea"])?></td>
-                        <td class="txt_r"><?=number_format($row["price_collect"])?></td>
+                        <td class="txt_r"><?=number_format($row["price"])?></td>
                         <td class="txt_c"><?=$row["status"]?></td>
                         <td class="txt_c"><?=$row["tax_type"]?></td>
                         <td class="txt_c"><?=substr($row["reg_date"],0,10)?></td>

@@ -358,7 +358,7 @@ if ($rs->num_rows > 0) {
             ?>
 						<td><?=number_format($row["amount"])?></td>
                         <td><?=number_format($row["ea"])?></td>
-                        <td><?=number_format($row["price_collect"])?></td>
+                        <td><?=number_format($row["price"])?></td>
                         <td><?=number_format($row["cnt"])?></td>
                         
                     </tr>

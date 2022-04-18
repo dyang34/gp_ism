@@ -19,7 +19,7 @@ class OrderAggrDao extends A_Dao
 	function selectByKey($db, $key) {
 		 
 //	    $sql =" select no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, item_code, order_date, order_date_mall, order_date_sub, order_date_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, reg_date, order_type, imc_idx, goods_mst_code, tmp_data3  "
-	    $sql =" select order_date, code ,item_code ,imb_idx ,cate1_idx ,cate2_idx ,cate3_idx ,cate4_idx ,imc_idx ,tax_type ,order_type ,amount ,ea ,price_collect ,cnt "
+	    $sql =" select order_date, code ,item_code ,imb_idx ,cate1_idx ,cate2_idx ,cate3_idx ,cate4_idx ,imc_idx ,tax_type ,order_type ,amount ,ea ,price_collect ,cnt, price_supply, price, fg_supply, fg_revise "
 	        ." from ism_order_aggr "
 	            ." where order_date = ".$this->quot($db, $key)
 //		            ." where io_idx = ".$this->quot($db, $key)
@@ -39,7 +39,7 @@ class OrderAggrDao extends A_Dao
 	function selectFirst($db, $wq) {
 
 //		    $sql =" select no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, item_code, order_date, order_date_mall, order_date_sub, order_date_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, reg_date, order_type, imc_idx, goods_mst_code, tmp_data3 "
-	    $sql =" select order_date, code ,item_code ,imb_idx ,cate1_idx ,cate2_idx ,cate3_idx ,cate4_idx ,imc_idx ,tax_type ,order_type ,amount ,ea ,price_collect ,cnt "
+	    $sql =" select order_date, code ,item_code ,imb_idx ,cate1_idx ,cate2_idx ,cate3_idx ,cate4_idx ,imc_idx ,tax_type ,order_type ,amount ,ea ,price_collect ,cnt, price_supply, price, fg_supply, fg_revise "
 	        ." from ism_order_aggr"
 			 .$wq->getWhereQuery()
 			 .$wq->getOrderByQuery()
@@ -60,7 +60,7 @@ class OrderAggrDao extends A_Dao
 	function select($db, $wq) {
 	    
 	        //$sql =" select no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, a.item_code, order_date, order_date_mall, order_date_sub, order_date_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, a.reg_date, g.code, g.name, g.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3 "
-	            $sql =" select order_date, code ,item_code ,imb_idx ,cate1_idx ,cate2_idx ,cate3_idx ,cate4_idx ,imc_idx ,tax_type ,order_type ,amount ,ea ,price_collect ,cnt "
+	            $sql =" select order_date, code ,item_code ,imb_idx ,cate1_idx ,cate2_idx ,cate3_idx ,cate4_idx ,imc_idx ,tax_type ,order_type ,amount ,ea ,price_collect ,cnt, price_supply, price, fg_supply, fg_revise "
 	                ." from ism_order_aggr a "
 	            ." left join ism_mst_goods g "
 	            ." on a.item_code = g.item_code "
@@ -74,7 +74,7 @@ class OrderAggrDao extends A_Dao
 	function selectAggr($db, $wq, $group_by, $add_select1, $add_select2) {
 	    
 	    //	    $sql =" select io_idx, no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, item_code, order_date, order_date_mall, order_date_sub, order_date_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, reg_date "
-	    $sql =" select sum(amount) amount, sum(ea) ea, sum(price_collect) price_collect, sum(cnt) as cnt ".$add_select1.$add_select2
+	    $sql =" select sum(amount) amount, sum(ea) ea, sum(price) price, sum(cnt) as cnt ".$add_select1.$add_select2
 	        ." from ism_order_aggr a "
 	            ." left join ism_mst_goods g "
 	                ." on a.item_code = g.item_code "
@@ -91,7 +91,7 @@ class OrderAggrDao extends A_Dao
 		
 		$sql =" select @rnum:=@rnum+1 as rnum, r.* from ("
 //			     ."		select @rnum:=0, no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, a.item_code, order_date, order_date_mall, order_date_sub, order_date_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, a.reg_date, g.code, g.name, g.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3 "
-			     ."		select @rnum:=0, order_date, code ,item_code ,imb_idx ,cate1_idx ,cate2_idx ,cate3_idx ,cate4_idx ,imc_idx ,tax_type ,order_type ,amount ,ea ,price_collect ,cnt "
+			     ."		select @rnum:=0, order_date, code ,item_code ,imb_idx ,cate1_idx ,cate2_idx ,cate3_idx ,cate4_idx ,imc_idx ,tax_type ,order_type ,amount ,ea ,price_collect ,cnt, price_supply, price, fg_supply, fg_revise "
 			         ." ,(select name from ism_mst_brand b where b.imb_idx = g.imb_idx) as brand_name "
 /*			             
 			             ."		,(select title from ism_mst_category c1 where c1.imct_idx = a.cate1_idx) as cate1_name "
@@ -116,7 +116,7 @@ class OrderAggrDao extends A_Dao
 	    
 	    echo $sql =" select @rnum:=@rnum+1 as rnum, r.* ".$add_select2." from ("
 //	        ."		select @rnum:=0, io_idx, no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, item_code, order_date, order_date_mall, order_date_sub, order_date_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, reg_date "
-	            ."	select @rnum:=0, sum(amount) amount, sum(ea) ea, sum(price_collect) price_collect, sum(cnt) as cnt ".$add_select1
+	            ."	select @rnum:=0, sum(amount) amount, sum(ea) ea, sum(price) price, sum(cnt) as cnt ".$add_select1
                 ." from ism_order_aggr a "
                 ." left join ism_mst_goods g "
                 ." on a.item_code = g.item_code "
@@ -207,13 +207,13 @@ class OrderAggrDao extends A_Dao
 	}
 	
 	function insert2($db, $arrVal) {
-        $sql =" insert into ism_order_aggr(no, order_date, item_code, amount, ea, price_collect, tax_type, order_type, imc_idx, status, order_date, channel, goods_mst_code, name_collect, opt_name_collect, name_confirm, opt_name_confirm, tmp_data3, reg_date)"
+        $sql =" insert into ism_order_aggr(no, order_date, item_code, amount, ea, price, tax_type, order_type, imc_idx, status, order_date, channel, goods_mst_code, name_collect, opt_name_collect, name_confirm, opt_name_confirm, tmp_data3, reg_date)"
     	    ." values ('1"
     	    ."', '".$this->checkMysql($db, $arrVal["order_date"])
     	    ."', '".$this->checkMysql($db, $arrVal["item_code"])
     	    ."', '".$this->checkMysql($db, $arrVal["amount"])
     	    ."', '".$this->checkMysql($db, $arrVal["ea"])
-    	    ."', '".$this->checkMysql($db, $arrVal["price_collect"])
+    	    ."', '".$this->checkMysql($db, $arrVal["price"])
     	    ."', '".$this->checkMysql($db, $arrVal["tax_type"])
     	    ."','2"
             ."','21"

@@ -131,7 +131,7 @@ if ($rs->num_rows > 0) {
         <td style="mso-number-format:'\@';"><?=$row["order_no_mall"]?></td>
         <td><?=number_format($row["amount"])?></td>
         <td><?=number_format($row["ea"])?></td>
-        <td><?=number_format($row["price_collect"])?></td>
+        <td><?=number_format($row["price"])?></td>
         <td><?=$row["status"]?></td>
         <td><?=$row["tax_type"]?></td>
         <td><?=substr($row["reg_date"],0,10)?></td>

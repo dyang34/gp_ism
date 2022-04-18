@@ -239,7 +239,7 @@ foreach($arrSalesType as $key => $value) {
                             <tr>
                                 <th>금액</th>
                                 <td>
-                                    <input type="text" name="price_collect" value="<?=$row['price_collect']?>" placeholder="금액을 입력하세요." style="width: 200px;">
+                                    <input type="text" name="price" value="<?=$row['price']?>" placeholder="금액을 입력하세요." style="width: 200px;">
                                 </td>
                             </tr>
 <?php /*
@@ -313,8 +313,8 @@ $(document).on("click","a[name=btnSave]",function() {
 	if ( VC_inValidNumber(f.amount, "수량") ) return false;
 	if ( VC_inValidText(f.ea, "EA") ) return false;
 	if ( VC_inValidNumber(f.ea, "EA") ) return false;
-	if ( VC_inValidText(f.price_collect, "금액") ) return false;
-	if ( VC_inValidNumber(f.price_collect, "금액") ) return false;
+	if ( VC_inValidText(f.price, "금액") ) return false;
+	if ( VC_inValidNumber(f.price, "금액") ) return false;
 
 	f.auto_defense.value = "identicharmc!@";
 	mc_consult_submitted = true;

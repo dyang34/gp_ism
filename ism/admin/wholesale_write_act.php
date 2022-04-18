@@ -24,7 +24,7 @@ $item_code = RequestUtil::getParam("item_code", "");
 $order_date = RequestUtil::getParam("order_date", "");
 $amount = RequestUtil::getParam("amount", "");
 $ea = RequestUtil::getParam("ea", "");
-$price_collect = RequestUtil::getParam("price_collect", "");
+$price = RequestUtil::getParam("price", "");
 $tax_type = RequestUtil::getParam("tax_type", "");
 $order_type = RequestUtil::getParam("order_type", "");
 $status = RequestUtil::getParam("status", "");
@@ -56,7 +56,7 @@ try {
             exit;
         }
         
-        if (!$price_collect) {
+        if (!$price) {
             JsUtil::alertBack("금액을 입력해 주십시오.   ");
             exit;
         }
@@ -66,7 +66,7 @@ try {
         $arrIns["order_date"] = $order_date;
         $arrIns["amount"] = $amount;
         $arrIns["ea"] = $ea;
-        $arrIns["price_collect"] = $price_collect;
+        $arrIns["price"] = $price;
         $arrIns["tax_type"] = $tax_type;
         $arrIns["order_type"] = $order_type;
         $arrIns["imc_idx"] = $imc_idx;
@@ -99,7 +99,7 @@ try {
             exit;
         }
         
-        if (!$price_collect) {
+        if (!$price) {
             JsUtil::alertBack("금액을 입력해 주십시오.   ");
             exit;
         }
@@ -117,7 +117,7 @@ try {
         $uq->add("order_date", $order_date);
         $uq->add("amount", $amount);
         $uq->add("ea", $ea);
-        $uq->add("price_collect", $price_collect);
+        $uq->add("price", $price);
         $uq->add("tax_type", $tax_type);
         $uq->add("order_type", $order_type);
         $uq->add("imc_idx", $imc_idx);

@@ -482,7 +482,7 @@ foreach($arrStatus as $lt){
 				<p class="list-adding float-r ism_total" style="border: 1px solid #395467; border-radius: 20px; padding: 7px 20px; background: #fff;">
                     <span><span style="font-weight:bold">전체 수량</span> <em><?=number_format($row_sum["amount"])?></em>개</span>
                     <span><span style="font-weight:bold">전체 EA</span> <em><?=number_format($row_sum["ea"])?></em>개</span>
-                    <span><span style="font-weight:bold">전체 금액</span> <em><?=number_format($row_sum["price_collect"])?></em>원</span>
+                    <span><span style="font-weight:bold">전체 금액</span> <em><?=number_format($row_sum["price"])?></em>원</span>
                     <span><span style="font-weight:bold">전체 주문수</span> <em><?=number_format($row_sum["cnt"])?></em>건</span>
                 </p>
 			</div>
@@ -932,7 +932,7 @@ if ($_status) {
             ?>
 						<td class="txt_r"><?=number_format($row["amount"])?></td>
                         <td class="txt_r"><?=number_format($row["ea"])?></td>
-                        <td class="txt_r"><?=number_format($row["price_collect"])?></td>
+                        <td class="txt_r"><?=number_format($row["price"])?></td>
                         <td class="txt_r"><?=number_format($row["cnt"])?></td>
                         
                     </tr>

@@ -1,5 +1,6 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/blm_default_set.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/ism_ip_check.php";
 
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/RequestUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/WhereQuery.php";
@@ -7,13 +8,15 @@ require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/db/Page.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/brand/BrandMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/channel/ChannelMgr.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/category/CategoryMgr.php";
-require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/order/OrderAggrMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/sales_type/SalesTypeMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/status/StatusMgr.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/order/OrderMgr.php";
 
 $menuCate = 1;
 $menuNo = 22;
 
 $currentPage = RequestUtil::getParam("currentPage", "1");
-$pageSize = RequestUtil::getParam("pageSize", "25");
+$pageSize = RequestUtil::getParam("pageSize", "10");
 
 $_grp_day_type = RequestUtil::getParam("_grp_day_type", "grp_order_date_day");
 $_grp_code_type = RequestUtil::getParam("_grp_code_type", "");
@@ -33,10 +36,12 @@ $_cate3_idx = RequestUtil::getParam("_cate3_idx", "");
 $_cate4_idx = RequestUtil::getParam("_cate4_idx", "");
 $_tax_type = RequestUtil::getParam("_tax_type", "");
 $_order_type = RequestUtil::getParam("_order_type", "");
-$_code = RequestUtil::getParam("_code", "");
+$_goods_mst_code = RequestUtil::getParam("_goods_mst_code", "");
 $_goods_name = RequestUtil::getParam("_goods_name", "");
 $_item_code = RequestUtil::getParam("_item_code", "");
 $_item_name = RequestUtil::getParam("_item_name", "");
+$_include_cancel = RequestUtil::getParam("_include_cancel", "");
+$_status = RequestUtil::getParam("_status", "");
 
 $_order_by = RequestUtil::getParam("_order_by", "order_date");
 $_order_by_asc = RequestUtil::getParam("_order_by_asc", "desc");
@@ -44,11 +49,32 @@ $_order_by_asc = RequestUtil::getParam("_order_by_asc", "desc");
 $pg = new Page($currentPage, $pageSize);
 
 $arrDayOfWeek = array("일","월","화","수","목","금","토");
-$arrChannel = $arrBrand = $arrCategory1 = $arrCategory2 = $arrCategory3 = $arrCategory4 = array();
+$arrChannel = $arrBrand = $arrCategory1 = $arrCategory2 = $arrCategory3 = $arrCategory4 = $arrSalesType = $arrStatus = array();
+
+$wq = new WhereQuery(true, true);
+$wq->addOrderBy("sort","asc");
+$rs = StatusMgr::getInstance()->getList($wq);
+if ($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row = $rs->fetch_assoc();
+        
+        array_push($arrStatus, $row);
+    }
+}
+
+$wq = new WhereQuery(true, true);
+$rs = SalesTypeMgr::getInstance()->getList($wq);
+if ($rs->num_rows > 0) {
+    for($i=0;$i<$rs->num_rows;$i++) {
+        $row = $rs->fetch_assoc();
+        
+        $arrSalesType[$row["imst_idx"]] = $row["title"];
+    }
+}
 
 $wq = new WhereQuery(true, true);
 $wq->addAndString2("imc_fg_del","=","0");
-
+$wq->addOrderBy("imst_idx","");
 $wq->addOrderBy("sort","desc");
 $wq->addOrderBy("name","asc");
 
@@ -152,6 +178,7 @@ if($_cate3_idx && $_cate3_idx > 0) {
 }
 
 $wq = new WhereQuery(true, true);
+
 $wq->addAndString("order_date", ">=", $_order_date_from);
 $wq->addAndStringBind("order_date", "<", $_order_date_to, "date_add('?', interval 1 day)");
 $wq->addAndString("imc_idx", "=", $_imc_idx);
@@ -162,11 +189,16 @@ $wq->addAndString("cate3_idx", "=", $_cate3_idx);
 $wq->addAndString("cate4_idx", "=", $_cate4_idx);
 $wq->addAndString("tax_type", "=", $_tax_type);
 $wq->addAndString("order_type", "=", $_order_type);
-$wq->addAndString("gi.code", "=", $_code);
+$wq->addAndString("goods_mst_code", "=", $_goods_mst_code);
 $wq->addAndString("a.item_code", "=", $_item_code);
+$wq->addAndString("status", "=", $_status);
 
 $wq->addAndLike("name",$_goods_name);
 $wq->addAndLike("item_name",$_item_name);
+
+if(!$_include_cancel) {
+    $wq->addAndNotIn("status", array("취소접수","취소완료","삭제"));
+}
 
 $wq->addOrderBy($_order_by, $_order_by_asc);
 
@@ -188,8 +220,8 @@ if ($_order_by=="cate1_name") {
 }
 
 $wq->addOrderBy("order_date", "desc");
-$wq->addOrderBy("name", "asc");
-$wq->addOrderBy("item_name", "asc");
+//$wq->addOrderBy("name", "asc");
+//$wq->addOrderBy("item_name", "asc");
 
 $arrGroupBy = array();
 
@@ -221,7 +253,9 @@ if($_grp_order_type) {
     array_push($arrGroupBy, $_grp_order_type);
 }
 
-$rs = OrderAggrMgr::getInstance()->getListAggrPerPage($wq, $pg, $arrGroupBy);
+$rs = OrderMgr::getInstance()->getListAggrPerPage($wq, $pg, $arrGroupBy);
+
+$row_sum = OrderMgr::getInstance()->getListAggrSum($wq);
 
 include $_SERVER['DOCUMENT_ROOT']."/ism/include/head.php";
 include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
@@ -239,10 +273,12 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
     <input type="hidden" name="_cate4_idx" value="<?=$_cate4_idx?>">
     <input type="hidden" name="_tax_type" value="<?=$_tax_type?>">
     <input type="hidden" name="_order_type" value="<?=$_order_type?>">
-    <input type="hidden" name="_code" value="<?=$_code?>">
+    <input type="hidden" name="_goods_mst_code" value="<?=$_goods_mst_code?>">
     <input type="hidden" name="_goods_name" value="<?=$_goods_name?>">
 	<input type="hidden" name="_item_code" value="<?=$_item_code?>">
 	<input type="hidden" name="_item_name" value="<?=$_item_name?>">
+	<input type="hidden" name="_include_cancel" value="<?=$_include_cancel?>">
+	<input type="hidden" name="_status" value="<?=$_status?>">
     <input type="hidden" name="_order_by" value="<?=$_order_by?>">
     <input type="hidden" name="_order_by_asc" value="<?=$_order_by_asc?>">
     
@@ -286,11 +322,12 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                                  
                                 <td colspan="5" style=" border-bottom: 2px solid #395467;">
 <?php /*                                
-                                	<input type="radio" id="_grp_code_type_goods" class="" name="_grp_code_type" value="code" <?=$_grp_code_type=="code"?"checked='checked'":""?>><label for="_grp_code_type_goods">상품</label>
+                                	<input type="radio" id="_grp_code_type_goods" class="" name="_grp_code_type" value="goods_mst_code" <?=$_grp_code_type=="goods_mst_code"?"checked='checked'":""?>><label for="_grp_code_type_goods">상품</label>
                                     <input type="radio" id="_grp_code_type_item" name="_grp_code_type" value="item_code" <?=$_grp_code_type=="item_code"?"checked='checked'":""?>><label for="_grp_code_type_item">품목(옵션)</label>
 */?>
 									<select name="_grp_day_type">
                                     	<option value="grp_order_date_day" <?=$_grp_day_type=="grp_order_date_day"?"selected='selected'":""?>>일별</option>
+                                    	<option value="grp_order_date_week" <?=$_grp_day_type=="grp_order_date_week"?"selected='selected'":""?>>주별</option>
                                     	<option value="grp_order_date_month" <?=$_grp_day_type=="grp_order_date_month"?"selected='selected'":""?>>월별</option>
                                     </select>
 									<select name="_grp_code_type">
@@ -305,41 +342,38 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                                     	<option value="grp_cate3" <?=$_grp_category=="grp_cate3"?"selected='selected'":""?>>카테고리3</option>
                                     	<option value="grp_cate4" <?=$_grp_category=="grp_cate4"?"selected='selected'":""?>>카테고리4</option>
                                     </select>
-									<input type="checkbox" name="_grp_brand" id="_grp_brand" value="grp_brand" <?=$_grp_brand=="grp_brand"?"checked='checked'":""?>><label for="_grp_brand">브랜드</label>
-                                    <input type="checkbox" name="_grp_channel" id="_grp_channel" value="grp_channel" <?=$_grp_channel=="grp_channel"?"checked='checked'":""?>><label for="_grp_channel">채널</label>
-                                    <input type="checkbox" name="_grp_tax_type" id="_grp_tax_type" value="grp_tax_type" <?=$_grp_tax_type=="grp_tax_type"?"checked='checked'":""?>><label for="_grp_tax_type">과세</label>
                                     <input type="checkbox" name="_grp_order_type" id="_grp_order_type" value="grp_order_type" <?=$_grp_order_type=="grp_order_type"?"checked='checked'":""?>><label for="_grp_order_type">판매유형</label>
+                                    <input type="checkbox" name="_grp_channel" id="_grp_channel" value="grp_channel" <?=$_grp_channel=="grp_channel"?"checked='checked'":""?>><label for="_grp_channel">거래처(채널)</label>
+									<input type="checkbox" name="_grp_brand" id="_grp_brand" value="grp_brand" <?=$_grp_brand=="grp_brand"?"checked='checked'":""?>><label for="_grp_brand">브랜드</label>
+                                    <input type="checkbox" name="_grp_tax_type" id="_grp_tax_type" value="grp_tax_type" <?=$_grp_tax_type=="grp_tax_type"?"checked='checked'":""?>><label for="_grp_tax_type">과세</label>
                                 </td>
 							</tr>
 							<tr>
                                 <th>판매일자</th>
                                 <td><input type="date" id="_order_date_from" name="_order_date_from" class="date_in" value="<?=$_order_date_from?>" style="padding:0 16px;">~<input type="date" id="_order_date_to" name="_order_date_to" value="<?=$_order_date_to?>" class="date_in" style="padding:0 16px;"></td>
-                                <th>채널</th>
-                                <td>
-                                    <select name="_imc_idx" class="select_brand">
-                						<option value="">채널 선택</option>
+                                <th>판매유형/거래처(채널)</th>
+                            	<td colspan="3">
+									<select name="_order_type" class="sel_order_type">
+                                    	<option value="">판매 유형</option>
+<?php                                     	
+foreach($arrSalesType as $key => $value) {
+?>
+                                    	<option value="<?=$key?>" <?=$_order_type==$key?"selected":""?>><?=$value?></option>
+<?php
+}
+?>
+                                    </select>
+                                    <select name="_imc_idx" class="sel_channel">
+                						<option value="">거래처(채널) 선택</option>
                 						<?php
                 						foreach($arrChannel as $lt){
                 							?>
-                							<option value="<?=$lt['imc_idx']?>" <?=$_imc_idx==$lt['imc_idx']?"selected":""?>><?=$lt['name']?></option>
+                							<option value="<?=$lt['imc_idx']?>" <?=$_imc_idx==$lt['imc_idx']?"selected":""?>><?="[".$lt['sales_type_title']."] ".$lt['name']?></option>
                 							<?php
                 						}
                 						?>
                 					</select>
                                 </td>                           
-                                <th>브랜드</th>
-                                <td>
-                                    <select name="_imb_idx" class="select_brand">
-                						<option value="">브랜드 선택</option>
-                						<?php
-                						foreach($arrBrand as $lt){
-                							?>
-                							<option value="<?=$lt['imb_idx']?>" <?=$_imb_idx==$lt['imb_idx']?"selected":""?>><?=$lt['name']?></option>
-                							<?php
-                						}
-                						?>
-                					</select>
-                                </td>
 							</tr>
 							<tr>
                                 <th>카테고리</th>
@@ -385,7 +419,26 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
                 						?>
                 					</select>
                                 </td>
-                                <th>과세구분</th>
+                                <th>브랜드</th>
+                                <td>
+                                    <select name="_imb_idx" class="select_brand">
+                						<option value="">브랜드 선택</option>
+                						<?php
+                						foreach($arrBrand as $lt){
+                							?>
+                							<option value="<?=$lt['imb_idx']?>" <?=$_imb_idx==$lt['imb_idx']?"selected":""?>><?=$lt['name']?></option>
+                							<?php
+                						}
+                						?>
+                					</select>
+                                </td>
+                            </tr>
+                            <tr>
+                            	<th>상품코드</th>
+                            	<td><input type="text" placeholder="상품코드로 검색" name="_goods_mst_code" style="width: 100%;" value=<?=$_goods_mst_code?>></td>
+                            	<th>상품명</th>
+                            	<td><input type="text" placeholder="상품명으로 검색" name="_goods_name" style="width: 100%;" value=<?=$_goods_name?>></td>
+                            	<th>과세구분</th>
                                 <td>
                                 	<select name="_tax_type">
                                     	<option value="">과세 구분</option>
@@ -395,24 +448,23 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
 								</td>
                             </tr>
                             <tr>
-                            	<th>상품코드</th>
-                            	<td><input type="text" placeholder="상품코드로 검색" name="_code" style="width: 100%;" value=<?=$_code?>></td>
-                            	<th>상품명</th>
-                            	<td><input type="text" placeholder="상품명으로 검색" name="_goods_name" style="width: 100%;" value=<?=$_goods_name?>></td>
-                            	<th>판매유형</th>
-                            	<td>
-									<select name="_order_type">
-                                    	<option value="">판매 유형</option>
-                                    	<option value="1" <?=$_order_type=="1"?"selected":""?>>온라인</option>
-                                    	<option value="2" <?=$_order_type=="2"?"selected":""?>>도매</option>
-                                    </select>
-                            	</td>
-                            </tr>
-                            <tr>
                             	<th>품목(옵션)코드</th>
-                            	<td><input type="text" placeholder="품목(옵션)명으로 검색" name="_item_code" style="width: 100%;" value=<?=$_item_code?>></td>
+                            	<td><input type="text" placeholder="품목(옵션)코드로 검색" name="_item_code" style="width: 100%;" value=<?=$_item_code?>></td>
                             	<th>품목(옵션)명</th>
-                            	<td colspan="3"><input type="text" placeholder="품목(옵션)명으로 검색" name="_item_name" style="width: 100%;" value=<?=$_item_name?>></td>
+                            	<td><input type="text" placeholder="품목(옵션)명으로 검색" name="_item_name" style="width: 100%;" value=<?=$_item_name?>></td>
+                            	<th>상태</th>
+                            	<td>
+<select name="_status" class="sel_status">
+                                    	<option value="">상태</option>
+<?php        
+foreach($arrStatus as $lt){
+?>
+                							<option value="<?=$lt['title_status']?>" <?=$_status==$lt['title_status']?"selected":""?>><?=$lt['title_status']?></option>
+                							<?php
+}
+?>
+                                    </select>
+                            	<input type="checkbox" value="1" name="_include_cancel" id="_include_cancel" <?=$_include_cancel?"checked='checked'":""?>><label for="_include_cancel">취소/삭제 포함</label></td>
                             </tr>
                         </tbody>
                     </table>
@@ -426,28 +478,124 @@ include $_SERVER['DOCUMENT_ROOT']."/ism/include/header.php";
 			<!-- 상품검색(e) -->
                 
 			<div class="float-wrap">
-				<h3 class="float-l">집계 건수 <strong><?=number_format($pg->getTotalCount())?>건</strong></h3>
-				<p class="list-adding float-r">
-					<a href="#none" name="_btn_sort" order_by="order_date" order_by_asc="desc" class="<?=$_order_by=="order_date" && $_order_by_asc=="desc"?"on":""?>" >판매일순<em>▼</em></a>
+				<h3 class="float-l">집계 Data <strong><?=number_format($pg->getTotalCount())?>건</strong></h3>
+				<p class="list-adding float-r ism_total" style="border: 1px solid #395467; border-radius: 20px; padding: 7px 20px; background: #fff;">
+                    <span><span style="font-weight:bold">전체 수량</span> <em><?=number_format($row_sum["amount"])?></em>개</span>
+                    <span><span style="font-weight:bold">전체 EA</span> <em><?=number_format($row_sum["ea"])?></em>개</span>
+                    <span><span style="font-weight:bold">전체 금액</span> <em><?=number_format($row_sum["price"])?></em>원</span>
+                    <span><span style="font-weight:bold">전체 주문수</span> <em><?=number_format($row_sum["cnt"])?></em>건</span>
+                </p>
+			</div>
+
+			<p class="list-adding float-r">
+				<a href="#none" name="_btn_sort" order_by="order_date" order_by_asc="desc" class="<?=$_order_by=="order_date" && $_order_by_asc=="desc"?"on":""?>" >판매일순<em>▼</em></a>
 <?php
 if ($_grp_code_type=="grp_goods" || $_grp_code_type=="grp_item") {
 ?>					
-					<a href="#none" name="_btn_sort" order_by="name" order_by_asc="asc" class="<?=$_order_by=="name" && $_order_by_asc=="asc"?"on":""?>">상품명<em>▲</em></a>
-					<a href="#none" name="_btn_sort" order_by="name" order_by_asc="desc" class="<?=$_order_by=="name" && $_order_by_asc=="desc"?"on":""?>">상품명<em>▼</em></a>
+				<a href="#none" name="_btn_sort" order_by="name" order_by_asc="asc" class="<?=$_order_by=="name" && $_order_by_asc=="asc"?"on":""?>">상품명<em>▲</em></a>
+				<a href="#none" name="_btn_sort" order_by="name" order_by_asc="desc" class="<?=$_order_by=="name" && $_order_by_asc=="desc"?"on":""?>">상품명<em>▼</em></a>
 <?php
 }
 ?>
-				</p>
-			</div>
+
+
+				<a href="#none" name="_btn_sort" order_by="code" order_by_asc="asc" class="<?=$_order_by=="code" && $_order_by_asc=="asc"?"on":""?>">상품코드<em>▲</em></a>
+				<a href="#none" name="_btn_sort" order_by="code" order_by_asc="desc" class="<?=$_order_by=="code" && $_order_by_asc=="desc"?"on":""?>">상품코드<em>▼</em></a>
+				<a href="#none" name="_btn_sort" order_by="item_code" order_by_asc="asc" class="<?=$_order_by=="item_code" && $_order_by_asc=="asc"?"on":""?>">품목(옵션)코드<em>▲</em></a>
+				<a href="#none" name="_btn_sort" order_by="item_code" order_by_asc="desc" class="<?=$_order_by=="item_code" && $_order_by_asc=="desc"?"on":""?>">품목(옵션)코드<em>▼</em></a>
+				<a href="#none" name="_btn_sort" order_by="name" order_by_asc="asc" class="<?=$_order_by=="name" && $_order_by_asc=="asc"?"on":""?>">상품명<em>▲</em></a>
+				<a href="#none" name="_btn_sort" order_by="name" order_by_asc="desc" class="<?=$_order_by=="name" && $_order_by_asc=="desc"?"on":""?>">상품명<em>▼</em></a>
+				<a href="#none" name="_btn_sort" order_by="item_name" order_by_asc="asc" class="<?=$_order_by=="item_name" && $_order_by_asc=="asc"?"on":""?>">품목(옵션)명<em>▲</em></a>
+				<a href="#none" name="_btn_sort" order_by="item_name" order_by_asc="desc" class="<?=$_order_by=="item_name" && $_order_by_asc=="desc"?"on":""?>">품목(옵션)명<em>▼</em></a>
+				<a href="#none" name="_btn_sort" order_by="brand_name" order_by_asc="asc" class="<?=$_order_by=="brand_name"?"on":""?>">브랜드순<em>▲</em></a>
+				<a href="#none" name="_btn_sort" order_by="cate1_name" order_by_asc="asc" class="<?=$_order_by=="cate1_name"?"on":""?>">카테고리<em>▲</em></a>
+
+
+
+			</p>
            
             <!-- 메인TABLE(s) -->
-            <table class="display" cellpadding="0" cellspacing="0">
+            <div class="display_wrap">
+            <table class="display display_scroll" cellpadding="0" cellspacing="0">
+				<colgroup>
+                    <col style="width:110px;">
+<?php                    
+if (in_array("grp_goods", $arrGroupBy)) {
+?>
+					<col />
+					<col />
+            <?php             
+}
+
+if (in_array("grp_item", $arrGroupBy)) {
+?>
+					<col />
+					<col />
+					<col />
+					<col />
+            <?php
+}
+
+if (in_array("grp_cate1", $arrGroupBy)) {
+?>
+					<col />
+            <?php
+}
+
+if (in_array("grp_cate2", $arrGroupBy)) {
+?>
+					<col />
+					<col />
+            <?php
+}
+
+if (in_array("grp_cate3", $arrGroupBy)) {
+?>
+					<col />
+            <?php
+}
+
+if (in_array("grp_cate4", $arrGroupBy)) {
+?>
+					<col />
+            <?php
+}
+
+if (in_array("grp_order_type", $arrGroupBy)) {
+    ?>
+					<col />
+            <?php
+}
+
+if (in_array("grp_channel", $arrGroupBy)) {
+    ?>
+					<col />
+            <?php
+}
+
+if (in_array("grp_brand", $arrGroupBy)) {
+    ?>
+					<col />
+            <?php
+}
+
+if (in_array("grp_tax_type", $arrGroupBy)) {
+?>
+					<col />
+            <?php
+}
+?>                    
+					<col />
+					<col />
+					<col />
+					<col />
+                </colgroup>
                 <thead>
                     <tr>
 <?php 
 $cnt_columns = 4;
 
-if (in_array("grp_order_date_day", $arrGroupBy)) {
+if (in_array("grp_order_date_day", $arrGroupBy) || in_array("grp_order_date_week", $arrGroupBy)) {
     $cnt_columns++;
 ?>
 						<th class="tbl_first">주문일자</th>
@@ -476,20 +624,6 @@ if (in_array("grp_item", $arrGroupBy)) {
 						<th class="">상품명</th>
 						<th class="">옵션코드</th>
 						<th class="">옵션명</th>
-            <?php
-}
-
-if (in_array("grp_channel", $arrGroupBy)) {
-    $cnt_columns++;
-?>
-						<th class="">채널</th>
-            <?php
-}
-
-if (in_array("grp_brand", $arrGroupBy)) {
-    $cnt_columns++;
-?>
-						<th class="">브랜드</th>
             <?php
 }
 
@@ -529,8 +663,22 @@ if (in_array("grp_cate4", $arrGroupBy)) {
 
 if (in_array("grp_order_type", $arrGroupBy)) {
     $cnt_columns++;
-?>
+    ?>
 						<th class="">판매유형</th>
+            <?php
+}
+
+if (in_array("grp_channel", $arrGroupBy)) {
+    $cnt_columns++;
+    ?>
+						<th class="">거래처(채널)</th>
+            <?php
+}
+
+if (in_array("grp_brand", $arrGroupBy)) {
+    $cnt_columns++;
+    ?>
+						<th class="">브랜드</th>
             <?php
 }
 
@@ -544,7 +692,7 @@ if (in_array("grp_tax_type", $arrGroupBy)) {
                         <th>수량</th>
                         <th>EA</th>
                         <th>금액</th>
-                        <th>건수</th>
+                        <th>주문수</th>
                     </tr>
                 </thead>
                 <tbody style="border-bottom: 2px solid #395467">
@@ -556,13 +704,161 @@ if ($rs->num_rows > 0) {
         if ($_grp_day_type=="grp_order_date_day") {
             $idx_day_of_week = date('w', strtotime(substr($row["order_date"],0,10)));
             $date_txt = substr($row["order_date"],0,10)." ".$arrDayOfWeek[$idx_day_of_week];
+            
+            $order_list_link_param = "_order_date_from=".substr($row["order_date"],0,10);
+            $order_list_link_param .= "&_order_date_to=".substr($row["order_date"],0,10);
+            
+        } else if ($_grp_day_type=="grp_order_date_week") {
+            
+            $weekly_start_date = substr($row["order_date"],0,10);
+            $weekly_end_date = substr($row["order_date"],18,10);
+            
+            if($weekly_start_date < $_order_date_from) {
+                $weekly_start_date = $_order_date_from;
+            }
+
+            if($weekly_end_date > $_order_date_to) {
+                $weekly_end_date = $_order_date_to;
+            }
+            
+            $date_txt = $weekly_start_date."<br/>~ ".$weekly_end_date;
+            
+            $order_list_link_param = "_order_date_from=".$weekly_start_date;
+            $order_list_link_param .= "&_order_date_to=".$weekly_end_date;
+            
         } else {
             $date_txt = substr($row["order_date"],0,7);
+            
+            $monthly_start_date = substr($row["order_date"],0,7)."-01";
+            $monthly_end_date = date("Y-m-t", strtotime(substr($row["order_date"],0,7)."-01"));
+            
+            if ($monthly_start_date < $_order_date_from || $monthly_end_date > $_order_date_to) {
+                if($monthly_start_date < $_order_date_from) {
+                    $monthly_start_date = $_order_date_from;
+                }
+                
+                if($monthly_end_date > $_order_date_to) {
+                    $monthly_end_date = $_order_date_to;
+                }
+            
+                $date_txt = $monthly_start_date."<br/>~ ".$monthly_end_date;
+                
+            }
+            
+            $order_list_link_param = "_order_date_from=".$monthly_start_date;
+            $order_list_link_param .= "&_order_date_to=".$monthly_end_date;
         }
 ?>
                     
                     <tr>
-                        <td class="tbl_first txt_c" style="<?=$idx_day_of_week=="6"?"color:blue;":($idx_day_of_week=="0"?"color:red;":"")?>"><?=$date_txt?></td>
+                        <td class="tbl_first txt_c" style="<?=$idx_day_of_week=="6"?"color:blue;":($idx_day_of_week=="0"?"color:red;":"")?>">
+<?php
+
+if (in_array("grp_goods", $arrGroupBy)) {
+    $order_list_link_param .= "&_goods_mst_code=".$row["code"];
+}
+
+if (in_array("grp_item", $arrGroupBy)) {
+    $order_list_link_param .= "&_item_code=".$row["item_code"];
+}
+
+if (in_array("grp_cate1", $arrGroupBy)) {
+    $order_list_link_param .= "&_cate1_idx=".$row["cate1_idx"];
+}
+
+if (in_array("grp_cate2", $arrGroupBy)) {
+    $order_list_link_param .= "&_cate1_idx=".$row["cate1_idx"];
+    $order_list_link_param .= "&_cate2_idx=".$row["cate2_idx"];
+}
+
+if (in_array("grp_cate3", $arrGroupBy)) {
+    $order_list_link_param .= "&_cate1_idx=".$row["cate1_idx"];
+    $order_list_link_param .= "&_cate2_idx=".$row["cate2_idx"];
+    $order_list_link_param .= "&_cate3_idx=".$row["cate3_idx"];
+}
+
+if (in_array("grp_cate4", $arrGroupBy)) {
+    $order_list_link_param .= "&_cate1_idx=".$row["cate1_idx"];
+    $order_list_link_param .= "&_cate2_idx=".$row["cate2_idx"];
+    $order_list_link_param .= "&_cate3_idx=".$row["cate3_idx"];
+    $order_list_link_param .= "&_cate4_idx=".$row["cate4_idx"];
+}
+
+if (in_array("grp_order_type", $arrGroupBy)) {
+    $order_list_link_param .= "&_order_type=".$row["order_type"];
+}
+
+if (in_array("grp_channel", $arrGroupBy)) {
+    $order_list_link_param .= "&_imc_idx=".$row["imc_idx"];
+}
+
+if (in_array("grp_brand", $arrGroupBy)) {
+    $order_list_link_param .= "&_imb_idx=".$row["imb_idx"];
+}
+
+if (in_array("grp_tax_type", $arrGroupBy)) {
+    $order_list_link_param .= "&_tax_type=".$row["tax_type"];
+}
+
+
+if(!$_include_cancel) {
+    $order_list_link_param .= "&_except_cancel=1";
+}
+
+if ($_imc_idx) {
+    $order_list_link_param .= "&_imc_idx_2=".$_imc_idx;
+}
+
+if ($_imb_idx) {
+    $order_list_link_param .= "&_imb_idx_2=".$_imb_idx;
+}
+
+if ($_cate1_idx) {
+    $order_list_link_param .= "&_cate1_idx_2=".$_cate1_idx;
+}
+
+if ($_cate2_idx) {
+    $order_list_link_param .= "&_cate2_idx_2=".$_cate2_idx;
+}
+
+if ($_cate3_idx) {
+    $order_list_link_param .= "&_cate3_idx_2=".$_cate3_idx;
+}
+
+if ($_cate4_idx) {
+    $order_list_link_param .= "&_cate4_idx_2=".$_cate4_idx;
+}
+
+if ($_tax_type) {
+    $order_list_link_param .= "&_tax_type_2=".$_tax_type;
+}
+
+if ($_order_type) {
+    $order_list_link_param .= "&_order_type_2=".$_order_type;
+}
+
+if ($_goods_mst_code) {
+    $order_list_link_param .= "&_goods_mst_code_2=".$_goods_mst_code;
+}
+
+if ($_goods_name) {
+    $order_list_link_param .= "&_goods_name_2=".$_goods_name;
+}
+
+if ($_item_code) {
+    $order_list_link_param .= "&_item_code_2=".$_item_code;
+}
+
+if ($_item_name) {
+    $order_list_link_param .= "&_item_name_2=".$_item_name;
+}
+
+if ($_status) {
+    $order_list_link_param .= "&_status_2=".$_status;
+}
+?>
+                        <a href="./order_list.php?<?=$order_list_link_param?>" target="_blank"><?=$date_txt?></a>
+                        </td>
                         
 <?php 
             if (in_array("grp_goods", $arrGroupBy)) {
@@ -578,18 +874,6 @@ if ($rs->num_rows > 0) {
                         <td><?=$row["name"]?></td>
                         <td><?=$row["item_code"]?></td>
                         <td><?=$row["item_name"]?></td>
-            <?php
-            }
-            
-            if (in_array("grp_channel", $arrGroupBy)) {
-            ?>
-                        <td class="txt_c"><?=$row["channel"]?></td>
-            <?php
-            }
-            
-            if (in_array("grp_brand", $arrGroupBy)) {
-            ?>
-                        <td class="txt_c"><?=$row["brand_name"]?></td>
             <?php
             }
             
@@ -624,8 +908,20 @@ if ($rs->num_rows > 0) {
             }
             
             if (in_array("grp_order_type", $arrGroupBy)) {
-            ?>
-            <td class="txt_c"><?=$row["order_type"]=="1"?"온라인":"도매"?></td>
+                ?>
+            <td class="txt_c"><?=$arrSalesType[$row["order_type"]]?></td>
+            <?php
+            }
+            
+            if (in_array("grp_channel", $arrGroupBy)) {
+                ?>
+                        <td class="txt_c"><?=$row["channel"]?></td>
+            <?php
+            }
+            
+            if (in_array("grp_brand", $arrGroupBy)) {
+                ?>
+                        <td class="txt_c"><?=$row["brand_name"]?></td>
             <?php
             }
             
@@ -651,6 +947,7 @@ if ($rs->num_rows > 0) {
 ?>
                 </tbody>
             </table>
+            </div>
             <!-- 메인TABLE(e) -->
 			<p class="hide"><strong>Pagination</strong></p>
 			<div style="position: relative;">
@@ -659,9 +956,19 @@ if ($rs->num_rows > 0) {
     			<div style="position: absolute; right: 17px; bottom: 3px; text-align: center; line-height: 30px; border-radius: 10px; background-color: #313A3D;" class="rig_new"><a href="./goods_write.php" style="display:inline-block;padding: 5px 22px;color: #fff;">등록하기</a></div>
 */?>
     		</div>
+    		
+    		<a href="#none" onclick="javascript:goPageTop();"  style="position: fixed; right: 31px; bottom: 31px; width: 67px; height: 67px; line-height: 70px; background-color: #313A3D; border: none; border-radius: 50%; z-index: 999; box-sizing: border-box; color: #fff; letter-spacing: .3px; text-align: center;">TOP<img src="/ism/images/common/top.png" alt="" style=" margin: -2px 0 0 2px;"/></a>
 
 <script src="/ism/cms/js/util/ValidCheck.js"></script>
 <script type="text/javascript">
+
+var prev_include_except;
+
+$(document).ready(function() {
+
+//	getSelChannel("");
+	
+});
 
 $(document).on("click","a[name=btnSearch]",function() {
 	
@@ -676,10 +983,10 @@ $(document).on("click","a[name=btnSearch]",function() {
 	var fromDate = new Date(arrFromDate[0],arrFromDate[1]-1,arrFromDate[2]);
 	var toDate = new Date(arrToDate[0],arrToDate[1]-1,arrToDate[2]);
 
-	toDate.setMonth(toDate.getMonth()-6);
+	toDate.setMonth(toDate.getMonth()-12);
 	
 	if (fromDate < toDate) {
-		alert("최대 6개월 단위로 조회하실 수 있습니다.    ");
+		alert("최대 12개월 단위로 조회하실 수 있습니다.    ");
 		f._order_date_from.focus();
 	
 		return false;
@@ -724,6 +1031,39 @@ $(document).on('change','.sel_category',function() {
     		$('.sel_category[depth='+i+']').css("display","none");
     		$('.sel_category[depth='+i+'] option:eq(0)').prop("selected",true);
     	}
+	}
+});
+
+$(document).on('change','.sel_order_type',function() {
+	getSelChannel($("option:selected", this).val());
+});
+
+var getSelChannel = function(order_type) {
+
+	var obj_select
+
+	obj_select = $('.sel_channel');
+
+	$.ajax({
+		url: "/ism/ajax/ajax_channel.php",
+		data: {imst_idx: order_type},
+		async: true,
+		cache: false,
+		error: function(xhr){	},
+		success: function(data){
+			obj_select.html(data);
+		}
+	});
+}
+
+$(document).on('change','.sel_status',function() {
+	
+	if($("option:selected", this).val()=="취소접수" || $("option:selected", this).val()=="취소완료" || $("option:selected", this).val()=="삭제") {
+		prev_include_except = $('input:checkbox[name=_include_cancel]').is(':checked');
+		
+		$('input:checkbox[name=_include_cancel]').prop("checked", true);
+	} else {
+//		$('input:checkbox[name=_include_cancel]').prop("checked", prev_include_except);
 	}
 });
 
