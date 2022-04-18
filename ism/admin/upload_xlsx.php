@@ -30,8 +30,6 @@ $wq->addAndString2("imst_idx","=","1");
 $rs = ChannelMgr::getInstance()->getList($wq);
 
 $arrChannel = array();
-array_push($arrChannel, '네이버 페이');
-array_push($arrChannel, '롯데닷컴');
 
 if($rs->num_rows > 0) {
     for($i=0;$i<$rs->num_rows;$i++) {
