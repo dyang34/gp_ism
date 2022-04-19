@@ -688,7 +688,7 @@ $(document).on('change','.sel_order_type',function() {
 });
 
 var getSelChannel = function(order_type) {
-	var obj_select
+	var obj_select;
 
 	obj_select = $('.sel_channel');
 
@@ -751,5 +751,5 @@ var goSort = function(p_order_by, p_order_by_asc) {
 <?php
 include $_SERVER['DOCUMENT_ROOT']."/ism/include/footer.php";
 
-@ $rs->free();
+@ $rs->free(); 
 ?>
