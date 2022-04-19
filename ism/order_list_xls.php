@@ -172,7 +172,7 @@ if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
 ?>
         <td><?=number_format($row["price"])?></td>
         <td><?=$row["status"]?></td>
-        <td><?=$row["tax_type"]?></td>
+        <td><?=$row["tax_type"]?></td> 
 <?php 
 if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
 ?>
