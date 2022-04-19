@@ -112,6 +112,8 @@ if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
         <th style="color:white;background-color:#000081;">옵션명</th>
         <th style="color:white;background-color:#000081;">주문번호(사방넷)</th>
         <th style="color:white;background-color:#000081;">주문번호(쇼핑몰)</th>
+        <th style="color:white;background-color:#000081;">부주문번호</th>
+        <th style="color:white;background-color:#000081;">주문순번</th>
         <th style="color:white;background-color:#000081;">수량</th>
         <th style="color:white;background-color:#000081;">EA</th>
 <?php 
@@ -159,6 +161,8 @@ if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
         <td><?=$row["item_name"]?></td>
         <td style="mso-number-format:'\@';"><?=$row["order_no"]?></td>
         <td style="mso-number-format:'\@';"><?=$row["order_no_mall"]?></td>
+        <td style="mso-number-format:'\@';"><?=$row["order_no_sub"]?></td>
+        <td style="mso-number-format:'\@';"><?=$row["order_no_seq"]?></td>
         <td><?=number_format($row["amount"])?></td>
         <td><?=number_format($row["ea"])?></td>
 <?php 

@@ -58,8 +58,8 @@ class OrderDao extends A_Dao
 
 	function select($db, $wq) {
 	    
-	        //$sql =" select no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, a.item_code, order_no, order_no_mall, order_no_sub, order_no_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, a.reg_date, g.code, g.name, g.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3 "
-	            $sql =" select order_date, amount, ea, a.item_code, order_no, price_collect, status, tax_type, grp_code, a.reg_date, g.code, g.name, gi.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3, imc_idx, order_no_mall, price_pay, price_supply, price, fg_supply, fg_revise, channel_org, fg_separate "
+	        //$sql =" select no, order_date, channel, channel_id, name_collect, opt_name_collect, name_confirm, opt_name_confirm, amount, ea, goods_code, goods_code_mall, a.item_code, order_no, order_no_mall, order_no_sub, order_no_seq, fg_calculate, fg_separate, price_collect, price_goods, price_pay, status, tax_type, grp_code, a.reg_date, g.code, g.name, g.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3, order_no_sub, order_no_seq "
+	            $sql =" select order_date, amount, ea, a.item_code, order_no, price_collect, status, tax_type, grp_code, a.reg_date, g.code, g.name, gi.item_name, g.imb_idx, g.cate1_idx, g.cate2_idx, g.cate3_idx, g.cate4_idx, order_type, goods_mst_code, tmp_data3, imc_idx, order_no_mall, price_pay, price_supply, price, fg_supply, fg_revise, channel_org, fg_separate, order_no_sub, order_no_seq "
 	            ." ,(select name from ism_mst_brand b where b.imb_idx = g.imb_idx) as brand_name "
 	                ."		,(select title from ism_mst_category c1 where c1.imct_idx = g.cate1_idx) as cate1_name "
 	                    ."		,(select title from ism_mst_category c2 where c2.imct_idx = g.cate2_idx) as cate2_name "
