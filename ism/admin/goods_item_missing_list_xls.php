@@ -1,7 +1,6 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/blm_default_set.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/common/ism_ip_check.php";
-
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/cms/util/RequestUtil.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/ism/classes/ism/goods/GoodsItemMgr.php";
 
@@ -19,6 +18,7 @@ Header("Pragma: no-cache");
 Header("Expires: 0");
 header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 print("<meta http-equiv=\"Content-Type\" content=\"application/vnd.ms-excel; charset=utf-8\">");
+
 ?>
 <style>
 td{font-size:11px;text-align:center;}
