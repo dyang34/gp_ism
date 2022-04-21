@@ -632,6 +632,12 @@ if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
                         <td></td>
                         <td>사방넷 결제가 * 12% 수수료 적용</td>
                     </tr>
+					<tr>
+                        <td class="tbl_first txt_c">AKmall(신)</td>
+		<td></td>
+		<td></td>
+		<td></td>
+                    </tr>
                     <tr>
                         <td class="tbl_first txt_c">JMRP</td>
 		<td>공급합계</td>
