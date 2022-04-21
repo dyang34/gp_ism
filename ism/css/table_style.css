@@ -272,3 +272,15 @@ input:-webkit-autofill:active {
 
 .display_wrap { width: 98%; overflow: auto; margin: 0 auto; } 
 .display_scroll { white-space: nowrap; border-collapse: collapse; }
+
+/*레이어팝업*/
+.not-scroll { position: fixed; overflow: hidden; width: 100%; height: 100%; }
+.blind { visibility: hidden; overflow: hidden; position: absolute; width: 0; height: 0; font-size: 0; line-height: 0; }
+.ism_layerbg { display: none; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,.5); backface-visibility: hidden; -webkit-backface-visibility: hidden; z-index: 1000; }
+.ism_layerbg.active { display: block; }
+.ism_layerPop { display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 50%; padding: 45px 20px 60px; border-radius: 8px; box-sizing: border-box; background-color: #fff; /* overflow-y: scroll; */ z-index: 10000; overflow: visible; font-size: 13px; }
+.ism_layerPop.active { display: block; }
+.titlearea2 { width: 100%; zoom: 1; margin-bottom: 10px; }
+.ism_layerPop .absolutev { position: absolute; top: -2%; background: transparent !important; }
+.ism_layerPop .absoluter { right: -27px; }
+.ism_layer { display: inline-block; width: 19px; height: 19px; border: 1px solid #333; border-radius: 50%; margin-left: 5px; vertical-align: text-bottom; cursor: pointer; background: #fff; }

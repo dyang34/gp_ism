@@ -521,7 +521,7 @@ if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
 <?php 
 if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
 ?>
-                        <th>반영금액</th>
+                        <th>반영금액<span class="ism_layer"><img src="/ism/images/common/que_1.png" alt="" style="margin-top: -2px; width: 9px; height: 9px;"/></span></th>
                         <th>공급합계</th>
                         <th>결제금액</th>
 <?php     
@@ -595,7 +595,223 @@ if (LoginManager::getUserLoginInfo("iam_grade") > 9) {
     			<div style="position: absolute; right: 17px; bottom: 3px; text-align: center; line-height: 30px; border-radius: 10px; background-color: #313A3D;" class="rig_new"><a href="./goods_write.php" style="display:inline-block;padding: 5px 22px;color: #fff;">등록하기</a></div>
 */?>
     		</div>
-    		
+
+<div class="ism_layerPop">
+    <div style="width: 100%; height: 640px; overflow-y: scroll;">
+        <div class="box is_layerCont">
+            <div class="titlearea2">
+                <h4 style="font-size: 24px; padding-left: 21px; text-align: center; margin-bottom: 20px;">매출집계 참고지표</h4>
+                <p style="font-size: 14px; padding-left: 21px; text-align: right; margin-right: 13px; color: #0060ff;">적용일자 : 2022.01.01 부터</p>
+            </div>
+            <table class="display" cellpadding="0" cellspacing="0">
+                <caption>등록 제품</caption>
+                <colgroup>
+                    <col style="width:10%;">
+                    <col style="width:10%;">
+                    <col style="width:10%;">
+                    <col style="width:10%;">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th class="tbl_first" style="font-weight: bold;">쇼핑몰</th>
+                        <th style="font-weight: bold;">반영금액</th>
+                        <th style="font-weight: bold;">최종금액 산출방법</th>
+                        <th style="font-weight: bold;">주문서 수동등록시 산출방법</th>
+                    </tr>
+                </thead>
+                <tbody style="border-bottom: 2px solid #395467; text-align: center;">
+                    <tr>
+                        <td class="tbl_first txt_c">11번가</td>
+                        <td>공급합계</td>
+                        <td></td>
+                        <td>사방넷 결제가 * 12% 수수료 적용</td>
+                    </tr>
+                    <tr>
+                        <td class="tbl_first txt_c">11번가(구)</td>
+                        <td>공급합계</td>
+                        <td></td>
+                        <td>사방넷 결제가 * 12% 수수료 적용</td>
+                    </tr>
+                    <tr>
+                        <td class="tbl_first txt_c">JMRP</td>
+		<td>공급합계</td>
+		<td>사방넷 결제가 * 4% 수수료 적용</td>
+		<td>사방넷 결제가 * 4% 수수료 적용</td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">강블리 화장품 자사몰</td>
+		<td>공급합계</td>
+		<td>사방넷 결제가 * 4% 수수료 적용</td>
+		<td>사방넷 결제가 * 4% 수수료 적용</td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">공영홈쇼핑</td>
+		<td>공급합계</td>
+		<td>사방넷 결제가 * 6% 수수료 적용</td>
+		<td>사방넷 결제가 * 6% 수수료 적용</td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">네이버 페이</td>
+		<td>공급합계</td>
+		<td></td>
+		<td>사방넷 결제가 * 2.35% 수수료 적용</td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">다이소몰(신)</td>
+		<td>공급합계</td>
+		<td>사방넷 결제가 * 14% 수수료 적용</td>
+		<td>사방넷 결제가 * 14% 수수료 적용</td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">도매꾹</td>
+		<td>공급합계</td>
+		<td>사방넷 결제가 * 10% 수수료 적용</td>
+		<td>사방넷 결제가 * 10% 수수료 적용</td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">롯데닷컴</td>
+		<td>공급합계</td>
+		<td></td>
+		<td></td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">롯데온</td>
+		<td>공급합계</td>
+		<td>사방넷 결제가 * 9.5% 수수료 적용</td>
+		<td>사방넷 결제가 * 9.5% 수수료 적용</td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">만개스토어</td>
+		<td>공급합계</td>
+		<td></td>
+		<td>사방넷 결제가 * 25% 수수료 적용</td>
+                    </tr>
+                    <tr style="color: #0060ff;">
+		<td class="tbl_first txt_c">블링마켓</td>
+		<td>결제금액</td>
+		<td></td>
+		<td></td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">스마트스토어</td>
+		<td>공급합계</td>
+		<td></td>
+		<td>사방넷 결제가 * 6% 수수료 적용</td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">신세계몰(신)</td>
+		<td>공급합계</td>
+		<td></td>
+		<td></td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">오늘의집</td>
+		<td>공급합계</td>
+		<td></td>
+		<td></td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">옥션</td>
+		<td>공급합계</td>
+		<td></td>
+		<td></td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">위메프(신)</td>
+		<td>공급합계</td>
+		<td></td>
+		<td>사방넷 결제가 * 11.5% 수수료 적용</td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">인터파크</td>
+		<td>공급합계</td>
+		<td></td>
+		<td></td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">지마켓</td>
+		<td>공급합계</td>
+		<td></td>
+		<td></td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">카카오톡스토어</td>
+		<td>공급합계</td>
+		<td></td>
+		<td></td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">쿠팡</td>
+		<td>공급합계</td>
+		<td>사방넷 결제가 * 10.8% 수수료 적용</td>
+		<td>사방넷 결제가 * 10.8% 수수료 적용</td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">티몬</td>
+		<td>공급합계</td>
+		<td>사방넷 결제가 * 19% 수수료 적용</td>
+		<td>사방넷 결제가 * 19% 수수료 적용</td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">티몬(게임)</td>
+		<td>공급합계</td>
+		<td>사방넷 결제가 * 10% 수수료 적용</td>
+		<td>사방넷 결제가 * 10% 수수료 적용</td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">하프클럽(신)</td>
+		<td>공급합계</td>
+		<td>사방넷 결제가 * 14% 수수료 적용</td>
+		<td>사방넷 결제가 * 14% 수수료 적용</td>
+                    </tr>
+                    <tr>
+		<td class="tbl_first txt_c">현대홈쇼핑(신)</td>
+		<td>공급합계</td>
+		<td></td>
+		<td></td>
+                    </tr>
+	    </tbody>
+            </table>
+            <div class="titlearea2">
+                <p style="font-size: 14px; text-align: left; margin: 10px 0 0 19px; color: red;">※산출방법 2곳의 공란은 사방넷에서 자동으로 공급합계 금액이 계산됨.</p>
+            </div>
+        </div>
+    </div>
+    <button type="button" class="absolutev absoluter" name="btn_talkingClose">
+        <img src="/ism/images/common/bl_list_1.png" alt="닫기" width="28" height="28">
+        <span class="blind">화면닫기</span>
+    </button>
+</div>
+<div class="ism_layerbg" name="btn_chargeClose"></div>			
+
+<script type="text/javascript">
+
+    var posY;
+
+    $(document).on('click','.ism_layer',function(){
+        posY = $(window).scrollTop();
+        
+        $('html,body').addClass('not-scroll');
+
+            $('#wrap').css('top',-posY);
+            $('.ism_layerPop').toggleClass('active');
+            $('.ism_layerbg').addClass('active');
+
+            return false;
+    });
+
+    $(document).on('click','div[name=btn_chargeClose],button[name=btn_talkingClose]',function(){
+        $('html,body').removeClass('not-scroll');
+        $('.ism_layerbg,.ism_layerPop').removeClass('active');
+
+        $('#wrap').css('top', 'auto');
+        posY = $(window).scrollTop(posY);
+
+        return false;
+    });
+
+</script>
+
 		<a href="#none" onclick="javascript:goPageTop();"  style="position: fixed; right: 31px; bottom: 31px; width: 67px; height: 67px; line-height: 70px; background-color: #313A3D; border: none; border-radius: 50%; z-index: 999; box-sizing: border-box; color: #fff; letter-spacing: .3px; text-align: center;">TOP<img src="/ism/images/common/top.png" alt="" style=" margin: -2px 0 0 2px;"/></a>
     		
 <script src="/ism/cms/js/util/ValidCheck.js"></script>
