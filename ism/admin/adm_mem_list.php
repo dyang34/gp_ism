@@ -119,8 +119,8 @@ for($ii=0;$ii<count($arrMemGrade);$ii++) {
 					<a href="#none" name="_btn_sort" order_by="reg_date" order_by_asc="desc" class="<?=$_order_by=="reg_date"?"on":""?>">최신순</a>
 					<a href="#none" name="_btn_sort" order_by="userid" order_by_asc="asc" class="<?=$_order_by=="userid" && $_order_by_asc=="asc"?"on":""?>">아이디<em>▲</em></a>
 					<a href="#none" name="_btn_sort" order_by="userid" order_by_asc="desc" class="<?=$_order_by=="userid" && $_order_by_asc=="desc"?"on":""?>">아이디<em>▼</em></a>
-					<a href="#none" name="_btn_sort" order_by="iam_name" order_by_asc="asc" class="<?=$_order_by=="name" && $_order_by_asc=="asc"?"on":""?>">이름<em>▲</em></a>
-					<a href="#none" name="_btn_sort" order_by="iam_name" order_by_asc="desc" class="<?=$_order_by=="name" && $_order_by_asc=="desc"?"on":""?>">이름<em>▼</em></a>
+					<a href="#none" name="_btn_sort" order_by="iam_name" order_by_asc="asc" class="<?=$_order_by=="iam_name" && $_order_by_asc=="asc"?"on":""?>">이름<em>▲</em></a>
+					<a href="#none" name="_btn_sort" order_by="iam_name" order_by_asc="desc" class="<?=$_order_by=="iam_name" && $_order_by_asc=="desc"?"on":""?>">이름<em>▼</em></a>
 					<a href="#none" name="_btn_sort" order_by="iam_grade" order_by_asc="asc" class="<?=$_order_by=="iam_grade" && $_order_by_asc=="asc"?"on":""?>">권한<em>▲</em></a>
 					<a href="#none" name="_btn_sort" order_by="iam_grade" order_by_asc="desc" class="<?=$_order_by=="iam_grade" && $_order_by_asc=="desc"?"on":""?>">권한<em>▼</em></a>
 					<a href="#none" name="_btn_sort" order_by="iam_last_login" order_by_asc="asc" class="<?=$_order_by=="iam_last_login" && $_order_by_asc=="asc"?"on":""?>">최종로그인<em>▲</em></a>
